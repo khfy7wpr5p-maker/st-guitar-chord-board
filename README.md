@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 10
+## Current status — Stage 11
 
 The app targets the complete initial matrix:
 
@@ -22,6 +22,8 @@ The app targets the complete initial matrix:
 - explicit relative major/minor relation for basic major/minor chords
 - iPhone-safe standalone PWA shell with safe-area/touch contracts
 - offline app-shell fallback with same-origin bounded caching
+- WebKit iPhone-profile browser smoke tests
+- Chromium service-worker offline reload smoke test
 
 ### Search and naming rule
 
@@ -73,6 +75,8 @@ Audio routing now prefers the editor-owned `ST_GUITAR_AUDIO.playChord(...)` brid
 See [docs/AUDIO-INTEGRATION.md](docs/AUDIO-INTEGRATION.md).
 
 Authority compatibility is documented in [docs/AUTHORITY-CROSSCHECK.md](docs/AUTHORITY-CROSSCHECK.md).
+
+Mobile/browser qualification is documented in [docs/MOBILE-QUALIFICATION.md](docs/MOBILE-QUALIFICATION.md).
 
 ## Run
 
