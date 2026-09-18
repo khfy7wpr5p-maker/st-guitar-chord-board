@@ -87,3 +87,9 @@ test("audio adapter surfaces qualified ST audition failures", async () => {
   const adapter=createAudioAdapter({ST_SCORE_AUDIO_ENGINE:engine});
   await assert.rejects(()=>adapter.playChord([48,52,55]),/sample missing/);
 });
+
+test("editor bridge offline readiness is trusted only when explicitly declared", () => {
+  assert.equal(createAudioAdapter({ST_GUITAR_AUDIO:{capabilities:{offlineReady:true},playChord(){}}}).offlineReady,true);
+  assert.equal(createAudioAdapter({ST_GUITAR_AUDIO:{capabilities:{offlineReady:false},playChord(){}}}).offlineReady,false);
+  assert.equal(createAudioAdapter({ST_GUITAR_AUDIO:{playChord(){}}}).offlineReady,null);
+});
