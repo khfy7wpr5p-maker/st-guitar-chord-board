@@ -44,6 +44,10 @@ export const HARMONIC_AUTHORITY = Object.freeze({
   sus4: Object.freeze([0,5,7])
 });
 
+export const PRODUCT_HARMONIC_EXTENSIONS = Object.freeze({
+  "5": Object.freeze([0,7])
+});
+
 export const FINGERING_AUTHORITY = Object.freeze({
   maxStandardFingers: 4,
   candidateMinimumFret: 0,
