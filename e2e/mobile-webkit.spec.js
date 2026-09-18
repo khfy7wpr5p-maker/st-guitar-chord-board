@@ -44,6 +44,7 @@ test("iPhone WebKit chord search, relation, variation and audio payload", async 
   const calls = await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__);
   expect(calls).toHaveLength(1);
   expect(calls[0].symbol).toBe("Am");
+  expect(calls[0].displaySymbol).toBe("Am");
   expect(calls[0].voicingIndex).toBe(1);
   expect(Array.isArray(calls[0].midis)).toBeTruthy();
   expect(calls[0].midis.length).toBeGreaterThanOrEqual(3);
@@ -65,9 +66,29 @@ test("power chord flow exposes exactly two positions", async ({ page }) => {
   await page.locator("#chord-button").tap();
   const call = await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.at(-1));
   expect(call.symbol).toBe("A5");
+  expect(call.displaySymbol).toBe("A5");
   expect(call.voicingIndex).toBe(1);
   expect(call.midis).toHaveLength(3);
   expect([...new Set(call.midis.map(midi => midi % 12))].sort((a,b)=>a-b)).toEqual([4,9]);
+});
+
+test("flat power chord spelling stays visible while audio identity remains canonical", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("Bb5");
+
+  await expect(page.locator("#chord-symbol")).toHaveText("Bb5");
+  await expect(page.locator("#chord-reading")).toHaveText("Si bemol beş");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+  await expect(page.locator('#suggestions .suggestion[data-symbol="Bb"]')).toBeVisible();
+  await expect(page.locator('#suggestions .suggestion[data-symbol="Bbm"]')).toBeVisible();
+  await expect(page.locator('#suggestions .suggestion[data-symbol="Bb5"]')).toBeVisible();
+
+  await page.locator("#chord-button").tap();
+  const call = await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.at(-1));
+  expect(call.symbol).toBe("A#5");
+  expect(call.displaySymbol).toBe("Bb5");
+  expect(call.midis).toHaveLength(3);
+  expect([...new Set(call.midis.map(midi => midi % 12))].sort((a,b)=>a-b)).toEqual([5,10]);
 });
 
 test("relative relation navigation stays within the large-button flow", async ({ page }) => {
