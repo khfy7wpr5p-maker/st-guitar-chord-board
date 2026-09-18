@@ -76,13 +76,15 @@ Symbol search input
 
 ## Next stages
 
-### Stage 7 — engine authority cross-check
-Cross-check product data against:
-- `musicxml-to-guitar-tab-engine` fretboard / physical candidate authority
-- `st-guitar-fingering-training` deterministic fingering/barre authority
-- `st-guitar-harmonic-engine` chord-identity authority
+### Stage 7 — engine authority cross-check ✅
+Pinned compatibility baselines now cross-check product data against:
+- `musicxml-to-guitar-tab-engine` standard tuning, six-string layout and 0..20 fret bounds;
+- `st-guitar-harmonic-engine` exact major/minor/7/maj7/m7 and sus2/sus4 interval templates;
+- `st-guitar-fingering-training` deterministic four-finger/barre resource boundary.
 
-The chord-board runtime remains local. These integrations should validate or generate compact product data, not introduce a backend.
+Every displayed voicing is checked in CI. The learned fingering ranker remains explicitly outside runtime because its source repository still records runtime/production authorization as false.
+
+The chord-board runtime remains local; Stage 7 adds compatibility guards, not a backend or cross-repository runtime dependency.
 
 ### Stage 8 — mobile/audio qualification
 - iPhone touch and layout checks
