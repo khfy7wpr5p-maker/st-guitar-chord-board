@@ -1,6 +1,6 @@
 {
   "name": "st-guitar-chord-board",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,8 @@
     "serve": "python3 -m http.server 4173"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
+    "@playwright/test": "1.63.0",
+    "tonal": "6.4.3"
   },
   "engines": { "node": ">=20" }
 }
