@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 2
+## Current status — Stage 3
 
 The app now targets the complete initial matrix:
 
@@ -21,7 +21,9 @@ The button contains no “Play” or “Dokun” label. Touching the chord surfa
 
 ## Audio
 
-The preferred runtime path is the existing ST guitar playback host through `window.ST_GUITAR_AUDIO.playChord(...)`. A Web Audio oscillator exists only as a development fallback; it is not the intended final guitar timbre.
+The preferred runtime path now directly supports an exposed `ST_SCORE_AUDIO_ENGINE`: the chord button unlocks audio from the user gesture, selects `CLASSICAL_GUITAR`, and sends one concurrent `audition(...)` request per sounding string. The editor-owned `ST_GUITAR_AUDIO.playChord(...)` bridge remains supported. A Web Audio oscillator exists only as a development fallback.
+
+See [docs/AUDIO-INTEGRATION.md](docs/AUDIO-INTEGRATION.md).
 
 ## Run
 
