@@ -12,6 +12,9 @@ Symbol search input
   -> same-root suggestion family
   -> Chord parser / normalizer
   -> Turkish chord reading
+  -> Explicit relation layer
+       -> same-root family
+       -> relative major/minor for basic triads only
   -> Voicing provider
        -> curated common open/open-region voicing when available
        -> curated C-family alternatives
@@ -99,8 +102,16 @@ Still remaining:
 - confirmation that the editor's guitar sound assets are packaged/cached for true offline playback;
 - cache/version migration qualification.
 
-### Stage 9 — chord relationship layer
-If added, relationships must be explicitly categorized (for example same-root family, relative major/minor, or tonal-context relation). The UI must not call musically different chords “equivalent” without a precise relation definition.
+### Stage 9 — chord relationship layer ✅
+Implemented:
+- existing same-root family remains a search/navigation category;
+- basic major chords expose one relative-minor relation;
+- basic minor chords expose one relative-major relation;
+- relation mapping is reciprocal across all 12 canonical roots;
+- seventh and suspended chords do not receive fabricated context-free relations;
+- dominant-to-tonic evidence is deliberately excluded from the single-chord UI because the Harmonic Engine requires explicit tonal context and adjacency.
+
+The UI uses precise labels such as **Göreli majör** and **Göreli minör** and does not call distinct harmonies “equivalent”.
 
 ## Non-goals
 - server-side chord calculation
