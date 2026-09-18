@@ -1,4 +1,4 @@
-import { parseChordQuery } from "./chord-core.js";
+import { parseChordPresentation } from "./chord-core.js";
 import { chordNameTr } from "./chord-labels-tr.js";
 import { suggestChordSymbols } from "./chord-catalog.js";
 import { getRelativeRelation } from "./chord-relations.js";
@@ -26,7 +26,7 @@ let index = 0;
 function renderSuggestions(value) {
   const suggestions = suggestChordSymbols(value);
   suggestionsEl.innerHTML = suggestions.map(candidate => {
-    const chord = parseChordQuery(candidate);
+    const chord = parseChordPresentation(candidate);
     const reading = chord ? chordNameTr(chord) : "";
     const selected = candidate === symbol;
     return `<button type="button" class="suggestion${selected ? " selected" : ""}" data-symbol="${candidate}" aria-pressed="${selected}">
@@ -44,7 +44,7 @@ function renderRelation(chord) {
     return;
   }
 
-  const relatedChord = parseChordQuery(relation.symbol);
+  const relatedChord = parseChordPresentation(relation.symbol);
   const reading = relatedChord ? chordNameTr(relatedChord) : "";
   relationEl.hidden = false;
   relationEl.innerHTML = `<button type="button" class="relation-card" data-symbol="${relation.symbol}">
@@ -55,7 +55,7 @@ function renderRelation(chord) {
 }
 
 function render() {
-  const chord = parseChordQuery(symbol);
+  const chord = parseChordPresentation(symbol);
   const voicings = getVoicings(symbol);
   if (!voicings.length || !chord) {
     symbolEl.textContent = symbol;
@@ -66,14 +66,16 @@ function render() {
     renderRelation(null);
     return;
   }
+
   index = Math.max(0, Math.min(index, voicings.length - 1));
   const v = voicings[index];
-  symbolEl.textContent = symbol;
+  symbol = chord.displaySymbol;
+  symbolEl.textContent = chord.displaySymbol;
   readingEl.textContent = chordNameTr(chord);
   stringsEl.innerHTML = renderChordDiagramSvg(v);
   countEl.textContent = `${index+1} / ${voicings.length}`;
   board.disabled = false;
-  board.setAttribute("aria-label", `${symbol}, ${chordNameTr(chord)} akorunu çal`);
+  board.setAttribute("aria-label", `${chord.displaySymbol}, ${chordNameTr(chord)} akorunu çal`);
   status.textContent = audio.kind === "development-web-audio"
     ? "Geliştirme sesi"
     : audio.offlineReady === true
@@ -84,9 +86,9 @@ function render() {
 }
 
 function selectSymbol(nextSymbol) {
-  const parsed = parseChordQuery(nextSymbol);
+  const parsed = parseChordPresentation(nextSymbol);
   if (!parsed) return false;
-  symbol = parsed.symbol;
+  symbol = parsed.displaySymbol;
   index = 0;
   render();
   return true;
@@ -115,13 +117,19 @@ relationEl.addEventListener("click", event => {
 });
 
 board.addEventListener("click", async () => {
+  const chord = parseChordPresentation(symbol);
   const v = getVoicings(symbol)[index];
-  if (!v) return;
+  if (!v || !chord) return;
   const positions = v.frets.flatMap((fret, stringIndex) =>
     fret < 0 ? [] : [{ stringNumber: 6 - stringIndex, fret }]
   );
   try {
-    await audio.playChord(voicingMidi(v), { symbol, voicingIndex:index, positions });
+    await audio.playChord(voicingMidi(v), {
+      symbol: chord.symbol,
+      displaySymbol: chord.displaySymbol,
+      voicingIndex:index,
+      positions
+    });
     board.classList.remove("pressed");
     void board.offsetWidth;
     board.classList.add("pressed");

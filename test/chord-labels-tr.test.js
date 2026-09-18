@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { chordNameTr } from "../src/chord-labels-tr.js";
-import { parseChordQuery } from "../src/chord-core.js";
+import { parseChordPresentation, parseChordQuery } from "../src/chord-core.js";
 
 test("renders required Turkish chord readings", () => {
   assert.equal(chordNameTr(parseChordQuery("Am")), "La minör");
@@ -13,4 +13,11 @@ test("renders required Turkish chord readings", () => {
   assert.equal(chordNameTr(parseChordQuery("A5")), "La beş");
   assert.equal(chordNameTr(parseChordQuery("B5")), "Si beş");
   assert.equal(chordNameTr(parseChordQuery("C5")), "Do beş");
+});
+
+test("renders preserved flat spellings in Turkish", () => {
+  assert.equal(chordNameTr(parseChordPresentation("Bb5")), "Si bemol beş");
+  assert.equal(chordNameTr(parseChordPresentation("Ebmaj7")), "Mi bemol majör yedili");
+  assert.equal(chordNameTr(parseChordPresentation("Gb")), "Sol bemol majör");
+  assert.equal(chordNameTr(parseChordPresentation("Si bemol minör")), "Si bemol minör");
 });
