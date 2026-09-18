@@ -120,3 +120,20 @@ The UI uses precise labels such as **Göreli majör** and **Göreli minör** and
 - AI-required chord lookup
 - note-set chord search
 - silent substitution of a different voicing
+
+
+### Stage 10 — mobile PWA + offline capability contract ✅
+Implemented:
+- standalone portrait PWA manifest with local id/scope;
+- iPhone standalone metadata and `viewport-fit=cover`;
+- safe-area padding for notched devices;
+- >=44 px generic touch target floor and touch-action hardening;
+- same-origin bounded service-worker caching;
+- offline navigation fallback to the cached app shell;
+- old cache cleanup and immediate service-worker activation;
+- editor audio bridge may explicitly declare `capabilities.offlineReady`;
+- UI never claims offline guitar timbre unless the host declares it.
+
+Not yet claimed:
+- physical iPhone/Safari qualification;
+- offline availability of the editor's `smplr electric_guitar_jazz` assets. Current editor evidence proves use of that sampler, but not local packaging of its soundfont assets.
