@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 11
+## Current status — Stage 12
 
 The app targets the complete initial matrix:
 
@@ -24,6 +24,8 @@ The app targets the complete initial matrix:
 - offline app-shell fallback with same-origin bounded caching
 - WebKit iPhone-profile browser smoke tests
 - Chromium service-worker offline reload smoke test
+- pinned build-time local guitar soundfont vendoring path
+- same-origin local smplr bridge with explicit offlineReady capability
 
 ### Search and naming rule
 
@@ -74,6 +76,8 @@ Audio routing now prefers the editor-owned `ST_GUITAR_AUDIO.playChord(...)` brid
 
 See [docs/AUDIO-INTEGRATION.md](docs/AUDIO-INTEGRATION.md).
 
+Local offline-audio packaging is documented in [docs/LOCAL-AUDIO-PACKAGING.md](docs/LOCAL-AUDIO-PACKAGING.md).
+
 Authority compatibility is documented in [docs/AUTHORITY-CROSSCHECK.md](docs/AUTHORITY-CROSSCHECK.md).
 
 Mobile/browser qualification is documented in [docs/MOBILE-QUALIFICATION.md](docs/MOBILE-QUALIFICATION.md).
@@ -82,6 +86,7 @@ Mobile/browser qualification is documented in [docs/MOBILE-QUALIFICATION.md](doc
 
 ```bash
 npm test
+npm run vendor:guitar-audio   # optional: prepare local guitar soundfont
 npm run serve
 ```
 

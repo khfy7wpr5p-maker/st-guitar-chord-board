@@ -1,6 +1,6 @@
 {
   "name": "st-guitar-chord-board",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "test:browser": "playwright test",
     "test:webkit": "playwright test --project=webkit-iphone",
     "test:offline": "playwright test --project=chromium-offline",
+    "vendor:guitar-audio": "node scripts/vendor-guitar-soundfont.mjs",
     "serve": "python3 -m http.server 4173"
   },
   "devDependencies": {

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "instrument": "electric_guitar_jazz",
+  "runtime_path": "./vendor/audio/electric_guitar_jazz-mp3.js",
+  "source": {
+    "repository": "gleitz/midi-js-soundfonts",
+    "commit": "044fab8e1456bfafc5776e86dfd6bb8697149aef",
+    "path": "FluidR3_GM/electric_guitar_jazz-mp3.js",
+    "git_blob_sha1": "2c0ef6f12d5a260982520130c97905e5931a60d4"
+  },
+  "license_notes": {
+    "packaging_repository": "MIT",
+    "FluidR3_GM_samples": "CC BY 3.0 per source repository README"
+  }
+}

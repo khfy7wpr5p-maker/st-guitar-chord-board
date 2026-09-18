@@ -1,3 +1,4 @@
 node_modules/
 test-results/
 playwright-report/
+vendor/audio/electric_guitar_jazz-mp3.js

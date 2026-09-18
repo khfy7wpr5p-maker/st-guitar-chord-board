@@ -87,3 +87,24 @@ Chord Board treats this declaration conservatively:
 The UI never upgrades an unknown audio path to “offline ready”.
 
 Fresh editor evidence at `seslitab-guitar-reader@49d76b8a2317b38bf728e20240258daa92b62c1e` shows use of `smplr` with `electric_guitar_jazz`, but does not by itself prove those soundfont assets are packaged locally.
+
+
+## Stage 12 local-vendored soundfont route
+
+Chord Board now includes an optional local soundfont packaging path documented in `LOCAL-AUDIO-PACKAGING.md`.
+
+The route is intentionally build-time rather than runtime-network based:
+
+```text
+pinned source commit
+  -> download during explicit vendor/build step
+  -> verify canonical Git blob SHA-1
+  -> local same-origin soundfont file
+  -> smplr local bridge
+  -> ST_GUITAR_AUDIO { offlineReady:true }
+  -> Chord Board
+```
+
+The service worker treats the large soundfont as optional. This keeps normal development/browser CI lightweight while allowing a distributable build to include and pre-cache the verified asset.
+
+This removes the architectural dependency on a runtime CDN, but physical offline playback is not marked fully qualified until the vendored asset is included in a release build and tested with the network disabled.
