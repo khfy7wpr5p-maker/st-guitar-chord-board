@@ -1,8 +1,12 @@
 {
+  "id":"./",
   "name":"ST Guitar Chord Board",
   "short_name":"Chord Board",
   "start_url":"./",
+  "scope":"./",
   "display":"standalone",
+  "orientation":"portrait",
   "background_color":"#f5f5f5",
-  "theme_color":"#111111"
+  "theme_color":"#111111",
+  "lang":"tr"
 }
