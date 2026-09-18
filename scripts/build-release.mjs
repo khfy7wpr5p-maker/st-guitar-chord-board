@@ -16,6 +16,23 @@ const ROOT_FILES = Object.freeze([
   "THIRD_PARTY_NOTICES.md"
 ]);
 
+export const RUNTIME_SRC_FILES = Object.freeze([
+  "app.js",
+  "audio-adapter.js",
+  "chord-catalog.js",
+  "chord-core.js",
+  "chord-labels-tr.js",
+  "chord-relations.js",
+  "curated-open-voicings.js",
+  "diagram-model.js",
+  "movable-voicings.js",
+  "power-voicings.js",
+  "release-config.js",
+  "selection-state.js",
+  "standalone-guitar-audio.js",
+  "voicing-library.js"
+]);
+
 const RELEASE_CONFIG = `export const RELEASE_AUDIO = Object.freeze({
   enabled: true,
   instrumentUrl: "./vendor/audio/electric_guitar_jazz-mp3.js"
@@ -27,7 +44,8 @@ export async function buildRelease({
   distDir = resolve("dist"),
   expectedSoundfontBlobSha1 = GUITAR_SOUNDFONT_SOURCE.blobSha1,
   sourceCommit = GUITAR_SOUNDFONT_SOURCE.commit,
-  packageVersion
+  packageVersion,
+  runtimeSrcFiles = RUNTIME_SRC_FILES
 } = {}) {
   const soundfontPath = join(rootDir,"vendor/audio/electric_guitar_jazz-mp3.js");
   const soundfontBytes = await readFile(soundfontPath);
@@ -48,11 +66,15 @@ export async function buildRelease({
   for (const file of ROOT_FILES) {
     await cp(join(rootDir,file),join(distDir,file));
   }
-  await cp(join(rootDir,"src"),join(distDir,"src"),{recursive:true});
+
+  await mkdir(join(distDir,"src"),{recursive:true});
+  for (const file of runtimeSrcFiles) {
+    await cp(join(rootDir,"src",file),join(distDir,"src",file));
+  }
+
   await mkdir(join(distDir,"vendor/audio"),{recursive:true});
   await cp(join(rootDir,"vendor/audio/source.json"),join(distDir,"vendor/audio/source.json"));
   await writeFile(join(distDir,"vendor/audio/electric_guitar_jazz-mp3.js"),soundfontBytes);
-
   await writeFile(join(distDir,"src/release-config.js"),RELEASE_CONFIG);
 
   const swPath = join(distDir,"service-worker.js");
@@ -70,6 +92,7 @@ export async function buildRelease({
     schemaVersion:1,
     version,
     builtFor:"static-offline-pwa",
+    runtimeFiles:[...runtimeSrcFiles],
     soundfont:{
       instrument:"electric_guitar_jazz",
       gitBlobSha1:actualSha,
