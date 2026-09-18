@@ -1,4 +1,4 @@
-const SOURCE_REVISION = "st-guitar-chord-board@0.8.0";
+const SOURCE_REVISION = "st-guitar-chord-board@0.10.0";
 
 function assertMidiList(midis) {
   if (!Array.isArray(midis) || midis.length < 1 || midis.some(m => !Number.isInteger(m) || m < 0 || m > 127)) {
@@ -18,8 +18,10 @@ function requestIdFactory(host) {
 function editorBridge(host) {
   const bridge = host.ST_GUITAR_AUDIO;
   if (!bridge || typeof bridge.playChord !== "function") return null;
+  const declaredOffline = bridge.capabilities?.offlineReady;
   return {
     kind: "host-guitar-audio",
+    offlineReady: declaredOffline === true ? true : declaredOffline === false ? false : null,
     playChord(midis, meta = {}) {
       assertMidiList(midis);
       return bridge.playChord({ midis:[...midis], ...meta });
@@ -34,9 +36,7 @@ function scoreAudioSupportsGuitar(stEngine) {
     typeof stEngine.unlockFromUserGesture !== "function" ||
     typeof stEngine.setInstrument !== "function"
   ) return false;
-
   if (typeof stEngine.getInstrumentProfile !== "function") return true;
-
   try {
     const profile = stEngine.getInstrumentProfile("CLASSICAL_GUITAR");
     return profile?.lifecycle === "ACTIVE" && profile?.sampleReadiness === "QUALIFIED";
@@ -48,18 +48,16 @@ function scoreAudioSupportsGuitar(stEngine) {
 function scoreAudioAdapter(host) {
   const stEngine = host.ST_SCORE_AUDIO_ENGINE;
   if (!scoreAudioSupportsGuitar(stEngine)) return null;
-
   const nextRequestId = requestIdFactory(host);
   return {
     kind: "st-score-audio-engine",
+    offlineReady: stEngine.capabilities?.classicalGuitarOfflineReady === true ? true : null,
     async playChord(midis, meta = {}) {
       assertMidiList(midis);
       const unlock = await stEngine.unlockFromUserGesture();
       if (!unlock?.ok) throw new Error(unlock?.error?.message || "Gitar sesi açılamadı");
-
       await stEngine.setInstrument("CLASSICAL_GUITAR");
       const positions = Array.isArray(meta.positions) ? meta.positions : [];
-
       const results = await Promise.all(midis.map((midi, noteIndex) => {
         const position = positions[noteIndex] || {};
         return stEngine.audition({
@@ -74,10 +72,9 @@ function scoreAudioAdapter(host) {
           sourceEventId: `${meta.symbol || "chord"}:v${(meta.voicingIndex ?? 0) + 1}:n${noteIndex + 1}`
         });
       }));
-
       const failed = results.find(result => !result?.ok);
       if (failed) throw new Error(failed.error?.message || "Gitar akoru çalınamadı");
-      return { ok: true, voices: results.length };
+      return { ok:true, voices:results.length };
     }
   };
 }
@@ -85,6 +82,7 @@ function scoreAudioAdapter(host) {
 function developmentAdapter(host) {
   return {
     kind: "development-web-audio",
+    offlineReady: true,
     async playChord(midis) {
       assertMidiList(midis);
       const AudioContextCtor = host.AudioContext || host.webkitAudioContext;
@@ -92,18 +90,15 @@ function developmentAdapter(host) {
       const ctx = new AudioContextCtor();
       if (ctx.state === "suspended") await ctx.resume();
       const now = ctx.currentTime;
-      midis.forEach((midi, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.value = 440 * Math.pow(2,(midi-69)/12);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.12, now + 0.008 + i*0.002);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.9);
+      midis.forEach((midi,i)=>{
+        const osc=ctx.createOscillator();
+        const gain=ctx.createGain();
+        osc.type="triangle";
+        osc.frequency.value=440*Math.pow(2,(midi-69)/12);
+        gain.gain.setValueAtTime(0.0001,now);
+        gain.gain.exponentialRampToValueAtTime(0.12,now+0.008+i*0.002);
+        gain.gain.exponentialRampToValueAtTime(0.0001,now+0.85);
+        osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now+0.9);
       });
       setTimeout(()=>ctx.close().catch(()=>{}),1100);
       return { ok:true, voices:midis.length };
