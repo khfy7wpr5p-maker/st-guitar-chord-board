@@ -13,6 +13,16 @@ test("open C diagram preserves mute, open and finger states", () => {
   assert.deepEqual(model.strings.map(s=>s.row),[null,3,2,null,1,null]);
 });
 
+test("open-root power chord remains a first-position diagram", () => {
+  const model=buildChordDiagramModel({
+    frets:[-1,0,2,2,-1,-1],
+    fingers:[-1,0,1,2,-1,-1],
+    barres:[]
+  });
+  assert.equal(model.baseFret,1);
+  assert.deepEqual(model.strings.map(s=>s.row),[null,null,2,2,null,null]);
+});
+
 test("high-position barre diagram rebases to the first visible fret", () => {
   const model=buildChordDiagramModel({
     frets:[8,10,10,9,8,8],
