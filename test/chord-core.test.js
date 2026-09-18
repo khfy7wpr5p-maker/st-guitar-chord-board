@@ -15,14 +15,19 @@ test("C family interval semantics are exact", () => {
   assert.deepEqual(pitchClassesForChord(parseChordQuery("Csus2")), [0,2,7]);
 });
 
-test("stage-1 C family has at least three playable voicings each", () => {
+test("stage-1 C family has three exact guitar voicings each", () => {
   for (const symbol of ["C","Cm","C7","Cmaj7","Cm7","Csus2","Csus4"]) {
+    const chord = parseChordQuery(symbol);
+    const expected = [...pitchClassesForChord(chord)].sort((a,b)=>a-b);
     const voicings = getVoicings(symbol);
     assert.ok(voicings.length >= 3, symbol);
     for (const voicing of voicings) {
       assert.equal(voicing.frets.length, 6);
       assert.equal(voicing.fingers.length, 6);
-      assert.ok(voicingMidi(voicing).length >= 3);
+      const midis = voicingMidi(voicing);
+      assert.ok(midis.length >= 3);
+      const actual = [...new Set(midis.map(m=>m%12))].sort((a,b)=>a-b);
+      assert.deepEqual(actual, expected, `${symbol} ${voicing.frets.join(",")}`);
     }
   }
 });
