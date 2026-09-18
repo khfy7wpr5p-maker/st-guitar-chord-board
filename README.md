@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 8
+## Current status — Stage 9
 
 The app targets the complete initial matrix:
 
@@ -19,6 +19,7 @@ The app targets the complete initial matrix:
 - no required backend or Render dependency
 - CI cross-checks against pinned ST fretboard, harmony and fingering authorities
 - editor-first audio routing avoids suspended Score Audio guitar profiles
+- explicit relative major/minor relation for basic major/minor chords
 
 ### Search and naming rule
 
@@ -38,6 +39,15 @@ Am | A | A7 | Amaj7 | Am7 | Asus2 | Asus4
 This is deliberately described as the **same-root chord family**, not as harmonic equivalence.
 
 The product does not require the user to enter chord tones such as `A C E`. Note-set chord search is outside the product scope.
+
+### Chord relations
+
+The product does not use the vague label “equivalent chord”. Relations are explicit:
+
+- `C` → **Göreli minör: Am — La minör**
+- `Am` → **Göreli majör: C — Do majör**
+
+This relation is shown only for basic major/minor chords. Dominant-to-tonic relations are not inferred from a single chord because the Harmonic Engine requires explicit tonal context for that evidence.
 
 ### Guitar voicings
 
