@@ -30,3 +30,20 @@ jobs:
           name: ui-validation-screenshots
           path: test-results/ui-validation/*.png
           if-no-files-found: ignore
+
+  release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npm run build:release
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: st-guitar-chord-board-release
+          path: dist/
+          if-no-files-found: error
