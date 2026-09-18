@@ -86,11 +86,18 @@ Every displayed voicing is checked in CI. The learned fingering ranker remains e
 
 The chord-board runtime remains local; Stage 7 adds compatibility guards, not a backend or cross-repository runtime dependency.
 
-### Stage 8 — mobile/audio qualification
-- iPhone touch and layout checks
-- explicit classical-guitar sample qualification or editor sampler binding
-- full offline sample-asset qualification
-- cache/version migration checks
+### Stage 8 — audio qualification routing ✅ / mobile qualification remaining
+Implemented:
+- editor-owned guitar sampler/MIDI bridge is the first production route;
+- ST Score Audio classical-guitar route is gated on `ACTIVE + QUALIFIED` when profile inspection exists;
+- current suspended Score Audio guitar profile is automatically skipped;
+- legacy score-audio hosts without profile inspection remain compatible;
+- development oscillator remains non-production fallback.
+
+Still remaining:
+- physical iPhone touch/layout qualification;
+- confirmation that the editor's guitar sound assets are packaged/cached for true offline playback;
+- cache/version migration qualification.
 
 ### Stage 9 — chord relationship layer
 If added, relationships must be explicitly categorized (for example same-root family, relative major/minor, or tonal-context relation). The UI must not call musically different chords “equivalent” without a precise relation definition.

@@ -1,4 +1,4 @@
-const SOURCE_REVISION = "st-guitar-chord-board@0.3.0";
+const SOURCE_REVISION = "st-guitar-chord-board@0.8.0";
 
 function assertMidiList(midis) {
   if (!Array.isArray(midis) || midis.length < 1 || midis.some(m => !Number.isInteger(m) || m < 0 || m > 127)) {
@@ -15,59 +15,74 @@ function requestIdFactory(host) {
   };
 }
 
-export function createAudioAdapter(host = globalThis) {
-  const nextRequestId = requestIdFactory(host);
-  const stEngine = host.ST_SCORE_AUDIO_ENGINE;
-
-  if (
-    stEngine &&
-    typeof stEngine.audition === "function" &&
-    typeof stEngine.unlockFromUserGesture === "function" &&
-    typeof stEngine.setInstrument === "function"
-  ) {
-    return {
-      kind: "st-score-audio-engine",
-      async playChord(midis, meta = {}) {
-        assertMidiList(midis);
-        const unlock = await stEngine.unlockFromUserGesture();
-        if (!unlock?.ok) throw new Error(unlock?.error?.message || "Gitar sesi açılamadı");
-
-        await stEngine.setInstrument("CLASSICAL_GUITAR");
-        const positions = Array.isArray(meta.positions) ? meta.positions : [];
-
-        const results = await Promise.all(midis.map((midi, noteIndex) => {
-          const position = positions[noteIndex] || {};
-          return stEngine.audition({
-            requestId: nextRequestId(meta.symbol, noteIndex),
-            sourceRevisionId: meta.sourceRevisionId || SOURCE_REVISION,
-            pitch: { midi },
-            instrumentId: "CLASSICAL_GUITAR",
-            velocity: meta.velocity ?? 0.82,
-            durationMs: meta.durationMs ?? 900,
-            ...(Number.isInteger(position.stringNumber) ? { stringNumber: position.stringNumber } : {}),
-            ...(Number.isInteger(position.fret) ? { fret: position.fret } : {}),
-            sourceEventId: `${meta.symbol || "chord"}:v${(meta.voicingIndex ?? 0) + 1}:n${noteIndex + 1}`
-          });
-        }));
-
-        const failed = results.find(result => !result?.ok);
-        if (failed) throw new Error(failed.error?.message || "Gitar akoru çalınamadı");
-        return { ok: true, voices: results.length };
-      }
-    };
-  }
-
+function editorBridge(host) {
   const bridge = host.ST_GUITAR_AUDIO;
-  if (bridge && typeof bridge.playChord === "function") {
-    return {
-      kind: "host-guitar-audio",
-      playChord(midis, meta) {
-        assertMidiList(midis);
-        return bridge.playChord({ midis:[...midis], ...meta });
-      }
-    };
-  }
+  if (!bridge || typeof bridge.playChord !== "function") return null;
+  return {
+    kind: "host-guitar-audio",
+    playChord(midis, meta = {}) {
+      assertMidiList(midis);
+      return bridge.playChord({ midis:[...midis], ...meta });
+    }
+  };
+}
 
+function scoreAudioSupportsGuitar(stEngine) {
+  if (!stEngine) return false;
+  if (
+    typeof stEngine.audition !== "function" ||
+    typeof stEngine.unlockFromUserGesture !== "function" ||
+    typeof stEngine.setInstrument !== "function"
+  ) return false;
+
+  if (typeof stEngine.getInstrumentProfile !== "function") return true;
+
+  try {
+    const profile = stEngine.getInstrumentProfile("CLASSICAL_GUITAR");
+    return profile?.lifecycle === "ACTIVE" && profile?.sampleReadiness === "QUALIFIED";
+  } catch {
+    return false;
+  }
+}
+
+function scoreAudioAdapter(host) {
+  const stEngine = host.ST_SCORE_AUDIO_ENGINE;
+  if (!scoreAudioSupportsGuitar(stEngine)) return null;
+
+  const nextRequestId = requestIdFactory(host);
+  return {
+    kind: "st-score-audio-engine",
+    async playChord(midis, meta = {}) {
+      assertMidiList(midis);
+      const unlock = await stEngine.unlockFromUserGesture();
+      if (!unlock?.ok) throw new Error(unlock?.error?.message || "Gitar sesi açılamadı");
+
+      await stEngine.setInstrument("CLASSICAL_GUITAR");
+      const positions = Array.isArray(meta.positions) ? meta.positions : [];
+
+      const results = await Promise.all(midis.map((midi, noteIndex) => {
+        const position = positions[noteIndex] || {};
+        return stEngine.audition({
+          requestId: nextRequestId(meta.symbol, noteIndex),
+          sourceRevisionId: meta.sourceRevisionId || SOURCE_REVISION,
+          pitch: { midi },
+          instrumentId: "CLASSICAL_GUITAR",
+          velocity: meta.velocity ?? 0.82,
+          durationMs: meta.durationMs ?? 900,
+          ...(Number.isInteger(position.stringNumber) ? { stringNumber: position.stringNumber } : {}),
+          ...(Number.isInteger(position.fret) ? { fret: position.fret } : {}),
+          sourceEventId: `${meta.symbol || "chord"}:v${(meta.voicingIndex ?? 0) + 1}:n${noteIndex + 1}`
+        });
+      }));
+
+      const failed = results.find(result => !result?.ok);
+      if (failed) throw new Error(failed.error?.message || "Gitar akoru çalınamadı");
+      return { ok: true, voices: results.length };
+    }
+  };
+}
+
+function developmentAdapter(host) {
   return {
     kind: "development-web-audio",
     async playChord(midis) {
@@ -94,4 +109,8 @@ export function createAudioAdapter(host = globalThis) {
       return { ok:true, voices:midis.length };
     }
   };
+}
+
+export function createAudioAdapter(host = globalThis) {
+  return editorBridge(host) ?? scoreAudioAdapter(host) ?? developmentAdapter(host);
 }
