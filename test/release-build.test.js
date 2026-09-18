@@ -41,7 +41,8 @@ test("release build emits enabled local-audio config and verified manifest", asy
       distDir:dist,
       expectedSoundfontBlobSha1:mod.gitBlobSha1(soundfont),
       sourceCommit:"fixture-commit",
-      packageVersion:"9.9.9"
+      packageVersion:"9.9.9",
+      runtimeSrcFiles:["app.js","release-config.js"]
     });
 
     await access(join(dist,"vendor/audio/electric_guitar_jazz-mp3.js"));
@@ -50,6 +51,7 @@ test("release build emits enabled local-audio config and verified manifest", asy
     const manifest=JSON.parse(await readFile(join(dist,"release-manifest.json"),"utf8"));
     assert.equal(manifest.version,"9.9.9");
     assert.equal(manifest.soundfont.gitBlobSha1,result.soundfontGitBlobSha1);
+    assert.deepEqual(manifest.runtimeFiles,["app.js","release-config.js"]);
   } finally {
     await rm(root,{recursive:true,force:true});
   }
