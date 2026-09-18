@@ -10,7 +10,6 @@ export default defineConfig({
   reporter: "line",
   use: {
     baseURL: "http://127.0.0.1:4173",
-    serviceWorkers: "allow",
     trace: "retain-on-failure"
   },
   webServer: {
@@ -22,8 +21,18 @@ export default defineConfig({
   projects: [
     {
       name: "webkit-iphone",
+      testMatch: /mobile-webkit\.spec\.js/,
       use: {
-        ...devices["iPhone 13"]
+        ...devices["iPhone 13"],
+        serviceWorkers: "allow"
+      }
+    },
+    {
+      name: "chromium-offline",
+      testMatch: /offline-pwa\.spec\.js/,
+      use: {
+        ...devices["Desktop Chrome"],
+        serviceWorkers: "allow"
       }
     }
   ]
