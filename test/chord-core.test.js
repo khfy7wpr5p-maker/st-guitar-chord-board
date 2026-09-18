@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { formatChordSymbol, parseChordQuery, pitchClassesForChord } from "../src/chord-core.js";
+import { formatChordSymbol, parseChordPresentation, parseChordQuery, pitchClassesForChord } from "../src/chord-core.js";
 import { getVoicings, voicingMidi } from "../src/voicing-library.js";
 
 const ROOTS=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
@@ -26,6 +26,24 @@ test("parses symbolic and Turkish chord queries", () => {
   assert.deepEqual(parseChordQuery("Sibmaj7"), {root:"A#",quality:"maj7",symbol:"A#maj7"});
   assert.deepEqual(parseChordQuery("A5"), {root:"A",quality:"5",symbol:"A5"});
   assert.deepEqual(parseChordQuery("C#5"), {root:"C#",quality:"5",symbol:"C#5"});
+});
+
+test("flat presentation preserves spelling while canonical identity stays stable", () => {
+  assert.deepEqual(parseChordPresentation("Bb5"), {
+    root:"A#", quality:"5", symbol:"A#5", displayRoot:"Bb", displaySymbol:"Bb5"
+  });
+  assert.deepEqual(parseChordPresentation("Si bemol 5"), {
+    root:"A#", quality:"5", symbol:"A#5", displayRoot:"Bb", displaySymbol:"Bb5"
+  });
+  assert.deepEqual(parseChordPresentation("Ebmaj7"), {
+    root:"D#", quality:"maj7", symbol:"D#maj7", displayRoot:"Eb", displaySymbol:"Ebmaj7"
+  });
+  assert.deepEqual(parseChordQuery("Bb5"), {root:"A#",quality:"5",symbol:"A#5"});
+});
+
+test("enharmonic power symbols resolve to identical physical voicings", () => {
+  assert.deepEqual(getVoicings("Bb5"),getVoicings("A#5"));
+  assert.deepEqual(getVoicings("Gb5"),getVoicings("F#5"));
 });
 
 test("chord interval semantics are exact", () => {
