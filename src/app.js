@@ -1,6 +1,7 @@
 import { parseChordQuery } from "./chord-core.js";
 import { chordNameTr } from "./chord-labels-tr.js";
 import { suggestChordSymbols } from "./chord-catalog.js";
+import { getRelativeRelation } from "./chord-relations.js";
 import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
 import { renderChordDiagramSvg } from "./diagram-model.js";
@@ -8,6 +9,7 @@ import { renderChordDiagramSvg } from "./diagram-model.js";
 const root = document.querySelector("#app");
 const input = document.querySelector("#chord-search");
 const suggestionsEl = document.querySelector("#suggestions");
+const relationEl = document.querySelector("#relation");
 const symbolEl = document.querySelector("#chord-symbol");
 const readingEl = document.querySelector("#chord-reading");
 const board = document.querySelector("#chord-button");
@@ -34,6 +36,24 @@ function renderSuggestions(value) {
   }).join("");
 }
 
+function renderRelation(chord) {
+  const relation = getRelativeRelation(chord);
+  if (!relation) {
+    relationEl.hidden = true;
+    relationEl.innerHTML = "";
+    return;
+  }
+
+  const relatedChord = parseChordQuery(relation.symbol);
+  const reading = relatedChord ? chordNameTr(relatedChord) : "";
+  relationEl.hidden = false;
+  relationEl.innerHTML = `<button type="button" class="relation-card" data-symbol="${relation.symbol}">
+    <span class="relation-label">${relation.labelTr}</span>
+    <strong>${relation.symbol}</strong>
+    <span class="relation-reading">${reading}</span>
+  </button>`;
+}
+
 function render() {
   const chord = parseChordQuery(symbol);
   const voicings = getVoicings(symbol);
@@ -43,6 +63,7 @@ function render() {
     stringsEl.innerHTML = "<div class='empty'>Akor bulunamadı.</div>";
     countEl.textContent = "0 / 0";
     board.disabled = true;
+    renderRelation(null);
     return;
   }
   index = Math.max(0, Math.min(index, voicings.length - 1));
@@ -55,6 +76,7 @@ function render() {
   board.setAttribute("aria-label", `${symbol}, ${chordNameTr(chord)} akorunu çal`);
   status.textContent = audio.kind === "development-web-audio" ? "Geliştirme sesi" : "Gitar ses motoru bağlı";
   renderSuggestions(input.value);
+  renderRelation(chord);
 }
 
 function selectSymbol(nextSymbol) {
@@ -75,6 +97,13 @@ input.addEventListener("input", e => {
 });
 
 suggestionsEl.addEventListener("click", event => {
+  const button = event.target.closest("button[data-symbol]");
+  if (!button) return;
+  input.value = button.dataset.symbol;
+  selectSymbol(button.dataset.symbol);
+});
+
+relationEl.addEventListener("click", event => {
   const button = event.target.closest("button[data-symbol]");
   if (!button) return;
   input.value = button.dataset.symbol;
