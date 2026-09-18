@@ -213,3 +213,19 @@ voicing/MIDI: identical to A#5
 ```
 
 This is a display/spelling layer only; it does not duplicate the 96 canonical chord identities.
+
+
+### Stage 16 — swipe voicing navigation ✅
+Implemented:
+- the large chord surface accepts touch/pen pointer gestures;
+- swipe left selects the next voicing;
+- swipe right selects the previous voicing;
+- a 48 px horizontal threshold plus axis-dominance check rejects small/diagonal gestures;
+- vertical gestures remain scroll-friendly through `touch-action: pan-y`;
+- recognized swipes suppress the following synthetic click so changing position does not accidentally play the chord;
+- normal tap-to-play remains unchanged;
+- existing previous/next buttons remain available and share the same bounded voicing-change path;
+- WebKit iPhone smoke covers left swipe, right swipe, click suppression and vertical-gesture rejection.
+
+Boundary:
+- swipe is bounded at the first/last voicing; it does not wrap around.
