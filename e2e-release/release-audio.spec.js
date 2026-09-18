@@ -81,3 +81,43 @@ test("release manifest pins the verified soundfont provenance", async ({ request
   expect(manifest.soundfont.gitBlobSha1).toBe("2c0ef6f12d5a260982520130c97905e5931a60d4");
   expect(manifest.soundfont.bytes).toBeGreaterThan(100_000);
 });
+
+
+test("packaged soundfont covers every MIDI note used by all 96 chord voicings", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready","true");
+
+  const coverage = await page.evaluate(async () => {
+    const [{ CHORD_SYMBOLS }, { getVoicings, voicingMidi }, audio] = await Promise.all([
+      import("/src/chord-catalog.js"),
+      import("/src/voicing-library.js"),
+      import("/src/standalone-guitar-audio.js")
+    ]);
+    const instrument = await audio.loadMidiJsInstrument(
+      window,
+      "./vendor/audio/electric_guitar_jazz-mp3.js"
+    );
+
+    const missing = [];
+    let voicingCount = 0;
+    for (const symbol of CHORD_SYMBOLS) {
+      for (const voicing of getVoicings(symbol)) {
+        voicingCount += 1;
+        for (const midi of voicingMidi(voicing)) {
+          const noteName = audio.midiToNoteName(midi);
+          if (!instrument[noteName]) missing.push({ symbol, midi, noteName });
+        }
+      }
+    }
+
+    return {
+      chordCount: CHORD_SYMBOLS.length,
+      voicingCount,
+      missing
+    };
+  });
+
+  expect(coverage.chordCount).toBe(96);
+  expect(coverage.voicingCount).toBeGreaterThan(250);
+  expect(coverage.missing).toEqual([]);
+});
