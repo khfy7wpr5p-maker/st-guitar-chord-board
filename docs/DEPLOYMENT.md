@@ -1,0 +1,68 @@
+# Deployment
+
+## Production URL
+
+```text
+https://st-guitar-chord-board.onrender.com
+```
+
+The site is a static PWA. No application server, database, account service, or Render web service is required.
+
+## Hosting
+
+- provider: Render Static Site
+- source: `https://github.com/khfy7wpr5p-maker/st-guitar-chord-board`
+- branch: `main`
+- auto-deploy: enabled
+- publish directory: `dist`
+
+Build command:
+
+```bash
+npm install --no-audit --no-fund && npm run build:release
+```
+
+## Release guarantees
+
+The hosted build uses the same Stage 18 release pipeline as CI:
+
+1. download the pinned `electric_guitar_jazz` soundfont;
+2. verify Git blob SHA-1 `2c0ef6f12d5a260982520130c97905e5931a60d4`;
+3. generate a clean runtime-only `dist/`;
+4. enable standalone local guitar audio;
+5. require the soundfont in the release Service Worker cache;
+6. publish `dist/` over HTTPS.
+
+Verified soundfont size:
+
+```text
+2,330,622 bytes
+```
+
+## First production deployment
+
+The first Stage 19 deployment built:
+
+```text
+02a1ddf49a30ee22146bd463a0f87ca673a39bd5
+```
+
+Render reported the deploy as `live`. Build logs recorded the verified soundfont hash, release version `0.18.0`, and successful upload.
+
+## Continuous deployment
+
+Every new commit merged to `main` triggers a new static-site deploy automatically.
+
+Production deploys must continue to use `npm run build:release`; publishing the source tree directly would disable the release-only audio configuration and is not supported.
+
+## Qualification boundary
+
+Automated browser and release qualification already covers packaged-audio loading, decoding, Service Worker caching, network removal, and offline reload.
+
+The remaining release gate before v1.0 is a physical iPhone/Safari check for:
+
+- first tap audio unlock;
+- audible guitar timbre;
+- installed PWA relaunch;
+- offline audible playback;
+- final touch/layout inspection.
