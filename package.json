@@ -1,11 +1,17 @@
 {
   "name": "st-guitar-chord-board",
-  "version": "0.1.0",
+  "version": "0.11.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test",
+    "test:browser": "playwright test",
+    "test:webkit": "playwright test --project=webkit-iphone",
+    "test:offline": "playwright test --project=chromium-offline",
     "serve": "python3 -m http.server 4173"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
   },
   "engines": { "node": ">=20" }
 }
