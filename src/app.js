@@ -5,6 +5,7 @@ import { getRelativeRelation } from "./chord-relations.js";
 import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
 import { renderChordDiagramSvg } from "./diagram-model.js";
+import { loadSelectionState, saveSelectionState } from "./selection-state.js";
 
 const root = document.querySelector("#app");
 const input = document.querySelector("#chord-search");
@@ -20,12 +21,23 @@ const next = document.querySelector("#next");
 const status = document.querySelector("#status");
 const audio = createAudioAdapter(window);
 
+function browserStorage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+const storage = browserStorage();
+const restoredSelection = loadSelectionState(storage);
+
 const SWIPE_MIN_DISTANCE = 48;
 const SWIPE_AXIS_RATIO = 1.25;
 const SWIPE_CLICK_SUPPRESSION_MS = 450;
 
-let symbol = "C";
-let index = 0;
+let symbol = restoredSelection.symbol;
+let index = restoredSelection.voicingIndex;
 let gesture = null;
 let suppressClickUntil = 0;
 
@@ -91,12 +103,17 @@ function render() {
   renderRelation(chord);
 }
 
+function persistSelection() {
+  saveSelectionState(storage, { symbol, voicingIndex:index });
+}
+
 function selectSymbol(nextSymbol) {
   const parsed = parseChordPresentation(nextSymbol);
   if (!parsed) return false;
   symbol = parsed.displaySymbol;
   index = 0;
   render();
+  persistSelection();
   return true;
 }
 
@@ -107,6 +124,7 @@ function changeVoicing(delta) {
   if (nextIndex === index) return false;
   index = nextIndex;
   render();
+  persistSelection();
   return true;
 }
 
@@ -190,6 +208,6 @@ board.addEventListener("click", async event => {
 prev.addEventListener("click", () => { changeVoicing(-1); });
 next.addEventListener("click", () => { changeVoicing(1); });
 
-input.value = "C";
+input.value = symbol;
 render();
 root.dataset.ready = "true";
