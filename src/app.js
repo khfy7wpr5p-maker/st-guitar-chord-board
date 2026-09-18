@@ -6,6 +6,8 @@ import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
 import { renderChordDiagramSvg } from "./diagram-model.js";
 import { loadSelectionState, saveSelectionState } from "./selection-state.js";
+import { RELEASE_AUDIO } from "./release-config.js";
+import { installStandaloneGuitarBridge } from "./standalone-guitar-audio.js";
 
 const root = document.querySelector("#app");
 const input = document.querySelector("#chord-search");
@@ -19,6 +21,11 @@ const countEl = document.querySelector("#variant-count");
 const prev = document.querySelector("#prev");
 const next = document.querySelector("#next");
 const status = document.querySelector("#status");
+
+if (RELEASE_AUDIO.enabled) {
+  installStandaloneGuitarBridge(window, { soundfontUrl:RELEASE_AUDIO.instrumentUrl });
+}
+
 const audio = createAudioAdapter(window);
 
 function browserStorage() {
