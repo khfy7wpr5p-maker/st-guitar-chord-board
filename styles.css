@@ -4,18 +4,23 @@ body{margin:0;min-height:100dvh;background:#f5f5f5}
 button,input{font:inherit}
 #app{width:min(100%,520px);margin:0 auto;padding:16px;display:grid;gap:14px}
 .search-wrap input{width:100%;min-height:48px;border:1px solid #c9c9c9;border-radius:16px;padding:0 16px;font-size:18px;background:white}
-.chord-button{min-height:58dvh;border:0;border-radius:34px;padding:28px 18px;background:linear-gradient(145deg,#fff,#dedede);box-shadow:10px 10px 24px #c9c9c9,-10px -10px 24px #fff,inset 0 0 0 1px rgba(0,0,0,.05);display:grid;align-content:center;gap:36px;touch-action:manipulation}
+.chord-button{min-height:58dvh;border:0;border-radius:34px;padding:22px 18px 18px;background:linear-gradient(145deg,#fff,#dedede);box-shadow:10px 10px 24px #c9c9c9,-10px -10px 24px #fff,inset 0 0 0 1px rgba(0,0,0,.05);display:grid;align-content:center;gap:12px;touch-action:manipulation;color:#111}
 .chord-button:active,.chord-button.pressed{box-shadow:inset 8px 8px 18px #c8c8c8,inset -8px -8px 18px #fff}
-#chord-symbol{font-size:clamp(42px,14vw,76px);line-height:1}
-.strings{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:center}
-.string{min-width:0;display:grid;gap:12px;justify-items:center;padding:18px 2px;border-radius:999px;background:rgba(255,255,255,.58)}
-.fret{font-size:clamp(26px,8vw,40px);font-weight:760}
-.finger{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-weight:750;font-size:18px}
-.finger:empty{background:transparent}
+#chord-symbol{font-size:clamp(42px,14vw,72px);line-height:1}
+#strings{width:100%;display:grid;place-items:center;min-height:330px}
+.chord-diagram{width:min(100%,390px);height:auto;display:block;overflow:visible}
+.fretboard-lines{stroke:#252525;stroke-linecap:round}
+.open-mark{fill:none;stroke:#111;stroke-width:4}
+.mute-mark{fill:#111;font-size:30px;font-weight:650;text-anchor:middle}
+.finger-mark{fill:#111}
+.finger-number{fill:white;font-size:18px;font-weight:750;text-anchor:middle}
+.barre-mark{fill:#111}
+.base-fret{fill:#111;font-size:18px;font-weight:750;text-anchor:middle}
 .variants{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px}
 .variants button{height:52px;border:0;border-radius:16px;background:#e6e6e6;font-size:32px}
 .variants span{text-align:center;font-weight:700}
 .status{text-align:center;min-height:1.4em;margin:0;color:#666;font-size:13px}
-.empty{grid-column:1/-1;text-align:center}
+.empty{text-align:center}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media (max-height:700px){.chord-button{min-height:460px}}
+@media (max-height:700px){.chord-button{min-height:460px}#strings{min-height:290px}}
+@media (max-width:360px){#app{padding:12px}.chord-button{border-radius:28px;padding-inline:10px}}
