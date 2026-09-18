@@ -15,10 +15,10 @@ const ROOT_SPECS = new Map([
 
 const QUALITIES = [
   ["MAJ7","maj7"],["MAJOR7","maj7"],["MAJÖR7","maj7"],
-  ["MIN7","m7"],["MINOR7","m7"],["MİNÖR7","m7"],["M7","m7"],
+  ["MIN7","m7"],["MINOR7","m7"],["MINÖR7","m7"],["MİNÖR7","m7"],["M7","m7"],
   ["SUS2","sus2"],["SUS4","sus4"],
   ["7","7"],["5","5"],
-  ["MIN","m"],["MINOR","m"],["MİNÖR","m"],["M","m"],
+  ["MIN","m"],["MINOR","m"],["MINÖR","m"],["MİNÖR","m"],["M","m"],
   ["MAJ","major"],["MAJOR","major"],["MAJÖR","major"]
 ];
 
