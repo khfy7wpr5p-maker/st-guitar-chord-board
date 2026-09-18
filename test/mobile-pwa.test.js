@@ -28,4 +28,7 @@ test("service worker keeps offline app shell bounded to same-origin requests", (
   assert.match(sw,/url\.origin!==self\.location\.origin/);
   assert.match(sw,/event\.request\.mode==="navigate"/);
   assert.match(sw,/caches\.match\("\.\/index\.html"\)/);
+  assert.match(sw,/OPTIONAL_LOCAL_AUDIO/);
+  assert.match(sw,/electric_guitar_jazz-mp3\.js/);
+  assert.match(sw,/cache\.add\(asset\)\.catch\(\(\)=>null\)/);
 });
