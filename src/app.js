@@ -74,7 +74,11 @@ function render() {
   countEl.textContent = `${index+1} / ${voicings.length}`;
   board.disabled = false;
   board.setAttribute("aria-label", `${symbol}, ${chordNameTr(chord)} akorunu çal`);
-  status.textContent = audio.kind === "development-web-audio" ? "Geliştirme sesi" : "Gitar ses motoru bağlı";
+  status.textContent = audio.kind === "development-web-audio"
+    ? "Geliştirme sesi"
+    : audio.offlineReady === true
+      ? "Gitar sesi bağlı · çevrimdışı hazır"
+      : "Gitar ses motoru bağlı";
   renderSuggestions(input.value);
   renderRelation(chord);
 }
