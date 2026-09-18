@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 3
+## Current status — Stage 4
 
 The app now targets the complete initial matrix:
 
@@ -12,12 +12,14 @@ The app now targets the complete initial matrix:
 - **minimum 3 exact guitar voicings per chord**
 - finger numbers and barre metadata
 - exact string/fret -> MIDI playback payloads
-- phone-first large tactile chord surface
+- phone-first large tactile chord surface with a real six-string chord diagram
 - no required backend or Render dependency
 
 The C family retains curated open/open-region alternatives. The complete 84-chord matrix is backed by deterministic movable A/E/D-family shapes, transposed and octave-wrapped within fret 20. CI independently verifies that every generated voicing produces exactly the requested chord pitch classes.
 
 The button contains no “Play” or “Dokun” label. Touching the chord surface itself is the play action.
+
+The button now renders a real guitar diagram: six strings, visible fret window, open/muted markers, finger numbers, base-fret labels for high positions, and barre geometry.
 
 ## Audio
 
