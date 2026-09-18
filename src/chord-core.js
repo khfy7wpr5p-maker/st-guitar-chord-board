@@ -1,16 +1,16 @@
-const ROOT_ALIASES = new Map([
-  ["C","C"],["B#","C"],["DO","C"],
-  ["C#","C#"],["DB","C#"],["DO#","C#"],["REB","C#"],
-  ["D","D"],["RE","D"],
-  ["D#","D#"],["EB","D#"],["RE#","D#"],["MIB","D#"],
-  ["E","E"],["FB","E"],["MI","E"],
-  ["F","F"],["E#","F"],["FA","F"],
-  ["F#","F#"],["GB","F#"],["FA#","F#"],["SOLB","F#"],
-  ["G","G"],["SOL","G"],
-  ["G#","G#"],["AB","G#"],["SOL#","G#"],["LAB","G#"],
-  ["A","A"],["LA","A"],
-  ["A#","A#"],["BB","A#"],["LA#","A#"],["SIB","A#"],
-  ["B","B"],["CB","B"],["SI","B"]
+const ROOT_SPECS = new Map([
+  ["C",{root:"C",displayRoot:"C"}],["B#",{root:"C",displayRoot:"B#"}],["DO",{root:"C",displayRoot:"C"}],
+  ["C#",{root:"C#",displayRoot:"C#"}],["DB",{root:"C#",displayRoot:"Db"}],["DO#",{root:"C#",displayRoot:"C#"}],["REB",{root:"C#",displayRoot:"Db"}],
+  ["D",{root:"D",displayRoot:"D"}],["RE",{root:"D",displayRoot:"D"}],
+  ["D#",{root:"D#",displayRoot:"D#"}],["EB",{root:"D#",displayRoot:"Eb"}],["RE#",{root:"D#",displayRoot:"D#"}],["MIB",{root:"D#",displayRoot:"Eb"}],
+  ["E",{root:"E",displayRoot:"E"}],["FB",{root:"E",displayRoot:"Fb"}],["MI",{root:"E",displayRoot:"E"}],
+  ["F",{root:"F",displayRoot:"F"}],["E#",{root:"F",displayRoot:"E#"}],["FA",{root:"F",displayRoot:"F"}],
+  ["F#",{root:"F#",displayRoot:"F#"}],["GB",{root:"F#",displayRoot:"Gb"}],["FA#",{root:"F#",displayRoot:"F#"}],["SOLB",{root:"F#",displayRoot:"Gb"}],
+  ["G",{root:"G",displayRoot:"G"}],["SOL",{root:"G",displayRoot:"G"}],
+  ["G#",{root:"G#",displayRoot:"G#"}],["AB",{root:"G#",displayRoot:"Ab"}],["SOL#",{root:"G#",displayRoot:"G#"}],["LAB",{root:"G#",displayRoot:"Ab"}],
+  ["A",{root:"A",displayRoot:"A"}],["LA",{root:"A",displayRoot:"A"}],
+  ["A#",{root:"A#",displayRoot:"A#"}],["BB",{root:"A#",displayRoot:"Bb"}],["LA#",{root:"A#",displayRoot:"A#"}],["SIB",{root:"A#",displayRoot:"Bb"}],
+  ["B",{root:"B",displayRoot:"B"}],["CB",{root:"B",displayRoot:"Cb"}],["SI",{root:"B",displayRoot:"B"}]
 ]);
 
 const QUALITIES = [
@@ -21,6 +21,9 @@ const QUALITIES = [
   ["MIN","m"],["MINOR","m"],["MİNÖR","m"],["M","m"],
   ["MAJ","major"],["MAJOR","major"],["MAJÖR","major"]
 ];
+
+const SORTED_QUALITIES = Object.freeze([...QUALITIES].sort((a,b)=>b[0].length-a[0].length));
+const SORTED_ROOT_KEYS = Object.freeze([...ROOT_SPECS.keys()].sort((a,b)=>b.length-a.length));
 
 export const QUALITY_INTERVALS = Object.freeze({
   major: [0,4,7],
@@ -37,24 +40,44 @@ export const ROOT_PCS = Object.freeze({
   C:0,"C#":1,D:2,"D#":3,E:4,F:5,"F#":6,G:7,"G#":8,A:9,"A#":10,B:11
 });
 
-export function parseChordQuery(input) {
-  const raw = String(input ?? "").trim();
-  if (!raw) return null;
-  let token = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replaceAll(" ","");
-  token = token.replace("DİYEZ","#").replace("DIYEZ","#").replace("BEMOL","B");
+function normalizeToken(input) {
+  let token = String(input ?? "").trim().toUpperCase()
+    .replaceAll("♯","#")
+    .replaceAll("♭","B")
+    .replaceAll(" ","")
+    .replaceAll("\t","")
+    .replaceAll("\n","");
+  return token.replace("DİYEZ","#").replace("DIYEZ","#").replace("BEMOL","B");
+}
 
-  const roots = [...ROOT_ALIASES.keys()].sort((a,b)=>b.length-a.length);
-  const rootKey = roots.find(k => token.startsWith(k));
+export function parseChordPresentation(input) {
+  const token = normalizeToken(input);
+  if (!token) return null;
+
+  const rootKey = SORTED_ROOT_KEYS.find(key => token.startsWith(key));
   if (!rootKey) return null;
-  const root = ROOT_ALIASES.get(rootKey);
+
+  const spec = ROOT_SPECS.get(rootKey);
   const suffix = token.slice(rootKey.length);
+  const quality = !suffix
+    ? "major"
+    : SORTED_QUALITIES.find(([alias]) => suffix === alias)?.[1];
 
-  if (!suffix) return { root, quality:"major", symbol:root };
+  if (!quality) return null;
 
-  for (const [alias, quality] of QUALITIES.sort((a,b)=>b[0].length-a[0].length)) {
-    if (suffix === alias) return { root, quality, symbol:formatChordSymbol(root,quality) };
-  }
-  return null;
+  return Object.freeze({
+    root: spec.root,
+    quality,
+    symbol: formatChordSymbol(spec.root,quality),
+    displayRoot: spec.displayRoot,
+    displaySymbol: formatChordSymbol(spec.displayRoot,quality)
+  });
+}
+
+export function parseChordQuery(input) {
+  const parsed = parseChordPresentation(input);
+  if (!parsed) return null;
+  return { root:parsed.root, quality:parsed.quality, symbol:parsed.symbol };
 }
 
 export function formatChordSymbol(root, quality) {
