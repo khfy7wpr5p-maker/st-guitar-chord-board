@@ -26,7 +26,7 @@ export function suggestChordSymbols(input, limit = 8) {
   const exact = parseChordQuery(raw);
   if (exact) return sameRootFamily(exact).slice(0, limit);
 
-  const query = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replace(/\\s+/g,"");
+  const query = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replaceAll(" ","");
   return CHORD_SYMBOLS
     .filter(symbol => symbol.toUpperCase().startsWith(query))
     .slice(0, limit);
