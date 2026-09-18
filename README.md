@@ -197,3 +197,13 @@ Implemented:
 - live build logs confirm the 2,330,622-byte soundfont and pinned Git blob hash before publication.
 
 Deployment details are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+
+### Audio hotfix — full 96-chord soundfont coverage ✅
+Fixed in release `0.18.1`:
+- MIDI.js `electric_guitar_jazz` stores accidental samples using flat names (`Db/Eb/Gb/Ab/Bb`);
+- the standalone bridge previously requested sharp names (`C#/D#/F#/G#/A#`), causing chords containing accidental pitches to fail with missing samples;
+- MIDI-to-sample naming now follows the soundfont's actual flat-key convention;
+- the soundfont file itself is unchanged, so the release size does not grow because of this fix;
+- CI now checks every MIDI note used by every voicing of all 96 canonical chords against the packaged soundfont;
+- Service Worker cache rotates to `st-guitar-chord-board-v13` so existing installs receive the corrected bridge.
