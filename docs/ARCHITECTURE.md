@@ -150,3 +150,20 @@ Implemented:
 Boundary:
 - this is automated WebKit/mobile-browser evidence, not a physical iPhone/Safari qualification;
 - guitar soundfont offline availability remains unproven until the editor host packages the assets locally and declares `offlineReady:true`.
+
+
+### Stage 12 — local guitar soundfont packaging path ✅
+Implemented:
+- optional build-time vendor command for `electric_guitar_jazz`;
+- immutable source commit and Git blob SHA-1 pin;
+- downloaded bytes are rejected unless the canonical Git blob hash matches;
+- generated large audio asset is kept out of source control;
+- source/license provenance is checked into the repository;
+- a same-origin local smplr bridge publishes the existing `ST_GUITAR_AUDIO` contract;
+- the local bridge declares `offlineReady:true` only because its instrument URL is forced to a relative same-origin path;
+- service worker pre-caches the local soundfont when present but does not fail shell installation when it is absent.
+
+Remaining qualification:
+- execute the vendor step in the actual distributable build;
+- bind the editor to the local bridge;
+- verify cached guitar playback after network removal on a physical iPhone.
