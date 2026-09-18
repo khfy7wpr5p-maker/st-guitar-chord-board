@@ -14,3 +14,15 @@ The source repository README identifies FluidR3_GM-derived soundfont assets as *
 The `midi-js-soundfonts` repository's software/package license file is MIT and credits Benjamin Gleitzman. The sample-license statement above is separate from the repository software license.
 
 The large generated audio asset is intentionally not committed to this repository. It is downloaded from the pinned source revision during an explicit build/vendor step and its Git blob hash is verified before use.
+
+
+## Tonal.js
+
+Development/CI theory cross-check:
+
+- package: `tonal@6.4.3`
+- repository: `tonaljs/tonal`
+- license: MIT
+- runtime status: development-only; not imported by the browser application
+
+Tonal is used to independently validate chord pitch-class identities during tests. It is not required by the installed offline Chord Board runtime.

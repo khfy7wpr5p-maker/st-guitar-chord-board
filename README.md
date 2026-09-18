@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 14
+## Current status — Stage 15
 
 The app targets:
 
@@ -28,6 +28,7 @@ The app targets:
 - pinned build-time local guitar soundfont vendoring path
 - same-origin local smplr bridge with explicit offlineReady capability
 - enharmonic display spelling preserved for flat chord input
+- Tonal.js development/CI theory cross-check across all 96 canonical chords and displayed voicings
 
 ### Search and naming rule
 
@@ -100,6 +101,8 @@ Local offline-audio packaging is documented in [docs/LOCAL-AUDIO-PACKAGING.md](d
 
 Authority compatibility is documented in [docs/AUTHORITY-CROSSCHECK.md](docs/AUTHORITY-CROSSCHECK.md).
 
+Tonal theory validation and its runtime isolation boundary are documented in [docs/TONAL-THEORY-VALIDATION.md](docs/TONAL-THEORY-VALIDATION.md).
+
 Mobile/browser qualification is documented in [docs/MOBILE-QUALIFICATION.md](docs/MOBILE-QUALIFICATION.md).
 
 ## Run
@@ -117,3 +120,18 @@ Open `http://localhost:4173`.
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 Cloud services may be added later for accounts or sync without becoming a prerequisite for chord lookup or playback.
+
+
+### Stage 15 — Tonal theory validation ✅
+Implemented:
+- pinned `tonal@6.4.3` as a development-only dependency;
+- all 96 canonical chord identities are independently cross-checked against Tonal pitch classes;
+- every displayed guitar voicing is cross-checked directly against the Tonal chord identity;
+- power chords use Tonal's standard `5` chord definition;
+- enharmonic display aliases are validated through the existing canonical ST identity;
+- CI guards that Tonal is not imported by the browser app or service-worker app shell.
+
+Runtime contract:
+- ST remains authoritative for product vocabulary, Turkish naming, guitar voicings, fingering and playback payloads;
+- Tonal is a development/CI regression oracle only;
+- installed/offline use requires no Tonal CDN, npm runtime, backend or network connection.
