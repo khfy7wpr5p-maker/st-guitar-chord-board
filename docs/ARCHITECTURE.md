@@ -11,56 +11,63 @@ Search input
   -> Chord parser / normalizer
   -> Chord identity (root + quality)
   -> Voicing provider
-  -> Fingering metadata
+       -> curated open/open-region voicings when available
+       -> deterministic movable A/E/D-family generator
+  -> Fingering / barre metadata
   -> Large chord button
-  -> MIDI notes for exact selected voicing
+  -> exact MIDI notes for selected string/fret voicing
   -> AudioAdapter
        -> preferred: ST editor / ST Score Audio guitar bridge
        -> development fallback only: Web Audio oscillator
 ```
 
-## Stage boundaries
+## Implemented stages
 
-### Stage 0 — contracts
+### Stage 0 — contracts ✅
 - chord identity
 - supported quality vocabulary
 - voicing shape contract
 - host audio adapter contract
 - offline-first policy
 
-### Stage 1 — validated vertical slice
+### Stage 1 — validated vertical slice ✅
 - C, Cm, C7, Cmaj7, Cm7, Csus2, Csus4
-- >=3 voicings per chord
-- open and barre examples
+- >=3 exact voicings per chord
+- curated open/barre examples
 - finger numbers
-- exact MIDI derivation from string/fret
+- exact MIDI derivation
 - large phone control
 - local search
 - service-worker shell
 
-### Stage 2 — generator integration
-Replace the curated Stage-1 provider with an adapter over:
+### Stage 2 — 84-chord deterministic expansion
+- 12 roots × 7 chord families
+- three movable shape families per quality
+- generated frets bounded to 0..20
+- octave wrapping keeps high transpositions on the practical board
+- exact pitch-class equality required in CI
+- C-family curated open alternatives remain available
+
+## Next stages
+
+### Stage 3 — ST engine authority adapters
+Cross-check generated candidates against:
 - `musicxml-to-guitar-tab-engine` fretboard / physical candidate authority
 - `st-guitar-fingering-training` deterministic fingering/barre authority
+- `st-guitar-harmonic-engine` chord-identity authority
 
-Generated candidates must be validated independently before UI exposure.
-
-### Stage 3 — harmonic search integration
-Adapter over `st-guitar-harmonic-engine` for:
-- root/quality semantics
-- note-set -> candidate chord search
-- enharmonic aliases
-- later chord relations
+The chord-board runtime remains local; these integrations should produce or validate compact product data rather than introducing a server requirement.
 
 ### Stage 4 — production guitar audio
-Connect to the existing editor/ST audio guitar playback bridge. The chord board sends exact MIDI pitches for the selected voicing; it does not synthesize or infer a different voicing in the audio layer.
+Connect the existing editor/ST guitar playback bridge. The chord board sends the exact MIDI pitches for the selected voicing; the audio layer may not silently substitute a different voicing.
 
-### Stage 5 — expansion
-- all 12 roots
-- seven initial families: major, minor, 7, maj7, m7, sus2, sus4
-- minimum three ranked guitar voicings each
-- offline package qualification
-- iPhone touch/audio validation
+### Stage 5 — product hardening
+- curated open-position library for common keys
+- enharmonic display preference
+- chord relations
+- note-set -> chord search
+- iPhone touch/audio qualification
+- full offline asset qualification
 
 ## Non-goals
 - server-side chord calculation
