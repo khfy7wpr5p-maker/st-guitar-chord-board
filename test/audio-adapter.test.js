@@ -2,9 +2,41 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createAudioAdapter } from "../src/audio-adapter.js";
 
-test("ST Score Audio adapter unlocks guitar and auditions all chord voices", async () => {
+test("editor guitar bridge is preferred when both audio paths exist", async () => {
+  const calls=[];
+  const adapter=createAudioAdapter({
+    ST_GUITAR_AUDIO:{
+      playChord(payload){ calls.push(payload); return {ok:true}; }
+    },
+    ST_SCORE_AUDIO_ENGINE:{
+      getInstrumentProfile(){ return {lifecycle:"ACTIVE",sampleReadiness:"QUALIFIED"}; },
+      async unlockFromUserGesture(){ throw new Error("must not be called"); },
+      async setInstrument(){},
+      async audition(){}
+    }
+  });
+  assert.equal(adapter.kind,"host-guitar-audio");
+  await adapter.playChord([40,45,52],{symbol:"Am"});
+  assert.equal(calls.length,1);
+  assert.deepEqual(calls[0].midis,[40,45,52]);
+});
+
+test("suspended ST classical guitar profile is not selected", () => {
+  const adapter=createAudioAdapter({
+    ST_SCORE_AUDIO_ENGINE:{
+      getInstrumentProfile(){ return {lifecycle:"SUSPENDED",sampleReadiness:"SUSPENDED"}; },
+      async unlockFromUserGesture(){ return {ok:true}; },
+      async setInstrument(){},
+      async audition(){ return {ok:true}; }
+    }
+  });
+  assert.equal(adapter.kind,"development-web-audio");
+});
+
+test("qualified ST Score Audio adapter unlocks guitar and auditions all chord voices", async () => {
   const calls=[];
   const engine={
+    getInstrumentProfile(){ return {lifecycle:"ACTIVE",sampleReadiness:"QUALIFIED"}; },
     async unlockFromUserGesture(){ calls.push(["unlock"]); return {ok:true}; },
     async setInstrument(id){ calls.push(["instrument",id]); },
     async audition(request){ calls.push(["audition",request]); return {ok:true,requestId:request.requestId}; }
@@ -34,8 +66,18 @@ test("ST Score Audio adapter unlocks guitar and auditions all chord voices", asy
   assert.deepEqual(result,{ok:true,voices:4});
 });
 
-test("audio adapter surfaces ST audition failures", async () => {
+test("legacy score-audio hosts without profile inspection remain compatible", () => {
   const engine={
+    async unlockFromUserGesture(){ return {ok:true}; },
+    async setInstrument(){},
+    async audition(){ return {ok:true,requestId:"x"}; }
+  };
+  assert.equal(createAudioAdapter({ST_SCORE_AUDIO_ENGINE:engine}).kind,"st-score-audio-engine");
+});
+
+test("audio adapter surfaces qualified ST audition failures", async () => {
+  const engine={
+    getInstrumentProfile(){ return {lifecycle:"ACTIVE",sampleReadiness:"QUALIFIED"}; },
     async unlockFromUserGesture(){ return {ok:true}; },
     async setInstrument(){},
     async audition(request){
