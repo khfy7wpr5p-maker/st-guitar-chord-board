@@ -13,8 +13,9 @@ export function buildChordDiagramModel(voicing, visibleFrets = 5) {
     throw new RangeError("visibleFrets must be an integer in 4..7");
   }
 
+  const hasOpenString = voicing.frets.some(fret => fret === 0);
   const positive = voicing.frets.filter(fret => fret > 0);
-  const baseFret = positive.length && Math.min(...positive) > 1 ? Math.min(...positive) : 1;
+  const baseFret = !hasOpenString && positive.length && Math.min(...positive) > 1 ? Math.min(...positive) : 1;
 
   const strings = voicing.frets.map((fret, index) => {
     const finger = voicing.fingers[index];
