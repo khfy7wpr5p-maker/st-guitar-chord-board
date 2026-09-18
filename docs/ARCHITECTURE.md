@@ -190,3 +190,26 @@ Implemented:
 Authority boundary:
 - the pinned Harmonic Engine source does not define power chords in the reviewed template set;
 - therefore `5 = [0,7]` is recorded as a Chord Board product extension rather than falsely attributed to the Harmonic Engine.
+
+
+### Stage 14 — enharmonic display spelling ✅
+Implemented:
+- canonical pitch identity remains sharp-based internally for deterministic fret/MIDI behavior;
+- a separate presentation parse preserves the user's accidental spelling;
+- common flat roots `Db, Eb, Gb, Ab, Bb` remain visible as entered;
+- Turkish readings follow the displayed spelling, e.g. `Bb5 → Si bemol beş`;
+- same-root suggestion families preserve flat spelling;
+- partial flat lookup such as `Bbma` resolves to `Bbmaj7`;
+- audio payload carries both canonical `symbol` and user-facing `displaySymbol`;
+- enharmonic aliases resolve to identical guitar voicings and MIDI;
+- WebKit iPhone smoke verifies `Bb5` display, suggestions and canonical audio identity.
+
+Contract example:
+```text
+input/display: Bb5
+canonical identity: A#5
+Turkish reading: Si bemol beş
+voicing/MIDI: identical to A#5
+```
+
+This is a display/spelling layer only; it does not duplicate the 96 canonical chord identities.
