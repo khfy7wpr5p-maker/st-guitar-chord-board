@@ -20,8 +20,14 @@ const next = document.querySelector("#next");
 const status = document.querySelector("#status");
 const audio = createAudioAdapter(window);
 
+const SWIPE_MIN_DISTANCE = 48;
+const SWIPE_AXIS_RATIO = 1.25;
+const SWIPE_CLICK_SUPPRESSION_MS = 450;
+
 let symbol = "C";
 let index = 0;
+let gesture = null;
+let suppressClickUntil = 0;
 
 function renderSuggestions(value) {
   const suggestions = suggestChordSymbols(value);
@@ -94,6 +100,16 @@ function selectSymbol(nextSymbol) {
   return true;
 }
 
+function changeVoicing(delta) {
+  const voicings = getVoicings(symbol);
+  if (!voicings.length) return false;
+  const nextIndex = Math.max(0, Math.min(voicings.length - 1, index + delta));
+  if (nextIndex === index) return false;
+  index = nextIndex;
+  render();
+  return true;
+}
+
 input.addEventListener("input", e => {
   const value = e.target.value;
   renderSuggestions(value);
@@ -116,7 +132,40 @@ relationEl.addEventListener("click", event => {
   selectSymbol(button.dataset.symbol);
 });
 
-board.addEventListener("click", async () => {
+board.addEventListener("pointerdown", event => {
+  if (event.pointerType === "mouse") return;
+  gesture = {
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startY: event.clientY
+  };
+});
+
+board.addEventListener("pointercancel", event => {
+  if (gesture?.pointerId === event.pointerId) gesture = null;
+});
+
+board.addEventListener("pointerup", event => {
+  if (!gesture || gesture.pointerId !== event.pointerId) return;
+  const dx = event.clientX - gesture.startX;
+  const dy = event.clientY - gesture.startY;
+  gesture = null;
+
+  const horizontal = Math.abs(dx);
+  const vertical = Math.abs(dy);
+  if (horizontal < SWIPE_MIN_DISTANCE || horizontal <= vertical * SWIPE_AXIS_RATIO) return;
+
+  event.preventDefault();
+  changeVoicing(dx < 0 ? 1 : -1);
+  suppressClickUntil = performance.now() + SWIPE_CLICK_SUPPRESSION_MS;
+});
+
+board.addEventListener("click", async event => {
+  if (performance.now() <= suppressClickUntil) {
+    event.preventDefault();
+    return;
+  }
+
   const chord = parseChordPresentation(symbol);
   const v = getVoicings(symbol)[index];
   if (!v || !chord) return;
@@ -138,8 +187,8 @@ board.addEventListener("click", async () => {
   }
 });
 
-prev.addEventListener("click", () => { index = Math.max(0,index-1); render(); });
-next.addEventListener("click", () => { index = Math.min(getVoicings(symbol).length-1,index+1); render(); });
+prev.addEventListener("click", () => { changeVoicing(-1); });
+next.addEventListener("click", () => { changeVoicing(1); });
 
 input.value = "C";
 render();

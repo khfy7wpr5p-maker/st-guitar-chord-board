@@ -91,6 +91,60 @@ test("flat power chord spelling stays visible while audio identity remains canon
   expect([...new Set(call.midis.map(midi => midi % 12))].sort((a,b)=>a-b)).toEqual([5,10]);
 });
 
+
+
+async function dispatchSwipe(page, { fromX, toX, fromY = 240, toY = 240 }) {
+  await page.locator("#chord-button").evaluate((element, gesture) => {
+    const common = {
+      bubbles: true,
+      cancelable: true,
+      pointerId: 1,
+      pointerType: "touch",
+      isPrimary: true
+    };
+    element.dispatchEvent(new PointerEvent("pointerdown", {
+      ...common,
+      clientX: gesture.fromX,
+      clientY: gesture.fromY,
+      buttons: 1
+    }));
+    element.dispatchEvent(new PointerEvent("pointerup", {
+      ...common,
+      clientX: gesture.toX,
+      clientY: gesture.toY,
+      buttons: 0
+    }));
+  }, { fromX, toX, fromY, toY });
+}
+
+test("horizontal swipe changes voicing without triggering chord audio", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A5");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+
+  await dispatchSwipe(page, { fromX: 310, toX: 120 });
+  await page.locator("#chord-button").dispatchEvent("click");
+
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+  expect(await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.length)).toBe(0);
+
+  await dispatchSwipe(page, { fromX: 120, toX: 310 });
+  await page.locator("#chord-button").dispatchEvent("click");
+
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+  expect(await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.length)).toBe(0);
+});
+
+test("vertical gesture does not change voicing", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A5");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+
+  await dispatchSwipe(page, { fromX: 220, toX: 228, fromY: 140, toY: 330 });
+
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+});
+
 test("relative relation navigation stays within the large-button flow", async ({ page }) => {
   await page.goto("/");
   await page.locator("#chord-search").fill("C");

@@ -13,7 +13,7 @@ button{min-height:44px}
 .suggestion span{font-size:11px;white-space:nowrap;color:#666}
 .suggestion.selected{background:#111;color:#fff;border-color:#111}
 .suggestion.selected span{color:#e8e8e8}
-.chord-button{min-height:55dvh;border:0;border-radius:34px;padding:18px;background:linear-gradient(145deg,#fff,#dedede);box-shadow:10px 10px 24px #c9c9c9,-10px -10px 24px #fff,inset 0 0 0 1px rgba(0,0,0,.05);display:grid;align-content:center;gap:10px;touch-action:manipulation;color:#111;user-select:none;-webkit-user-select:none}
+.chord-button{min-height:55dvh;border:0;border-radius:34px;padding:18px;background:linear-gradient(145deg,#fff,#dedede);box-shadow:10px 10px 24px #c9c9c9,-10px -10px 24px #fff,inset 0 0 0 1px rgba(0,0,0,.05);display:grid;align-content:center;gap:10px;touch-action:pan-y;color:#111;user-select:none;-webkit-user-select:none}
 .chord-button:active,.chord-button.pressed{box-shadow:inset 8px 8px 18px #c8c8c8,inset -8px -8px 18px #fff}
 .chord-heading{display:grid;gap:6px;justify-items:center}
 #chord-symbol{font-size:clamp(42px,14vw,72px);line-height:1}
