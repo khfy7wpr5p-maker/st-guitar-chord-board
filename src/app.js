@@ -20,7 +20,7 @@ function render() {
   const voicings = getVoicings(symbol);
   if (!voicings.length) {
     symbolEl.textContent = symbol;
-    stringsEl.innerHTML = "<div class='empty'>Bu ilk dilimde C ailesi doğrulanıyor.</div>";
+    stringsEl.innerHTML = "<div class='empty'>Akor bulunamadı.</div>";
     countEl.textContent = "0 / 0";
     board.disabled = true;
     return;
@@ -36,7 +36,7 @@ function render() {
   }).join("");
   countEl.textContent = `${index+1} / ${voicings.length}`;
   board.disabled = false;
-  status.textContent = audio.kind === "host-guitar-audio" ? "Gitar ses motoru bağlı" : "Geliştirme sesi";
+  status.textContent = audio.kind === "development-web-audio" ? "Geliştirme sesi" : "Gitar ses motoru bağlı";
 }
 
 function selectQuery(value) {
@@ -54,10 +54,17 @@ input.addEventListener("input", e => selectQuery(e.target.value));
 board.addEventListener("click", async () => {
   const v = getVoicings(symbol)[index];
   if (!v) return;
-  await audio.playChord(voicingMidi(v), { symbol, voicingIndex:index });
-  board.classList.remove("pressed");
-  void board.offsetWidth;
-  board.classList.add("pressed");
+  const positions = v.frets.flatMap((fret, stringIndex) =>
+    fret < 0 ? [] : [{ stringNumber: 6 - stringIndex, fret }]
+  );
+  try {
+    await audio.playChord(voicingMidi(v), { symbol, voicingIndex:index, positions });
+    board.classList.remove("pressed");
+    void board.offsetWidth;
+    board.classList.add("pressed");
+  } catch (error) {
+    status.textContent = error instanceof Error ? error.message : "Ses hatası";
+  }
 });
 prev.addEventListener("click", () => { index = Math.max(0,index-1); render(); });
 next.addEventListener("click", () => { index = Math.min(getVoicings(symbol).length-1,index+1); render(); });
