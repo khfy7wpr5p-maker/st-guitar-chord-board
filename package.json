@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
+    "test:browser": "playwright test",
     "test:webkit": "playwright test --project=webkit-iphone",
+    "test:offline": "playwright test --project=chromium-offline",
     "serve": "python3 -m http.server 4173"
   },
   "devDependencies": {
