@@ -66,3 +66,22 @@ The remaining release gate before v1.0 is a physical iPhone/Safari check for:
 - installed PWA relaunch;
 - offline audible playback;
 - final touch/layout inspection.
+
+
+## 0.18.1 full-chord audio hotfix
+
+Release `0.18.1` corrects the standalone MIDI.js sample-name mapping.
+
+The packaged soundfont uses:
+`Db, Eb, Gb, Ab, Bb`
+
+rather than:
+`C#, D#, F#, G#, A#`
+
+for accidental sample keys.
+
+No additional audio files are added. The same 2,330,622-byte soundfont is reused.
+
+Release qualification now enumerates all 96 canonical chord identities and every available voicing and verifies that every generated MIDI note resolves to a real packaged sample.
+
+The Service Worker cache identifier is rotated to `st-guitar-chord-board-v13` to prevent existing PWA installations from retaining the old bridge.
