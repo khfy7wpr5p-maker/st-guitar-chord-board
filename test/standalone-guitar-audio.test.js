@@ -14,6 +14,11 @@ test("standalone guitar audio exposes deterministic MIDI note names", async () =
   assert.equal(mod.midiToNoteName(40),"E2");
   assert.equal(mod.midiToNoteName(45),"A2");
   assert.equal(mod.midiToNoteName(69),"A4");
+  assert.equal(mod.midiToNoteName(42),"Gb2");
+  assert.equal(mod.midiToNoteName(44),"Ab2");
+  assert.equal(mod.midiToNoteName(46),"Bb2");
+  assert.equal(mod.midiToNoteName(49),"Db3");
+  assert.equal(mod.midiToNoteName(51),"Eb3");
 });
 
 test("standalone installer never replaces an editor-owned guitar bridge", async () => {

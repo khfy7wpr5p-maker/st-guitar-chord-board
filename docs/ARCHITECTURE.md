@@ -283,3 +283,18 @@ Implemented:
 - provider logs independently confirm soundfont size and Git-blob verification during the live build.
 
 Deployment is hosting infrastructure only; core use remains offline-first after the PWA assets have been cached.
+
+
+### 0.18.1 — standalone soundfont accidental mapping hotfix ✅
+Root cause:
+- product MIDI identity is chromatic and spelling-independent;
+- the standalone bridge converted chromatic MIDI to sharp note names;
+- the pinned MIDI.js soundfont indexes black-key samples with flat names;
+- a missing single sample rejected the chord's `Promise.all`, so many chords produced no audio.
+
+Fix:
+- standalone sample lookup now uses the soundfont-native pitch-class vocabulary `C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B`;
+- harmonic/chord identity and user-facing enharmonic spelling are unchanged;
+- no duplicate audio assets are introduced;
+- exhaustive release coverage verifies all MIDI notes used by all voicings across all 96 canonical chords;
+- offline cache version is rotated so installed PWAs update the bridge.

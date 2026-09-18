@@ -1,6 +1,6 @@
 const DEFAULT_SOUNDFONT_URL = "./vendor/audio/electric_guitar_jazz-mp3.js";
 const INSTRUMENT_ID = "electric_guitar_jazz";
-const NOTE_NAMES = Object.freeze(["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]);
+const NOTE_NAMES = Object.freeze(["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"]);
 
 function assertMidi(midi) {
   if (!Number.isInteger(midi) || midi < 0 || midi > 127) {
