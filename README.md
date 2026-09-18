@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 13
+## Current status — Stage 14
 
 The app targets:
 
@@ -27,6 +27,7 @@ The app targets:
 - Chromium service-worker offline reload smoke test
 - pinned build-time local guitar soundfont vendoring path
 - same-origin local smplr bridge with explicit offlineReady capability
+- enharmonic display spelling preserved for flat chord input
 
 ### Search and naming rule
 
@@ -38,8 +39,12 @@ Search is symbol-first:
 - `B5` → **Si beş**
 - `C5` → **Do beş**
 - `G7` → **Sol yedili**
+- `Bb5` → **Si bemol beş**
+- `Ebmaj7` → **Mi bemol majör yedili**
 
 When a valid chord is entered, the compact suggestion strip shows the selected chord first and then the other supported qualities on the same root.
+
+Enharmonic spelling is presentation-safe: `Bb5` and `A#5` use the same physical pitch/fret identity, but the interface keeps the spelling the user entered. Flat input also keeps flat same-root suggestions such as `Bb / Bbm / Bb7 / ... / Bb5`.
 
 ### Power chords
 
