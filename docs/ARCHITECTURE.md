@@ -24,6 +24,7 @@ Symbol search input
   -> exact MIDI notes for selected string/fret voicing
   -> AudioAdapter
        -> preferred: ST editor / ST Score Audio guitar bridge
+       -> standalone release: packaged MIDI.js guitar soundfont via Web Audio
        -> development fallback only: Web Audio oscillator
 ```
 
@@ -245,3 +246,26 @@ Implemented:
 Privacy/runtime boundary:
 - state remains on the device;
 - no user identity, analytics, cloud sync, or backend dependency is introduced.
+
+
+### Stage 18 — publishable release build + packaged guitar audio ✅
+Implemented:
+- one-command `npm run build:release` pipeline;
+- immutable soundfont source and Git-blob verification before packaging;
+- clean static `dist/` output with an explicit runtime-file allowlist;
+- development-only theory/validation modules excluded from the release artifact;
+- release-only config enables standalone guitar audio without changing source-development behavior;
+- standalone MIDI.js soundfont bridge maps exact MIDI to local note samples and decodes them through Web Audio;
+- editor-owned `ST_GUITAR_AUDIO` remains authoritative when present;
+- release Service Worker requires the local soundfont cache entry instead of silently tolerating absence;
+- release manifest records version, runtime file set, source commit, soundfont byte count and blob hash;
+- dedicated Chromium release qualification proves local sample loading/decode/playback, Service Worker caching, network removal, offline reload and playback-path completion;
+- CI publishes the static `dist/` tree as `st-guitar-chord-board-release`.
+
+Verified release soundfont:
+- instrument: `electric_guitar_jazz`;
+- size: `2,330,622` bytes;
+- Git blob SHA-1: `2c0ef6f12d5a260982520130c97905e5931a60d4`.
+
+Remaining boundary:
+- actual audible output quality and first-gesture behavior still require a physical iPhone/Safari qualification before v1.0.
