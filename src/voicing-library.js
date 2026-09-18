@@ -12,7 +12,7 @@ export const C_FAMILY_VOICINGS = Object.freeze({
     V([8,10,10,8,8,8],[1,3,4,1,1,1],[{finger:1,fret:8,fromString:6,toString:1}])
   ],
   C7: [
-    V([-1,3,2,3,1,0],[-1,3,2,4,1,0]),
+    V([-1,3,2,3,5,3],[-1,2,1,3,4,3],[{finger:3,fret:3,fromString:3,toString:1}]),
     V([-1,3,5,3,5,3],[-1,1,3,1,4,1],[{finger:1,fret:3,fromString:5,toString:1}]),
     V([8,10,8,9,8,8],[1,3,1,2,1,1],[{finger:1,fret:8,fromString:6,toString:1}])
   ],
