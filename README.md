@@ -2,7 +2,9 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 18
+**Live app:** https://st-guitar-chord-board.onrender.com
+
+## Current status — Stage 19
 
 The app targets:
 
@@ -34,6 +36,7 @@ The app targets:
 - verified static release build with packaged `electric_guitar_jazz` soundfont
 - standalone Web Audio guitar bridge for published builds
 - CI-qualified online + offline packaged-sample playback path
+- live static deployment with automatic main-branch updates
 
 ### Search and naming rule
 
@@ -180,3 +183,17 @@ Implemented:
 - CI uploads `st-guitar-chord-board-release` as the deployable static artifact.
 
 Current automated release qualification does not replace the final physical iPhone/Safari audible-playback check.
+
+
+### Stage 19 — live static deployment ✅
+Implemented:
+- production static site is hosted at `https://st-guitar-chord-board.onrender.com`;
+- source repository is `khfy7wpr5p-maker/st-guitar-chord-board`;
+- deployment tracks the `main` branch;
+- auto-deploy is enabled for new commits;
+- Render executes `npm install --no-audit --no-fund && npm run build:release`;
+- only `dist/` is published;
+- first live deploy used commit `02a1ddf49a30ee22146bd463a0f87ca673a39bd5`;
+- live build logs confirm the 2,330,622-byte soundfont and pinned Git blob hash before publication.
+
+Deployment details are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

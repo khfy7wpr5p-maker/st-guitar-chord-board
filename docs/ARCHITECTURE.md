@@ -269,3 +269,17 @@ Verified release soundfont:
 
 Remaining boundary:
 - actual audible output quality and first-gesture behavior still require a physical iPhone/Safari qualification before v1.0.
+
+
+### Stage 19 — production static deployment ✅
+Implemented:
+- live HTTPS site at `https://st-guitar-chord-board.onrender.com`;
+- Render Static Site connected directly to GitHub `main`;
+- automatic deploys on new main commits;
+- production build command is the qualified Stage 18 `build:release` pipeline;
+- only generated `dist/` assets are published;
+- no backend/runtime server dependency was introduced;
+- first deploy of commit `02a1ddf49a30ee22146bd463a0f87ca673a39bd5` reached Render `live` state;
+- provider logs independently confirm soundfont size and Git-blob verification during the live build.
+
+Deployment is hosting infrastructure only; core use remains offline-first after the PWA assets have been cached.
