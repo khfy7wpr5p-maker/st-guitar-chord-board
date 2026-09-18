@@ -1,6 +1,7 @@
 import { parseChordQuery } from "./chord-core.js";
 import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
+import { renderChordDiagramSvg } from "./diagram-model.js";
 
 const root = document.querySelector("#app");
 const input = document.querySelector("#chord-search");
@@ -28,12 +29,7 @@ function render() {
   index = Math.max(0, Math.min(index, voicings.length - 1));
   const v = voicings[index];
   symbolEl.textContent = symbol;
-  stringsEl.innerHTML = v.frets.map((fret,i) => {
-    const finger = v.fingers[i];
-    const top = fret < 0 ? "×" : fret === 0 ? "○" : String(fret);
-    const bottom = fret > 0 && finger > 0 ? String(finger) : "";
-    return `<div class="string"><span class="fret">${top}</span><span class="finger">${bottom}</span></div>`;
-  }).join("");
+  stringsEl.innerHTML = renderChordDiagramSvg(v);
   countEl.textContent = `${index+1} / ${voicings.length}`;
   board.disabled = false;
   status.textContent = audio.kind === "development-web-audio" ? "Geliştirme sesi" : "Gitar ses motoru bağlı";
