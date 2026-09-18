@@ -40,7 +40,7 @@ export const ROOT_PCS = Object.freeze({
 export function parseChordQuery(input) {
   const raw = String(input ?? "").trim();
   if (!raw) return null;
-  let token = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replace(/\\s+/g,"");
+  let token = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replaceAll(" ","");
   token = token.replace("DİYEZ","#").replace("DIYEZ","#").replace("BEMOL","B");
 
   const roots = [...ROOT_ALIASES.keys()].sort((a,b)=>b.length-a.length);
