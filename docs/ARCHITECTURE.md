@@ -137,3 +137,16 @@ Implemented:
 Not yet claimed:
 - physical iPhone/Safari qualification;
 - offline availability of the editor's `smplr electric_guitar_jazz` assets. Current editor evidence proves use of that sampler, but not local packaging of its soundfont assets.
+
+
+### Stage 11 — automated mobile browser qualification ✅
+Implemented:
+- Playwright 1.63.0 pinned as the browser test authority;
+- WebKit with the Playwright iPhone 13 device profile validates the core mobile interaction flow;
+- large-button MIDI dispatch is verified through an editor-style host bridge;
+- Chromium separately validates real service-worker control and offline app-shell reload because Playwright service-worker support is Chromium-only;
+- browser tests run alongside Node unit/authority tests in CI.
+
+Boundary:
+- this is automated WebKit/mobile-browser evidence, not a physical iPhone/Safari qualification;
+- guitar soundfont offline availability remains unproven until the editor host packages the assets locally and declares `offlineReady:true`.
