@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 15
+## Current status — Stage 16
 
 The app targets:
 
@@ -29,6 +29,7 @@ The app targets:
 - same-origin local smplr bridge with explicit offlineReady capability
 - enharmonic display spelling preserved for flat chord input
 - Tonal.js development/CI theory cross-check across all 96 canonical chords and displayed voicings
+- horizontal swipe navigation between chord voicings on the large chord surface
 
 ### Search and naming rule
 
@@ -91,6 +92,8 @@ CI verifies:
 
 The button contains no “Play” or “Dokun” label. Touching the chord surface itself is the play action.
 
+On touch devices, swipe left/right directly on the large chord surface to move between voicings. Vertical gestures remain available for page scrolling. A recognized swipe suppresses the synthetic click that would otherwise play the chord accidentally. The existing ‹ / › controls remain available.
+
 ## Audio
 
 Audio routing prefers the editor-owned `ST_GUITAR_AUDIO.playChord(...)` bridge. The board reports “çevrimdışı hazır” only when that host explicitly declares `capabilities.offlineReady: true`.
@@ -135,3 +138,14 @@ Runtime contract:
 - ST remains authoritative for product vocabulary, Turkish naming, guitar voicings, fingering and playback payloads;
 - Tonal is a development/CI regression oracle only;
 - installed/offline use requires no Tonal CDN, npm runtime, backend or network connection.
+
+
+### Stage 16 — swipe voicing navigation ✅
+Implemented:
+- swipe left selects the next voicing;
+- swipe right selects the previous voicing;
+- navigation is bounded at the first/last voicing;
+- vertical gestures remain available for scrolling;
+- recognized swipe suppresses the following synthetic click;
+- normal tap-to-play and existing ‹ / › controls remain unchanged;
+- WebKit iPhone smoke covers horizontal navigation, click suppression and vertical-gesture rejection.
