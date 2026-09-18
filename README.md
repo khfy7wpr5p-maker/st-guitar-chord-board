@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 9
+## Current status — Stage 10
 
 The app targets the complete initial matrix:
 
@@ -20,6 +20,8 @@ The app targets the complete initial matrix:
 - CI cross-checks against pinned ST fretboard, harmony and fingering authorities
 - editor-first audio routing avoids suspended Score Audio guitar profiles
 - explicit relative major/minor relation for basic major/minor chords
+- iPhone-safe standalone PWA shell with safe-area/touch contracts
+- offline app-shell fallback with same-origin bounded caching
 
 ### Search and naming rule
 
@@ -66,7 +68,7 @@ The button renders a real guitar diagram: six strings, visible fret window, open
 
 ## Audio
 
-Audio routing now prefers the editor-owned `ST_GUITAR_AUDIO.playChord(...)` bridge. A separate `ST_SCORE_AUDIO_ENGINE` classical-guitar path is selected only when its profile is product-qualified (`ACTIVE + QUALIFIED`) when profile inspection is available. The current Score Audio guitar profile is suspended, so it is not treated as the preferred production path. A Web Audio oscillator remains development-only.
+Audio routing now prefers the editor-owned `ST_GUITAR_AUDIO.playChord(...)` bridge. The board reports “çevrimdışı hazır” only when that host explicitly declares `capabilities.offlineReady: true`. A separate `ST_SCORE_AUDIO_ENGINE` classical-guitar path is selected only when its profile is product-qualified (`ACTIVE + QUALIFIED`) when profile inspection is available. The current Score Audio guitar profile is suspended, so it is not treated as the preferred production path. A Web Audio oscillator remains development-only.
 
 See [docs/AUDIO-INTEGRATION.md](docs/AUDIO-INTEGRATION.md).
 
