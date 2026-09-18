@@ -85,3 +85,58 @@ No additional audio files are added. The same 2,330,622-byte soundfont is reused
 Release qualification now enumerates all 96 canonical chord identities and every available voicing and verifies that every generated MIDI note resolves to a real packaged sample.
 
 The Service Worker cache identifier is rotated to `st-guitar-chord-board-v13` to prevent existing PWA installations from retaining the old bridge.
+
+
+## GitHub Pages — free distribution path
+
+A GitHub Pages workflow is stored at:
+
+```text
+.github/workflows/pages.yml
+```
+
+It runs on each push to `main` and uses the qualified release pipeline:
+
+```bash
+npm install --no-audit --no-fund
+npm run build:release
+```
+
+The generated `dist/` directory is uploaded as the Pages artifact and deployed with GitHub's official Pages actions.
+
+### One-time activation
+
+GitHub requires Pages to be enabled once for the repository:
+
+1. open the repository on GitHub;
+2. open **Settings**;
+3. select **Pages**;
+4. under **Build and deployment**, set **Source** to **GitHub Actions**.
+
+After that, pushes to `main` deploy automatically.
+
+Expected public URL:
+
+```text
+https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/
+```
+
+### Project-subpath safety
+
+The application uses relative paths for:
+- manifest;
+- stylesheet;
+- JavaScript entry point;
+- Service Worker;
+- runtime modules;
+- packaged soundfont.
+
+The PWA manifest also uses relative `id`, `start_url`, and `scope`, so deployment under the GitHub Pages project path does not require a second build variant.
+
+### Offline sharing
+
+GitHub Pages is needed only for initial delivery and updates.
+
+Once the user opens the app online and the release Service Worker has installed successfully, the app shell and the packaged guitar soundfont are cached locally. The installed PWA can then be reopened without network access.
+
+Render remains available during migration and should only be disabled after the Pages URL has been activated and verified.
