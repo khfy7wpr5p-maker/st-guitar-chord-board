@@ -20,7 +20,7 @@ function assertExactVoicing(symbol, voicing) {
 
 test("parses symbolic and Turkish chord queries", () => {
   assert.deepEqual(parseChordQuery("Cmaj7"), {root:"C",quality:"maj7",symbol:"Cmaj7"});
-  assert.deepEqual(parseChordQuery("Do majör"), {root:"C",quality:"major",symbol:"C"});
+  assert.deepEqual(parseChordQuery("Do majör"), {root:"C",quality:"major",symbol:"C"});\n  assert.deepEqual(parseChordQuery("Do minör"), {root:"C",quality:"m",symbol:"Cm"});
   assert.deepEqual(parseChordQuery("Cm7"), {root:"C",quality:"m7",symbol:"Cm7"});
   assert.deepEqual(parseChordQuery("Csus4"), {root:"C",quality:"sus4",symbol:"Csus4"});
   assert.deepEqual(parseChordQuery("Sibmaj7"), {root:"A#",quality:"maj7",symbol:"A#maj7"});
