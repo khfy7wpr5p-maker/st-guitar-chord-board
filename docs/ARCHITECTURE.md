@@ -58,8 +58,10 @@ Cross-check generated candidates against:
 
 The chord-board runtime remains local; these integrations should produce or validate compact product data rather than introducing a server requirement.
 
-### Stage 4 — production guitar audio
-Connect the existing editor/ST guitar playback bridge. The chord board sends the exact MIDI pitches for the selected voicing; the audio layer may not silently substitute a different voicing.
+### Stage 4 — production guitar audio (integration seam implemented)
+The runtime adapter now supports the real ST Score Audio `audition()` contract and passes exact MIDI plus physical string/fret evidence for every sounding string. It also retains the editor-owned bridge.
+
+Remaining product gate: explicitly resume/qualify the classical-guitar sample profile or bind the editor's already-qualified guitar sampler. The audio layer may not silently substitute a different voicing.
 
 ### Stage 5 — product hardening
 - curated open-position library for common keys
