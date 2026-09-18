@@ -6,7 +6,9 @@ button,input{font:inherit}
 .search-wrap input{width:100%;min-height:48px;border:1px solid #c9c9c9;border-radius:16px;padding:0 16px;font-size:18px;background:white}
 .chord-button{min-height:58dvh;border:0;border-radius:34px;padding:22px 18px 18px;background:linear-gradient(145deg,#fff,#dedede);box-shadow:10px 10px 24px #c9c9c9,-10px -10px 24px #fff,inset 0 0 0 1px rgba(0,0,0,.05);display:grid;align-content:center;gap:12px;touch-action:manipulation;color:#111}
 .chord-button:active,.chord-button.pressed{box-shadow:inset 8px 8px 18px #c8c8c8,inset -8px -8px 18px #fff}
+.chord-heading{display:grid;gap:6px;justify-items:center}
 #chord-symbol{font-size:clamp(42px,14vw,72px);line-height:1}
+#chord-reading{font-size:clamp(18px,5vw,26px);font-weight:650;line-height:1.15}
 #strings{width:100%;display:grid;place-items:center;min-height:330px}
 .chord-diagram{width:min(100%,390px);height:auto;display:block;overflow:visible}
 .fretboard-lines{stroke:#252525;stroke-linecap:round}

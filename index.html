@@ -12,11 +12,14 @@
   <main id="app">
     <label class="search-wrap">
       <span class="sr-only">Akor ara</span>
-      <input id="chord-search" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="C, Cm7, Csus4, Do majör">
+      <input id="chord-search" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Am, E, G7, F#maj7">
     </label>
 
     <button id="chord-button" class="chord-button" type="button" aria-label="Seçili akoru çal">
-      <strong id="chord-symbol">C</strong>
+      <div class="chord-heading">
+        <strong id="chord-symbol">C</strong>
+        <span id="chord-reading">Do majör</span>
+      </div>
       <div id="strings" class="strings" aria-hidden="true"></div>
     </button>
 

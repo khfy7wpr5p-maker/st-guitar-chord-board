@@ -1,5 +1,5 @@
-const CACHE="st-guitar-chord-board-v2";
-const ASSETS=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/voicing-library.js","./src/movable-voicings.js","./src/audio-adapter.js","./src/diagram-model.js"];
+const CACHE="st-guitar-chord-board-v3";
+const ASSETS=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/voicing-library.js","./src/movable-voicings.js","./src/audio-adapter.js","./src/diagram-model.js"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener("activate",e=>e.waitUntil(
   caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())
