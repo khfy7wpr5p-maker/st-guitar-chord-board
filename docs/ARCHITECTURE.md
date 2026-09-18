@@ -229,3 +229,19 @@ Implemented:
 
 Boundary:
 - swipe is bounded at the first/last voicing; it does not wrap around.
+
+
+### Stage 17 — device-local selection restore ✅
+Implemented:
+- a small `selection-state` module owns persisted selection validation;
+- persisted state contains only `display symbol + voicing index`;
+- restore validates the chord through the existing presentation parser and validates the index against the current voicing provider;
+- invalid/stale state never enters the runtime selection path and falls back to `C / first voicing`;
+- localStorage access is failure-contained so private/restricted storage modes do not block app startup;
+- all successful chord selections and voicing changes persist immediately;
+- service-worker app shell caches the state module for offline startup;
+- WebKit reload and Chromium forced-offline reload verify restoration.
+
+Privacy/runtime boundary:
+- state remains on the device;
+- no user identity, analytics, cloud sync, or backend dependency is introduced.
