@@ -38,8 +38,8 @@ test("relative major-minor mapping is reciprocal across all 12 roots", () => {
   }
 });
 
-test("seventh and suspended chords do not invent context-free relations", () => {
-  for (const symbol of ["C7","Cmaj7","Cm7","Csus2","Csus4"]) {
+test("seventh, suspended and power chords do not invent context-free relations", () => {
+  for (const symbol of ["C7","Cmaj7","Cm7","Csus2","Csus4","C5"]) {
     assert.equal(getRelativeRelation(symbol),null,symbol);
   }
 });
