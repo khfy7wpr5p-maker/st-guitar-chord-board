@@ -65,3 +65,25 @@ True offline guitar timbre depends on the selected audio host:
 - the current Score Audio FreePats manifest uses external runtime fetch, so that specific path is not yet a proof of full offline sample availability.
 
 The development oscillator is only a diagnostic fallback and is not the intended guitar timbre.
+
+
+## Stage 10 offline capability contract
+
+An editor-owned bridge may optionally declare:
+
+```js
+window.ST_GUITAR_AUDIO = {
+  capabilities: { offlineReady: true },
+  playChord(payload) { /* ... */ }
+};
+```
+
+Chord Board treats this declaration conservatively:
+
+- `true` → host explicitly claims guitar playback assets are available offline;
+- `false` → host explicitly says offline guitar playback is not ready;
+- absent → offline status is unknown.
+
+The UI never upgrades an unknown audio path to “offline ready”.
+
+Fresh editor evidence at `seslitab-guitar-reader@49d76b8a2317b38bf728e20240258daa92b62c1e` shows use of `smplr` with `electric_guitar_jazz`, but does not by itself prove those soundfont assets are packaged locally.
