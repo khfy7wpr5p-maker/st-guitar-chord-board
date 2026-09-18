@@ -21,7 +21,7 @@ export default defineConfig({
   projects: [
     {
       name: "webkit-iphone",
-      testMatch: /mobile-webkit\.spec\.js/,
+      testMatch: /(mobile-webkit|ui-visual)\.spec\.js/,
       use: {
         ...devices["iPhone 13"],
         serviceWorkers: "allow"
