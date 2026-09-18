@@ -17,7 +17,7 @@ const QUALITIES = [
   ["MAJ7","maj7"],["MAJOR7","maj7"],["MAJÖR7","maj7"],
   ["MIN7","m7"],["MINOR7","m7"],["MİNÖR7","m7"],["M7","m7"],
   ["SUS2","sus2"],["SUS4","sus4"],
-  ["7","7"],
+  ["7","7"],["5","5"],
   ["MIN","m"],["MINOR","m"],["MİNÖR","m"],["M","m"],
   ["MAJ","major"],["MAJOR","major"],["MAJÖR","major"]
 ];
@@ -29,7 +29,8 @@ export const QUALITY_INTERVALS = Object.freeze({
   maj7: [0,4,7,11],
   m7: [0,3,7,10],
   sus2: [0,2,7],
-  sus4: [0,5,7]
+  sus4: [0,5,7],
+  "5": [0,7]
 });
 
 export const ROOT_PCS = Object.freeze({
@@ -39,7 +40,7 @@ export const ROOT_PCS = Object.freeze({
 export function parseChordQuery(input) {
   const raw = String(input ?? "").trim();
   if (!raw) return null;
-  let token = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replace(/\s+/g,"");
+  let token = raw.toUpperCase().replaceAll("♯","#").replaceAll("♭","B").replaceAll(" ","");
   token = token.replace("DİYEZ","#").replace("DIYEZ","#").replace("BEMOL","B");
 
   const roots = [...ROOT_ALIASES.keys()].sort((a,b)=>b.length-a.length);
@@ -57,7 +58,7 @@ export function parseChordQuery(input) {
 }
 
 export function formatChordSymbol(root, quality) {
-  const suffix = {major:"",m:"m","7":"7",maj7:"maj7",m7:"m7",sus2:"sus2",sus4:"sus4"}[quality];
+  const suffix = {major:"",m:"m","7":"7",maj7:"maj7",m7:"m7",sus2:"sus2",sus4:"sus4","5":"5"}[quality];
   if (suffix === undefined) throw new Error("Unsupported chord quality");
   return root + suffix;
 }

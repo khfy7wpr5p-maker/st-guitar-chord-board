@@ -10,4 +10,7 @@ test("renders required Turkish chord readings", () => {
   assert.equal(chordNameTr(parseChordQuery("F#maj7")), "Fa diyez majör yedili");
   assert.equal(chordNameTr(parseChordQuery("Bm7")), "Si minör yedili");
   assert.equal(chordNameTr(parseChordQuery("Dsus4")), "Re sus dört");
+  assert.equal(chordNameTr(parseChordQuery("A5")), "La beş");
+  assert.equal(chordNameTr(parseChordQuery("B5")), "Si beş");
+  assert.equal(chordNameTr(parseChordQuery("C5")), "Do beş");
 });

@@ -28,6 +28,7 @@ test("iPhone WebKit chord search, relation, variation and audio payload", async 
   await expect(suggestions.first()).toContainText("Am");
   await expect(page.locator('#suggestions .suggestion[data-symbol="A"]')).toBeVisible();
   await expect(page.locator('#suggestions .suggestion[data-symbol="A7"]')).toBeVisible();
+  await expect(page.locator('#suggestions .suggestion[data-symbol="A5"]')).toBeVisible();
 
   const relation = page.locator("#relation .relation-card");
   await expect(relation).toBeVisible();
@@ -47,6 +48,26 @@ test("iPhone WebKit chord search, relation, variation and audio payload", async 
   expect(Array.isArray(calls[0].midis)).toBeTruthy();
   expect(calls[0].midis.length).toBeGreaterThanOrEqual(3);
   expect(calls[0].positions.length).toBe(calls[0].midis.length);
+});
+
+test("power chord flow exposes exactly two positions", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A5");
+
+  await expect(page.locator("#chord-symbol")).toHaveText("A5");
+  await expect(page.locator("#chord-reading")).toHaveText("La beş");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 2");
+  await expect(page.locator("#relation")).toBeHidden();
+
+  await page.locator("#next").tap();
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+
+  await page.locator("#chord-button").tap();
+  const call = await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.at(-1));
+  expect(call.symbol).toBe("A5");
+  expect(call.voicingIndex).toBe(1);
+  expect(call.midis).toHaveLength(3);
+  expect([...new Set(call.midis.map(midi => midi % 12))].sort((a,b)=>a-b)).toEqual([4,9]);
 });
 
 test("relative relation navigation stays within the large-button flow", async ({ page }) => {

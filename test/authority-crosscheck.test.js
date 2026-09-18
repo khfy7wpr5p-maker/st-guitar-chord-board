@@ -8,6 +8,7 @@ import {
   FINGERING_AUTHORITY,
   GUITAR_AUTHORITY,
   HARMONIC_AUTHORITY,
+  PRODUCT_HARMONIC_EXTENSIONS,
   authorityPositionToMidi,
   validateFingeringResource
 } from "../src/authority-baseline.js";
@@ -18,10 +19,16 @@ test("authority provenance is pinned to reviewed source revisions", () => {
   assert.equal(AUTHORITY_SOURCES.fingering.commit,"06564c494c15acc7a1a2ec20219854d234281cf9");
 });
 
-test("local chord intervals match harmonic-engine authority", () => {
-  for (const quality of CHORD_QUALITIES) {
-    assert.deepEqual(QUALITY_INTERVALS[quality],HARMONIC_AUTHORITY[quality],quality);
+test("local source-backed chord intervals match harmonic-engine authority", () => {
+  for (const [quality, intervals] of Object.entries(HARMONIC_AUTHORITY)) {
+    assert.deepEqual(QUALITY_INTERVALS[quality],intervals,quality);
   }
+});
+
+test("power chord interval is an explicit product extension, not attributed to harmonic engine", () => {
+  assert.deepEqual(PRODUCT_HARMONIC_EXTENSIONS["5"],[0,7]);
+  assert.deepEqual(QUALITY_INTERVALS["5"],PRODUCT_HARMONIC_EXTENSIONS["5"]);
+  assert.equal(Object.prototype.hasOwnProperty.call(HARMONIC_AUTHORITY,"5"),false);
 });
 
 test("every displayed voicing round-trips against authoritative standard tuning", () => {
@@ -52,7 +59,7 @@ test("every displayed voicing stays within deterministic fingering resource boun
       }
     }
   }
-  assert.ok(checked>=252);
+  assert.ok(checked>=276);
 });
 
 test("learned fingering ranker remains outside runtime authority", () => {

@@ -8,7 +8,7 @@ The chord board is an offline-first, phone-first instrument surface. The selecte
 
 ```text
 Symbol search input
-  -> Local 84-chord catalog
+  -> Local 96-chord catalog
   -> same-root suggestion family
   -> Chord parser / normalizer
   -> Turkish chord reading
@@ -167,3 +167,26 @@ Remaining qualification:
 - execute the vendor step in the actual distributable build;
 - bind the editor to the local bridge;
 - verify cached guitar playback after network removal on a physical iPhone.
+
+
+### Stage 13 — power chords ✅
+Implemented:
+- product catalog expands from 84 to 96 chord symbols;
+- adds the `5` power-chord family across all 12 roots;
+- power-chord interval contract is `[0,7]` (root + perfect fifth);
+- the octave root may be doubled in the guitar voicing;
+- each power chord exposes exactly two positions, not three:
+  - root on string 6;
+  - root on string 5;
+- requested examples are fixed in tests:
+  - `A5 = 5-7-7-x-x-x / x-0-2-2-x-x`;
+  - `B5 = 7-9-9-x-x-x / x-2-4-4-x-x`;
+  - `C5 = 8-10-10-x-x-x / x-3-5-5-x-x`;
+- Turkish readings include `La beş`, `Si beş`, `Do beş`;
+- power chords do not receive relative-major/minor relation cards;
+- open-root power diagrams remain anchored at fret 1;
+- WebKit iPhone smoke covers the two-position A5 flow.
+
+Authority boundary:
+- the pinned Harmonic Engine source does not define power chords in the reviewed template set;
+- therefore `5 = [0,7]` is recorded as a Chord Board product extension rather than falsely attributed to the Harmonic Engine.
