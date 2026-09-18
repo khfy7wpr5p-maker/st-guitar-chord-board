@@ -1,6 +1,6 @@
 {
   "name": "st-guitar-chord-board",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,8 +8,11 @@
     "test:browser": "playwright test",
     "test:webkit": "playwright test --project=webkit-iphone",
     "test:offline": "playwright test --project=chromium-offline",
+    "test:release": "playwright test --config=playwright.release.config.js",
     "vendor:guitar-audio": "node scripts/vendor-guitar-soundfont.mjs",
-    "serve": "python3 -m http.server 4173"
+    "build:release": "npm run vendor:guitar-audio && node scripts/build-release.mjs",
+    "serve": "python3 -m http.server 4173",
+    "serve:release": "python3 -m http.server 4174 --directory dist"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
