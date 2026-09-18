@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 6
+## Current status — Stage 7
 
 The app targets the complete initial matrix:
 
@@ -17,6 +17,7 @@ The app targets the complete initial matrix:
 - exact string/fret -> MIDI playback payloads
 - phone-first large tactile chord surface with a real six-string chord diagram
 - no required backend or Render dependency
+- CI cross-checks against pinned ST fretboard, harmony and fingering authorities
 
 ### Search and naming rule
 
@@ -57,6 +58,8 @@ The button renders a real guitar diagram: six strings, visible fret window, open
 The preferred runtime path directly supports an exposed `ST_SCORE_AUDIO_ENGINE`: the chord button unlocks audio from the user gesture, selects `CLASSICAL_GUITAR`, and sends one concurrent `audition(...)` request per sounding string. The editor-owned `ST_GUITAR_AUDIO.playChord(...)` bridge remains supported. A Web Audio oscillator exists only as a development fallback.
 
 See [docs/AUDIO-INTEGRATION.md](docs/AUDIO-INTEGRATION.md).
+
+Authority compatibility is documented in [docs/AUTHORITY-CROSSCHECK.md](docs/AUTHORITY-CROSSCHECK.md).
 
 ## Run
 
