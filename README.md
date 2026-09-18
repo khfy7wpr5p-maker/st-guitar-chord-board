@@ -4,7 +4,7 @@ Offline-first, phone-first interactive guitar chord surface.
 
 **Live app:** https://st-guitar-chord-board.onrender.com
 
-## Current status — Stage 19
+## Current status — Stage 20
 
 The app targets:
 
@@ -207,3 +207,25 @@ Fixed in release `0.18.1`:
 - the soundfont file itself is unchanged, so the release size does not grow because of this fix;
 - CI now checks every MIDI note used by every voicing of all 96 canonical chords against the packaged soundfont;
 - Service Worker cache rotates to `st-guitar-chord-board-v13` so existing installs receive the corrected bridge.
+
+
+### Stage 20 — free GitHub Pages distribution ✅
+Prepared:
+- GitHub Pages deployment workflow builds the same qualified `dist/` release used by CI;
+- deploy source is GitHub Actions on every `main` push;
+- Pages artifact contains the packaged guitar soundfont and release Service Worker;
+- all PWA and runtime asset paths are relative, so the app is safe under the project subpath `/st-guitar-chord-board/`;
+- no Render, backend, database, or paid runtime is required for the Pages copy.
+
+One-time repository activation is still required in GitHub:
+`Settings → Pages → Build and deployment → Source → GitHub Actions`.
+
+Expected Pages URL after activation and a successful deployment:
+`https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/`
+
+Offline sharing flow:
+1. share the GitHub Pages URL;
+2. user opens it once while online;
+3. user adds it to the Home Screen / installs the PWA;
+4. the Service Worker caches the release shell and guitar soundfont;
+5. later launches can work without an internet connection.
