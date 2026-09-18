@@ -9,7 +9,7 @@
     "serve": "python3 -m http.server 4173"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "1.63.0"
   },
   "engines": { "node": ">=20" }
 }
