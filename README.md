@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 16
+## Current status — Stage 17
 
 The app targets:
 
@@ -30,6 +30,7 @@ The app targets:
 - enharmonic display spelling preserved for flat chord input
 - Tonal.js development/CI theory cross-check across all 96 canonical chords and displayed voicings
 - horizontal swipe navigation between chord voicings on the large chord surface
+- last selected chord spelling and voicing restored locally across reloads/offline relaunches
 
 ### Search and naming rule
 
@@ -149,3 +150,16 @@ Implemented:
 - recognized swipe suppresses the following synthetic click;
 - normal tap-to-play and existing ‹ / › controls remain unchanged;
 - WebKit iPhone smoke covers horizontal navigation, click suppression and vertical-gesture rejection.
+
+
+### Stage 17 — restore last selection ✅
+Implemented:
+- the last valid displayed chord symbol and voicing index are stored in browser `localStorage`;
+- enharmonic display spelling is preserved, e.g. `Bb5` restores as `Bb5`, not `A#5`;
+- reload restores the exact selected voicing;
+- offline PWA reload restores the same selection from device-local state;
+- malformed JSON, unknown chords, unavailable storage, negative/fractional indices, or out-of-range voicing indices fall back safely to `C / 1`;
+- no account, backend, Render service, sync service, or new UI control is required.
+
+Storage key:
+`st-guitar-chord-board:last-selection:v1`
