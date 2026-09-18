@@ -2,22 +2,26 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Stage 1
+## Current status — Stage 2
 
-The first validated vertical slice provides:
+The app now targets the complete initial matrix:
 
-- local chord search for `C`, `Cm`, `C7`, `Cmaj7`, `Cm7`, `Csus2`, `Csus4`;
-- Turkish aliases such as `Do majör`;
-- one large tactile chord button designed as the primary phone interaction;
-- finger numbers, open/muted strings and barre metadata;
-- at least three exact guitar voicings for every Stage-1 chord;
-- exact string/fret -> MIDI playback payloads;
-- an audio adapter for the existing ST guitar playback host;
-- a development-only Web Audio fallback;
-- service-worker application-shell caching;
-- no required backend or Render dependency.
+- **12 chromatic roots**
+- **7 chord families:** major, minor, 7, maj7, m7, sus2, sus4
+- **84 searchable chords**
+- **minimum 3 exact guitar voicings per chord**
+- finger numbers and barre metadata
+- exact string/fret -> MIDI playback payloads
+- phone-first large tactile chord surface
+- no required backend or Render dependency
+
+The C family retains curated open/open-region alternatives. The complete 84-chord matrix is backed by deterministic movable A/E/D-family shapes, transposed and octave-wrapped within fret 20. CI independently verifies that every generated voicing produces exactly the requested chord pitch classes.
 
 The button contains no “Play” or “Dokun” label. Touching the chord surface itself is the play action.
+
+## Audio
+
+The preferred runtime path is the existing ST guitar playback host through `window.ST_GUITAR_AUDIO.playChord(...)`. A Web Audio oscillator exists only as a development fallback; it is not the intended final guitar timbre.
 
 ## Run
 
@@ -32,16 +36,14 @@ Open `http://localhost:4173`.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Core direction:
-
 ```text
 Chord Search
   -> Chord Core
-  -> Voicing Provider
-  -> Fingering / Barre
+  -> Curated / Movable Voicing Provider
+  -> Fingering / Barre metadata
   -> Large Chord Button
   -> exact MIDI pitches
   -> ST Guitar Audio bridge
 ```
 
-The core is intentionally backend-free. Cloud services can be added later for accounts or sync without becoming a prerequisite for chord lookup or playback.
+Cloud services may be added later for accounts or sync without becoming a prerequisite for chord lookup or playback.
