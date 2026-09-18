@@ -1,5 +1,5 @@
-const CACHE="st-guitar-chord-board-v10";
-const APP_SHELL=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/authority-baseline.js","./src/local-smplr-guitar-bridge.js","./vendor/audio/source.json"];
+const CACHE="st-guitar-chord-board-v11";
+const APP_SHELL=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/authority-baseline.js","./src/selection-state.js","./src/local-smplr-guitar-bridge.js","./vendor/audio/source.json"];
 const OPTIONAL_LOCAL_AUDIO=["./vendor/audio/electric_guitar_jazz-mp3.js"];
 
 self.addEventListener("install",event=>{

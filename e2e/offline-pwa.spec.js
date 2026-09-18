@@ -24,12 +24,18 @@ test("cached app shell reloads while browser context is offline", async ({ page,
 
   expect(await page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBeTruthy();
 
+  await page.locator("#chord-search").fill("A5");
+  await page.locator("#next").click();
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+
   await context.setOffline(true);
   await page.reload({ waitUntil: "domcontentloaded" });
 
   await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
-  await expect(page.locator("#chord-symbol")).toHaveText("C");
-  await expect(page.locator("#chord-reading")).toHaveText("Do majör");
+  await expect(page.locator("#chord-search")).toHaveValue("A5");
+  await expect(page.locator("#chord-symbol")).toHaveText("A5");
+  await expect(page.locator("#chord-reading")).toHaveText("La beş");
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
 
   await context.setOffline(false);
 });
