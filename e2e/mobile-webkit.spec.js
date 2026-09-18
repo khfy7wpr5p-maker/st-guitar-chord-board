@@ -173,3 +173,37 @@ test("mobile layout keeps the primary chord button inside the phone viewport wid
   expect(result.right).toBeLessThanOrEqual(result.viewport + 0.5);
   expect(result.minHeight).toBeGreaterThan(300);
 });
+
+
+test("last selected chord and voicing restore after reload", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("Bb5");
+  await page.locator("#next").tap();
+
+  await expect(page.locator("#chord-symbol")).toHaveText("Bb5");
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+
+  await page.reload();
+
+  await expect(page.locator("#chord-search")).toHaveValue("Bb5");
+  await expect(page.locator("#chord-symbol")).toHaveText("Bb5");
+  await expect(page.locator("#chord-reading")).toHaveText("Si bemol beş");
+  await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+});
+
+test("invalid persisted selection falls back safely to C first voicing", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.setItem("st-guitar-chord-board:last-selection:v1", JSON.stringify({
+      symbol: "NotAChord",
+      voicingIndex: 999
+    }));
+  });
+
+  await page.reload();
+
+  await expect(page.locator("#chord-search")).toHaveValue("C");
+  await expect(page.locator("#chord-symbol")).toHaveText("C");
+  await expect(page.locator("#chord-reading")).toHaveText("Do majör");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+});
