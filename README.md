@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 17
+## Current status — Stage 18
 
 The app targets:
 
@@ -31,6 +31,9 @@ The app targets:
 - Tonal.js development/CI theory cross-check across all 96 canonical chords and displayed voicings
 - horizontal swipe navigation between chord voicings on the large chord surface
 - last selected chord spelling and voicing restored locally across reloads/offline relaunches
+- verified static release build with packaged `electric_guitar_jazz` soundfont
+- standalone Web Audio guitar bridge for published builds
+- CI-qualified online + offline packaged-sample playback path
 
 ### Search and naming rule
 
@@ -113,11 +116,11 @@ Mobile/browser qualification is documented in [docs/MOBILE-QUALIFICATION.md](doc
 
 ```bash
 npm test
-npm run vendor:guitar-audio   # optional: prepare local guitar soundfont
-npm run serve
+npm run build:release
+npm run serve:release
 ```
 
-Open `http://localhost:4173`.
+Open `http://localhost:4174` for the generated release build.
 
 ## Architecture
 
@@ -163,3 +166,17 @@ Implemented:
 
 Storage key:
 `st-guitar-chord-board:last-selection:v1`
+
+
+### Stage 18 — publishable offline-audio release build ✅
+Implemented:
+- `npm run build:release` vendors the pinned guitar soundfont, verifies its canonical Git blob hash, and emits a static `dist/` package;
+- release builds enable a standalone same-origin MIDI.js soundfont bridge while source/development builds leave it disabled;
+- an editor-provided `ST_GUITAR_AUDIO` bridge still has priority and is never overwritten;
+- release Service Worker installation requires the packaged soundfont to be successfully cached;
+- the generated `release-manifest.json` records version, runtime files, soundfont bytes, source commit and verified blob hash;
+- release artifacts contain runtime files only; development-only Tonal validation code is excluded;
+- CI opens the built `dist`, loads and decodes the real packaged guitar samples, confirms successful chord playback, disables networking, reloads, and confirms the packaged playback path again;
+- CI uploads `st-guitar-chord-board-release` as the deployable static artifact.
+
+Current automated release qualification does not replace the final physical iPhone/Safari audible-playback check.
