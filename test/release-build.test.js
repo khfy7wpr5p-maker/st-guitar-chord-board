@@ -22,7 +22,7 @@ test("release build emits enabled local-audio config and verified manifest", asy
       ["index.html","<html></html>"],
       ["styles.css","body{}"],
       ["manifest.webmanifest","{}"],
-      ["service-worker.js",""],
+      ["service-worker.js","const RELEASE_REQUIRES_LOCAL_AUDIO=false;"],
       ["THIRD_PARTY_NOTICES.md","notice"],
       ["src/app.js",""],
       ["src/release-config.js","export const RELEASE_AUDIO={enabled:false};"],
