@@ -1,12 +1,17 @@
-const CACHE="st-guitar-chord-board-v11";
-const APP_SHELL=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/authority-baseline.js","./src/selection-state.js","./src/local-smplr-guitar-bridge.js","./vendor/audio/source.json"];
+const CACHE="st-guitar-chord-board-v12";
+const APP_SHELL=["./","./index.html","./styles.css","./manifest.webmanifest","./src/app.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/authority-baseline.js","./src/selection-state.js","./src/release-config.js","./src/standalone-guitar-audio.js","./src/local-smplr-guitar-bridge.js","./vendor/audio/source.json"];
 const OPTIONAL_LOCAL_AUDIO=["./vendor/audio/electric_guitar_jazz-mp3.js"];
+const RELEASE_REQUIRES_LOCAL_AUDIO=false;
 
 self.addEventListener("install",event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE);
     await cache.addAll(APP_SHELL);
-    await Promise.all(OPTIONAL_LOCAL_AUDIO.map(asset=>cache.add(asset).catch(()=>null)));
+    if(RELEASE_REQUIRES_LOCAL_AUDIO){
+      await cache.addAll(OPTIONAL_LOCAL_AUDIO);
+    }else{
+      await Promise.all(OPTIONAL_LOCAL_AUDIO.map(asset=>cache.add(asset).catch(()=>null)));
+    }
     await self.skipWaiting();
   })());
 });
