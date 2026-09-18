@@ -11,9 +11,10 @@ function rootFret(rootPc, stringNumber) {
 
 function powerShapeOnSixth(rootPc) {
   const root = rootFret(rootPc, 6);
+  const openRoot = root === 0;
   return Object.freeze({
     frets: [root, root + 2, root + 2, -1, -1, -1],
-    fingers: [1, 3, 4, -1, -1, -1],
+    fingers: [openRoot ? 0 : 1, openRoot ? 1 : 3, openRoot ? 2 : 4, -1, -1, -1],
     barres: [],
     shape: "POWER_ROOT_6",
     generated: true
@@ -22,9 +23,10 @@ function powerShapeOnSixth(rootPc) {
 
 function powerShapeOnFifth(rootPc) {
   const root = rootFret(rootPc, 5);
+  const openRoot = root === 0;
   return Object.freeze({
     frets: [-1, root, root + 2, root + 2, -1, -1],
-    fingers: [-1, 1, 3, 4, -1, -1],
+    fingers: [-1, openRoot ? 0 : 1, openRoot ? 1 : 3, openRoot ? 2 : 4, -1, -1],
     barres: [],
     shape: "POWER_ROOT_5",
     generated: true
