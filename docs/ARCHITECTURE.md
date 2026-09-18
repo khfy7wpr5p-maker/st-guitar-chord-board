@@ -7,11 +7,14 @@ The chord board is an offline-first, phone-first instrument surface. The selecte
 ## Runtime flow
 
 ```text
-Search input
+Symbol search input
+  -> Local 84-chord catalog
+  -> same-root suggestion family
   -> Chord parser / normalizer
-  -> Chord identity (root + quality)
+  -> Turkish chord reading
   -> Voicing provider
-       -> curated open/open-region voicings when available
+       -> curated common open/open-region voicing when available
+       -> curated C-family alternatives
        -> deterministic movable A/E/D-family generator
   -> Fingering / barre metadata
   -> Large chord button
@@ -31,49 +34,69 @@ Search input
 - offline-first policy
 
 ### Stage 1 — validated vertical slice ✅
-- C, Cm, C7, Cmaj7, Cm7, Csus2, Csus4
+- C-family vertical slice
 - >=3 exact voicings per chord
-- curated open/barre examples
 - finger numbers
 - exact MIDI derivation
 - large phone control
 - local search
 - service-worker shell
 
-### Stage 2 — 84-chord deterministic expansion
+### Stage 2 — 84-chord deterministic expansion ✅
 - 12 roots × 7 chord families
 - three movable shape families per quality
 - generated frets bounded to 0..20
-- octave wrapping keeps high transpositions on the practical board
 - exact pitch-class equality required in CI
-- C-family curated open alternatives remain available
+
+### Stage 3 — ST audio contract integration ✅
+- direct `ST_SCORE_AUDIO_ENGINE.audition()` adapter
+- exact MIDI + physical string/fret evidence
+- polyphonic chord dispatch
+- editor-owned guitar bridge retained
+
+### Stage 4 — tactile guitar diagram ✅
+- six-string SVG chord chart
+- open/mute markers
+- finger numbers
+- barre geometry
+- automatic base-fret window
+
+### Stage 5 — Turkish chord naming ✅
+- symbol-first search
+- Turkish reading under every selected symbol
+- note-set search removed from product scope
+
+### Stage 6 — search UX + common guitar positions
+- offline 84-chord catalog
+- compact same-root suggestion family
+- selected symbol ranked first
+- curated first-position/open alternatives for common A/E/D/G/B/F shapes
+- deterministic movable shapes retained as additional variations
+- no server dependency
 
 ## Next stages
 
-### Stage 3 — ST engine authority adapters
-Cross-check generated candidates against:
+### Stage 7 — engine authority cross-check
+Cross-check product data against:
 - `musicxml-to-guitar-tab-engine` fretboard / physical candidate authority
 - `st-guitar-fingering-training` deterministic fingering/barre authority
 - `st-guitar-harmonic-engine` chord-identity authority
 
-The chord-board runtime remains local; these integrations should produce or validate compact product data rather than introducing a server requirement.
+The chord-board runtime remains local. These integrations should validate or generate compact product data, not introduce a backend.
 
-### Stage 4 — production guitar audio (integration seam implemented)
-The runtime adapter now supports the real ST Score Audio `audition()` contract and passes exact MIDI plus physical string/fret evidence for every sounding string. It also retains the editor-owned bridge.
+### Stage 8 — mobile/audio qualification
+- iPhone touch and layout checks
+- explicit classical-guitar sample qualification or editor sampler binding
+- full offline sample-asset qualification
+- cache/version migration checks
 
-Remaining product gate: explicitly resume/qualify the classical-guitar sample profile or bind the editor's already-qualified guitar sampler. The audio layer may not silently substitute a different voicing.
-
-### Stage 5 — product hardening
-- curated open-position library for common keys
-- enharmonic display preference
-- chord relations
-- note-set -> chord search
-- iPhone touch/audio qualification
-- full offline asset qualification
+### Stage 9 — chord relationship layer
+If added, relationships must be explicitly categorized (for example same-root family, relative major/minor, or tonal-context relation). The UI must not call musically different chords “equivalent” without a precise relation definition.
 
 ## Non-goals
 - server-side chord calculation
 - Render dependency for core use
 - account/login in core
 - AI-required chord lookup
+- note-set chord search
 - silent substitution of a different voicing

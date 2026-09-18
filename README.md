@@ -2,7 +2,7 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-## Current status — Stage 5
+## Current status — Stage 6
 
 The app targets the complete initial matrix:
 
@@ -11,6 +11,8 @@ The app targets the complete initial matrix:
 - **84 searchable chord symbols**
 - **minimum 3 exact guitar voicings per chord**
 - Turkish reading shown for every selected chord
+- compact same-root chord-family suggestions
+- curated open/open-region first voicings for common guitar chords
 - finger numbers and barre metadata
 - exact string/fret -> MIDI playback payloads
 - phone-first large tactile chord surface with a real six-string chord diagram
@@ -25,9 +27,26 @@ Search is symbol-first. Typing familiar chord symbols is sufficient:
 - `G7` → **Sol yedili**
 - `F#maj7` → **Fa diyez majör yedili**
 
-The product does not require the user to enter chord tones such as `A C E`. Note-set chord search is outside the current product scope.
+When a valid chord is entered, the compact suggestion strip shows the selected chord first and then the other supported qualities on the same root. Example:
 
-The C family retains curated open/open-region alternatives. The complete 84-chord matrix is backed by deterministic movable A/E/D-family shapes, transposed and octave-wrapped within fret 20. CI independently verifies that every generated voicing produces exactly the requested chord pitch classes.
+```text
+Am | A | A7 | Amaj7 | Am7 | Asus2 | Asus4
+```
+
+This is deliberately described as the **same-root chord family**, not as harmonic equivalence.
+
+The product does not require the user to enter chord tones such as `A C E`. Note-set chord search is outside the product scope.
+
+### Guitar voicings
+
+The C family retains curated open/open-region alternatives. Stage 6 also adds curated first-position/open alternatives for common A, E, D, G, B and F-family shapes where practical. Remaining positions continue to come from the deterministic movable A/E/D-family generator.
+
+CI verifies:
+
+- all 84 canonical chords remain searchable;
+- every displayed voicing contains exactly the requested chord pitch classes;
+- generated frets stay within the bounded guitar range;
+- curated common shapes are exact and prioritized as the first variation.
 
 The button contains no “Play” or “Dokun” label. Touching the chord surface itself is the play action.
 
@@ -54,9 +73,10 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ```text
 Chord Symbol Search
+  -> Local Chord Catalog / Same-root Suggestions
   -> Chord Core
   -> Turkish Display Name
-  -> Curated / Movable Voicing Provider
+  -> Curated Open + Movable Voicing Provider
   -> Fingering / Barre metadata
   -> Large Chord Button
   -> exact MIDI pitches

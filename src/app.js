@@ -1,11 +1,13 @@
 import { parseChordQuery } from "./chord-core.js";
 import { chordNameTr } from "./chord-labels-tr.js";
+import { suggestChordSymbols } from "./chord-catalog.js";
 import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
 import { renderChordDiagramSvg } from "./diagram-model.js";
 
 const root = document.querySelector("#app");
 const input = document.querySelector("#chord-search");
+const suggestionsEl = document.querySelector("#suggestions");
 const symbolEl = document.querySelector("#chord-symbol");
 const readingEl = document.querySelector("#chord-reading");
 const board = document.querySelector("#chord-button");
@@ -18,6 +20,19 @@ const audio = createAudioAdapter(window);
 
 let symbol = "C";
 let index = 0;
+
+function renderSuggestions(value) {
+  const suggestions = suggestChordSymbols(value);
+  suggestionsEl.innerHTML = suggestions.map(candidate => {
+    const chord = parseChordQuery(candidate);
+    const reading = chord ? chordNameTr(chord) : "";
+    const selected = candidate === symbol;
+    return `<button type="button" class="suggestion${selected ? " selected" : ""}" data-symbol="${candidate}" aria-pressed="${selected}">
+      <strong>${candidate}</strong>
+      <span>${reading}</span>
+    </button>`;
+  }).join("");
+}
 
 function render() {
   const chord = parseChordQuery(symbol);
@@ -39,20 +54,33 @@ function render() {
   board.disabled = false;
   board.setAttribute("aria-label", `${symbol}, ${chordNameTr(chord)} akorunu çal`);
   status.textContent = audio.kind === "development-web-audio" ? "Geliştirme sesi" : "Gitar ses motoru bağlı";
+  renderSuggestions(input.value);
 }
 
-function selectQuery(value) {
-  const parsed = parseChordQuery(value);
-  if (!parsed) {
-    status.textContent = "Akor bulunamadı";
-    return;
-  }
+function selectSymbol(nextSymbol) {
+  const parsed = parseChordQuery(nextSymbol);
+  if (!parsed) return false;
   symbol = parsed.symbol;
   index = 0;
   render();
+  return true;
 }
 
-input.addEventListener("input", e => selectQuery(e.target.value));
+input.addEventListener("input", e => {
+  const value = e.target.value;
+  renderSuggestions(value);
+  if (!selectSymbol(value)) {
+    status.textContent = value.trim() ? "Önerilerden bir akor seçin" : "";
+  }
+});
+
+suggestionsEl.addEventListener("click", event => {
+  const button = event.target.closest("button[data-symbol]");
+  if (!button) return;
+  input.value = button.dataset.symbol;
+  selectSymbol(button.dataset.symbol);
+});
+
 board.addEventListener("click", async () => {
   const v = getVoicings(symbol)[index];
   if (!v) return;
@@ -68,6 +96,7 @@ board.addEventListener("click", async () => {
     status.textContent = error instanceof Error ? error.message : "Ses hatası";
   }
 });
+
 prev.addEventListener("click", () => { index = Math.max(0,index-1); render(); });
 next.addEventListener("click", () => { index = Math.min(getVoicings(symbol).length-1,index+1); render(); });
 

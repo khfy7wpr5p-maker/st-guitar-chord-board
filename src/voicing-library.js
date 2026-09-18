@@ -1,4 +1,5 @@
 import { parseChordQuery } from "./chord-core.js";
+import { getCommonOpenVoicing } from "./curated-open-voicings.js";
 import { generateMovableVoicings } from "./movable-voicings.js";
 
 const V = (frets, fingers, barres = [], shape = "curated") => ({ frets, fingers, barres, shape, generated:false });
@@ -41,10 +42,29 @@ export const C_FAMILY_VOICINGS = Object.freeze({
   ]
 });
 
+function voicingKey(voicing) {
+  return voicing.frets.join(",");
+}
+
+function combineUnique(primary, generated) {
+  const result=[];
+  const seen=new Set();
+  for (const voicing of [...primary,...generated]) {
+    const key=voicingKey(voicing);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(voicing);
+  }
+  return result;
+}
+
 export function getVoicings(symbol) {
   if (C_FAMILY_VOICINGS[symbol]) return C_FAMILY_VOICINGS[symbol];
   const chord = parseChordQuery(symbol);
-  return chord ? generateMovableVoicings(chord) : [];
+  if (!chord) return [];
+  const generated = generateMovableVoicings(chord);
+  const open = getCommonOpenVoicing(symbol);
+  return combineUnique(open ? [open] : [], generated);
 }
 
 const OPEN_MIDI = [40,45,50,55,59,64];
