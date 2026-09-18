@@ -1,6 +1,7 @@
 import { parseChordQuery } from "./chord-core.js";
 import { getCommonOpenVoicing } from "./curated-open-voicings.js";
 import { generateMovableVoicings } from "./movable-voicings.js";
+import { generatePowerVoicings } from "./power-voicings.js";
 
 const V = (frets, fingers, barres = [], shape = "curated") => ({ frets, fingers, barres, shape, generated:false });
 
@@ -62,6 +63,7 @@ export function getVoicings(symbol) {
   if (C_FAMILY_VOICINGS[symbol]) return C_FAMILY_VOICINGS[symbol];
   const chord = parseChordQuery(symbol);
   if (!chord) return [];
+  if (chord.quality === "5") return generatePowerVoicings(chord);
   const generated = generateMovableVoicings(chord);
   const open = getCommonOpenVoicing(symbol);
   return combineUnique(open ? [open] : [], generated);
