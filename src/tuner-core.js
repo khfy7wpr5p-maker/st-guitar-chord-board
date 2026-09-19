@@ -8,6 +8,12 @@ export const TUNER_SIGNAL_DEFAULTS = Object.freeze({
   holdMs: 800
 });
 
+export const TUNER_DISPLAY_DEFAULTS = Object.freeze({
+  steadyAlpha: 0.24,
+  correctionAlpha: 0.48,
+  correctionThresholdCents: 10
+});
+
 export function signalRms(samples) {
   if (!(samples instanceof Float32Array) && !Array.isArray(samples)) return 0;
   if (!samples.length) return 0;
@@ -54,6 +60,24 @@ export function shouldHoldReading(lastDetectedAt, now, holdMs=TUNER_SIGNAL_DEFAU
     && holdMs >= 0
     && now >= lastDetectedAt
     && now-lastDetectedAt <= holdMs;
+}
+
+export function smoothTuningReading(previous, next, {
+  steadyAlpha=TUNER_DISPLAY_DEFAULTS.steadyAlpha,
+  correctionAlpha=TUNER_DISPLAY_DEFAULTS.correctionAlpha,
+  correctionThresholdCents=TUNER_DISPLAY_DEFAULTS.correctionThresholdCents
+} = {}) {
+  if (!next) return null;
+  if (!previous || previous.midi !== next.midi) return Object.freeze({...next});
+
+  const deltaCents=next.cents-previous.cents;
+  const alpha=Math.abs(deltaCents) >= correctionThresholdCents ? correctionAlpha : steadyAlpha;
+  const boundedAlpha=Math.min(1,Math.max(0,alpha));
+  return Object.freeze({
+    ...next,
+    frequency: previous.frequency + (next.frequency-previous.frequency)*boundedAlpha,
+    cents: previous.cents + deltaCents*boundedAlpha
+  });
 }
 
 export function frequencyToTuning(frequency, referenceHz = 440) {

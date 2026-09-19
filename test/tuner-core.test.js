@@ -8,6 +8,7 @@ import {
   frequencyToTuning,
   shouldHoldReading,
   signalRms,
+  smoothTuningReading,
   updateNoiseFloor
 } from "../src/tuner-core.js";
 
@@ -78,4 +79,37 @@ test("sustain hold keeps the last note visible across brief pitch dropouts", () 
   assert.equal(shouldHoldReading(1000,1800),true);
   assert.equal(shouldHoldReading(1000,1801),false);
   assert.equal(shouldHoldReading(Number.NEGATIVE_INFINITY,1200),false);
+});
+
+
+test("display smoothing damps small cent jitter while staying responsive", () => {
+  const previous=frequencyToTuning(440);
+  const next=frequencyToTuning(441);
+  const smoothed=smoothTuningReading(previous,next);
+  assert.equal(smoothed.note,"A");
+  assert.ok(Math.abs(smoothed.cents) < Math.abs(next.cents));
+  assert.ok(smoothed.cents > 0);
+  assert.ok(smoothed.frequency > previous.frequency);
+  assert.ok(smoothed.frequency < next.frequency);
+});
+
+test("display smoothing responds faster to a larger tuning correction", () => {
+  const previous=frequencyToTuning(440);
+  const small=frequencyToTuning(441);
+  const large=frequencyToTuning(445);
+  const smallMove=smoothTuningReading(previous,small);
+  const largeMove=smoothTuningReading(previous,large);
+  const smallRatio=smallMove.cents/small.cents;
+  const largeRatio=largeMove.cents/large.cents;
+  assert.ok(largeRatio > smallRatio);
+});
+
+test("display smoothing snaps immediately when the detected note changes", () => {
+  const previous=frequencyToTuning(440);
+  const next=frequencyToTuning(466.1637615);
+  const smoothed=smoothTuningReading(previous,next);
+  assert.equal(smoothed.note,"A♯");
+  assert.equal(smoothed.midi,next.midi);
+  assert.equal(smoothed.frequency,next.frequency);
+  assert.equal(smoothed.cents,next.cents);
 });

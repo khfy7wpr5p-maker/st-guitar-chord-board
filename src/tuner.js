@@ -6,6 +6,7 @@ import {
   frequencyToTuning,
   shouldHoldReading,
   signalRms,
+  smoothTuningReading,
   updateNoiseFloor
 } from "./tuner-core.js";
 
@@ -67,6 +68,7 @@ export function createChromaticTuner(doc = document, win = window) {
   let active=false;
   let history=[];
   let lastReading=null;
+  let displayReading=null;
   let lastDetectedAt=Number.NEGATIVE_INFINITY;
   let noiseFloor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
   const buffer=new Float32Array(2048);
@@ -107,6 +109,7 @@ export function createChromaticTuner(doc = document, win = window) {
     analyser=null;
     history=[];
     lastReading=null;
+    displayReading=null;
     lastDetectedAt=Number.NEGATIVE_INFINITY;
     noiseFloor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
     if (context) {
@@ -174,10 +177,12 @@ export function createChromaticTuner(doc = document, win = window) {
             history.push(detected);
             if (history.length > 3) history.shift();
             const frequency=median(history);
-            lastReading=frequencyToTuning(frequency);
+            const rawReading=frequencyToTuning(frequency);
+            displayReading=smoothTuningReading(displayReading,rawReading);
+            lastReading=displayReading;
             lastDetectedAt=now;
             noiseFloor=updateNoiseFloor(noiseFloor,rms,{signalDetected:true});
-            setReading(lastReading);
+            setReading(displayReading);
             statusEl.textContent="Dinleniyor";
           } else {
             noiseFloor=updateNoiseFloor(noiseFloor,rms);
@@ -187,6 +192,7 @@ export function createChromaticTuner(doc = document, win = window) {
             } else {
               history=[];
               lastReading=null;
+              displayReading=null;
               setReading(null);
               statusEl.textContent="Bir nota çalın";
             }
