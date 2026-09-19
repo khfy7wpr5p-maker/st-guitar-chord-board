@@ -51,7 +51,7 @@ test("E major third position uses only index barre", () => {
 
 test("all displayed barres use finger 1", () => {
   const displayed=displayedVoicings();
-  assert.equal(displayed.length,276);
+  assert.equal(displayed.length,528);
   for (const {symbol,index,voicing} of displayed) {
     for (const barre of voicing.barres || []) {
       assert.equal(barre.finger,1,`${symbol} position ${index+1}`);
@@ -70,7 +70,7 @@ test("no displayed voicing encodes an implicit non-index barre", () => {
   }
 });
 
-test("catalog cardinality remains exactly 276", () => {
+test("catalog cardinality remains exactly 528", () => {
   let total=0;
   for (const root of CHORD_ROOTS) {
     for (const quality of CHORD_QUALITIES) {
@@ -80,7 +80,7 @@ test("catalog cardinality remains exactly 276", () => {
       total+=voicings.length;
     }
   }
-  assert.equal(total,276);
+  assert.equal(total,528);
 });
 
 test("every displayed voicing preserves exact chord pitch identity", () => {
@@ -97,5 +97,5 @@ test("every displayed voicing preserves exact chord pitch identity", () => {
       }
     }
   }
-  assert.equal(checked,276);
+  assert.equal(checked,528);
 });
