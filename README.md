@@ -305,3 +305,11 @@ Validation:
 - common open `Cadd9`, `Aadd9`, `Eadd9`, `Gadd9` and `D6` shapes are curated first;
 - `Fadd9` / `Faug` parser ambiguity with Turkish `Fa` is explicitly regression-tested;
 - release version is `0.21.0`, offline cache `st-guitar-chord-board-v19`.
+
+
+### 0.21.1 — extended-family suggestion visibility hotfix ✅
+- same-root search suggestions now expose all 15 supported chord families instead of truncating at the legacy 8-family limit;
+- the strip remains horizontally scrollable on phone screens;
+- Stage 24 chord data was already present in 0.21.0; this hotfix makes the new families visibly discoverable without typing the full symbol;
+- iPhone WebKit regression verifies `C6`, `Cm6`, `C9`, `Cadd9`, `Cdim`, `Caug` and `Cm7b5` are all present after entering `C`;
+- release version is `0.21.1`; Service Worker cache rotates to `st-guitar-chord-board-v20`.
