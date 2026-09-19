@@ -79,7 +79,6 @@ test("visual validation: Bb5 second position and restored state", async ({ page 
   await page.screenshot({ path:`${OUTPUT}/iphone-bb5-position-2-restored.png`, fullPage:true });
 });
 
-
 test("visual validation: A second position starts at fret five with weighted strings", async ({ page }) => {
   await page.goto("/");
   await page.locator("#chord-search").fill("A");
@@ -100,4 +99,41 @@ test("visual validation: A second position starts at fret five with weighted str
 
   await assertPhoneLayout(page);
   await page.screenshot({ path:`${OUTPUT}/iphone-a-position-2-fret-5.png`, fullPage:true });
+});
+
+test("runtime fingering: open G shows bass-to-treble 3-2-4", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("G");
+
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+  await expect(page.locator('.finger-position[data-string="6"] .finger-number')).toHaveText("3");
+  await expect(page.locator('.finger-position[data-string="5"] .finger-number')).toHaveText("2");
+  await expect(page.locator('.finger-position[data-string="1"] .finger-number')).toHaveText("4");
+});
+
+test("runtime fingering: E third position renders index barre plus 2-3-4", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("E");
+  await page.locator("#next").tap();
+  await page.locator("#next").tap();
+
+  await expect(page.locator("#variant-count")).toHaveText("3 / 3");
+  await expect(page.locator(".chord-diagram")).toHaveAttribute("data-base-fret","7");
+  await expect(page.locator('.barre-mark[data-finger="1"]')).toHaveCount(1);
+  await expect(page.locator('.finger-position[data-string="4"] .finger-number')).toHaveText("2");
+  await expect(page.locator('.finger-position[data-string="3"] .finger-number')).toHaveText("3");
+  await expect(page.locator('.finger-position[data-string="2"] .finger-number')).toHaveText("4");
+});
+
+test("runtime fingering: D second position renders index barre plus 2-3-4", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("D");
+  await page.locator("#next").tap();
+
+  await expect(page.locator("#variant-count")).toHaveText("2 / 3");
+  await expect(page.locator(".chord-diagram")).toHaveAttribute("data-base-fret","5");
+  await expect(page.locator('.barre-mark[data-finger="1"]')).toHaveCount(1);
+  await expect(page.locator('.finger-position[data-string="4"] .finger-number')).toHaveText("2");
+  await expect(page.locator('.finger-position[data-string="3"] .finger-number')).toHaveText("3");
+  await expect(page.locator('.finger-position[data-string="2"] .finger-number')).toHaveText("4");
 });
