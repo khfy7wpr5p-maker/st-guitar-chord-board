@@ -4,8 +4,12 @@ import {
   CHROMATIC_NOTES,
   TUNER_SIGNAL_DEFAULTS,
   adaptiveRmsFloor,
+  choosePrecisionPitch,
+  detectPitchHighPrecision,
   detectPitchYin,
+  detectPitchYinDetailed,
   frequencyToTuning,
+  normalizedAutocorrelation,
   shouldHoldReading,
   signalRms,
   smoothTuningReading,
@@ -112,4 +116,55 @@ test("display smoothing snaps immediately when the detected note changes", () =>
   assert.equal(smoothed.midi,next.midi);
   assert.equal(smoothed.frequency,next.frequency);
   assert.equal(smoothed.cents,next.cents);
+});
+
+test("detailed YIN exposes confidence for a clean guitar tone", () => {
+  const sampleRate=48000;
+  const expected=110;
+  const samples=new Float32Array(4096);
+  for (let i=0;i<samples.length;i+=1) samples[i]=0.25*Math.sin(2*Math.PI*expected*i/sampleRate);
+  const result=detectPitchYinDetailed(samples,sampleRate,{rmsFloor:0.001,threshold:0.18});
+  assert.ok(result);
+  assert.ok(Math.abs(result.frequency-expected)<0.15);
+  assert.ok(result.confidence>0.9);
+  assert.ok(normalizedAutocorrelation(samples,result.period)>0.95);
+});
+
+test("high precision detector tracks a weak harmonic-rich low E2", () => {
+  const sampleRate=48000;
+  const expected=82.4069;
+  const samples=new Float32Array(8192);
+  for (let i=0;i<samples.length;i+=1) {
+    const phase=2*Math.PI*expected*i/sampleRate;
+    samples[i]=0.0035*(0.72*Math.sin(phase)+0.38*Math.sin(2*phase)+0.18*Math.sin(3*phase))+0.00018*Math.sin(i*1.731);
+  }
+  const result=detectPitchHighPrecision(samples,sampleRate,{rmsFloor:0.0012,threshold:0.18});
+  assert.ok(result,"weak E2 should be detected");
+  assert.ok(Math.abs(result.frequency-expected)<0.25,String(result.frequency)+" was not close to E2");
+  assert.ok(result.confidence>=0.68);
+});
+
+test("high precision detector rejects silence and unpitched low-level noise", () => {
+  assert.equal(detectPitchHighPrecision(new Float32Array(8192),48000,{rmsFloor:0.001}),null);
+  const noise=new Float32Array(8192);
+  for (let i=0;i<noise.length;i+=1) noise[i]=0.0015*Math.sin(i*2.173)+0.0012*Math.sin(i*0.619);
+  const result=detectPitchHighPrecision(noise,48000,{rmsFloor:0.001});
+  assert.equal(result,null);
+});
+
+test("precision candidate consensus blends agreeing windows and guards octave disagreement", () => {
+  const short={frequency:82.5,confidence:0.82,periodicity:0.8};
+  const long={frequency:82.4,confidence:0.91,periodicity:0.9};
+  const agreed=choosePrecisionPitch(short,long);
+  assert.ok(agreed);
+  assert.ok(agreed.frequency>82.39 && agreed.frequency<82.51);
+  assert.equal(agreed.consensus,true);
+
+  const octave=choosePrecisionPitch(
+    {frequency:164.8,confidence:0.82,periodicity:0.8},
+    {frequency:82.4,confidence:0.86,periodicity:0.86}
+  );
+  assert.ok(octave);
+  assert.ok(Math.abs(octave.frequency-82.4)<0.01);
+  assert.equal(octave.octaveGuard,true);
 });

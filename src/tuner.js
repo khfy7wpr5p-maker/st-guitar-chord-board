@@ -1,8 +1,10 @@
 import {
   CHROMATIC_NOTES,
   TUNER_SIGNAL_DEFAULTS,
+  TUNER_PRECISION_DEFAULTS,
   adaptiveRmsFloor,
-  detectPitchYin,
+  choosePrecisionPitch,
+  detectPitchHighPrecision,
   frequencyToTuning,
   shouldHoldReading,
   signalRms,
@@ -10,9 +12,10 @@ import {
   updateNoiseFloor
 } from "./tuner-core.js";
 
-const UPDATE_INTERVAL_MS = 80;
-const IN_TUNE_CENTS = 5;
-const YIN_THRESHOLD = 0.2;
+const UPDATE_INTERVAL_MS = 100;
+const IN_TUNE_CENTS = 3;
+const YIN_THRESHOLD = 0.18;
+const CALIBRATION_MS = 450;
 
 function stopTracks(stream) {
   for (const track of stream?.getTracks?.() || []) track.stop();
@@ -71,7 +74,8 @@ export function createChromaticTuner(doc = document, win = window) {
   let displayReading=null;
   let lastDetectedAt=Number.NEGATIVE_INFINITY;
   let noiseFloor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
-  const buffer=new Float32Array(2048);
+  let calibrationUntil=0;
+  const buffer=new Float32Array(TUNER_PRECISION_DEFAULTS.longWindowSize);
 
   function setReading(reading) {
     for (const label of noteRing.children) {
@@ -152,10 +156,11 @@ export function createChromaticTuner(doc = document, win = window) {
       await context.resume();
       source=context.createMediaStreamSource(stream);
       analyser=context.createAnalyser();
-      analyser.fftSize=2048;
+      analyser.fftSize=TUNER_PRECISION_DEFAULTS.longWindowSize;
       analyser.smoothingTimeConstant=0;
       source.connect(analyser);
-      statusEl.textContent="Dinleniyor";
+      calibrationUntil=(win.performance?.now?.() ?? 0)+CALIBRATION_MS;
+      statusEl.textContent="Ortam kalibre ediliyor…";
 
       const tick=(now) => {
         if (!active || !analyser || !context) return;
@@ -164,18 +169,34 @@ export function createChromaticTuner(doc = document, win = window) {
           analyser.getFloatTimeDomainData(buffer);
           const rms=signalRms(buffer);
           const rmsFloor=adaptiveRmsFloor(noiseFloor);
-          const detected=detectPitchYin(buffer,context.sampleRate,{
+          const shortWindow=buffer.subarray(buffer.length-TUNER_PRECISION_DEFAULTS.shortWindowSize);
+          const shortCandidate=detectPitchHighPrecision(shortWindow,context.sampleRate,{
             rmsFloor,
             threshold:YIN_THRESHOLD
           });
-          if (detected) {
+
+          let longCandidate=null;
+          if (
+            !shortCandidate ||
+            shortCandidate.frequency<TUNER_PRECISION_DEFAULTS.longWindowBelowHz ||
+            shortCandidate.confidence<0.86
+          ) {
+            longCandidate=detectPitchHighPrecision(buffer,context.sampleRate,{
+              rmsFloor,
+              threshold:YIN_THRESHOLD
+            });
+          }
+
+          const candidate=choosePrecisionPitch(shortCandidate,longCandidate);
+          if (candidate) {
+            const detected=candidate.frequency;
             if (history.length) {
               const anchor=history[history.length-1];
               const distance=Math.abs(1200*Math.log2(detected/anchor));
-              if (distance > 80) history=[];
+              if (distance > 90) history=[];
             }
             history.push(detected);
-            if (history.length > 3) history.shift();
+            if (history.length > 5) history.shift();
             const frequency=median(history);
             const rawReading=frequencyToTuning(frequency);
             displayReading=smoothTuningReading(displayReading,rawReading);
@@ -183,7 +204,7 @@ export function createChromaticTuner(doc = document, win = window) {
             lastDetectedAt=now;
             noiseFloor=updateNoiseFloor(noiseFloor,rms,{signalDetected:true});
             setReading(displayReading);
-            statusEl.textContent="Dinleniyor";
+            statusEl.textContent=candidate.confidence>=0.88 ? "Yüksek hassasiyet" : "Dinleniyor";
           } else {
             noiseFloor=updateNoiseFloor(noiseFloor,rms);
             if (lastReading && shouldHoldReading(lastDetectedAt,now)) {
@@ -194,7 +215,7 @@ export function createChromaticTuner(doc = document, win = window) {
               lastReading=null;
               displayReading=null;
               setReading(null);
-              statusEl.textContent="Bir nota çalın";
+              statusEl.textContent=now<calibrationUntil ? "Ortam kalibre ediliyor…" : "Bir nota çalın";
             }
           }
         }
