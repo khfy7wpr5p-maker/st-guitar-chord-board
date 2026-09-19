@@ -15,7 +15,7 @@ function assertExactVoicing(symbol, voicing) {
   const midis=voicingMidi(voicing);
   assert.ok(midis.length>=3);
   const actual=[...new Set(midis.map(m=>m%12))].sort((a,b)=>a-b);
-  assert.deepEqual(actual,expected,`${symbol} ${voicing.frets.join(",")}`);
+  assert.deepEqual(actual,expected,symbol + " " + voicing.frets.join(","));
 }
 
 test("parses symbolic and Turkish chord queries", () => {
@@ -53,18 +53,21 @@ test("chord interval semantics are exact", () => {
   assert.deepEqual(pitchClassesForChord(parseChordQuery("C5")), [0,7]);
 });
 
-test("the original 84 chords retain at least three exact guitar voicings", () => {
+test("the original 84 chords expose exactly three exact guitar voicings", () => {
   let chordCount=0;
+  let voicingCount=0;
   for (const root of ROOTS) {
     for (const quality of STANDARD_QUALITIES) {
       const symbol=formatChordSymbol(root,quality);
       const voicings=getVoicings(symbol);
       chordCount+=1;
-      assert.ok(voicings.length>=3,symbol);
+      voicingCount+=voicings.length;
+      assert.equal(voicings.length,3,symbol);
       for (const voicing of voicings) assertExactVoicing(symbol,voicing);
     }
   }
   assert.equal(chordCount,84);
+  assert.equal(voicingCount,252);
 });
 
 test("all 12 power chords expose exactly two exact guitar positions", () => {
@@ -75,6 +78,16 @@ test("all 12 power chords expose exactly two exact guitar positions", () => {
     assert.deepEqual(voicings.map(v=>v.shape),["POWER_ROOT_6","POWER_ROOT_5"]);
     for (const voicing of voicings) assertExactVoicing(symbol,voicing);
   }
+});
+
+test("all 96 chord identities expose exactly 276 displayed voicings", () => {
+  let total=0;
+  for (const root of ROOTS) {
+    for (const quality of [...STANDARD_QUALITIES,"5"]) {
+      total+=getVoicings(formatChordSymbol(root,quality)).length;
+    }
+  }
+  assert.equal(total,276);
 });
 
 test("requested power-chord examples use familiar two-position geometry", () => {
