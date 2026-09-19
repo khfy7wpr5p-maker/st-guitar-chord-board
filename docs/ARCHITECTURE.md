@@ -319,3 +319,19 @@ Persistence/release compatibility:
 - Service Worker cache rotates to `st-guitar-chord-board-v14`;
 - release `0.19.0` keeps the existing pinned 2,330,622-byte `electric_guitar_jazz` soundfont;
 - GitHub Pages remains the static/offline distribution target; no Render dependency is introduced.
+
+
+### Stage 22 — refined in-house SVG chord diagram renderer ✅
+Rendering policy:
+- the diagram remains a local deterministic SVG generated from the selected ST voicing;
+- six string lines use guitar-like visual gauge weighting from bass to treble;
+- fret lines are visually lighter than strings while the nut remains a distinct heavy line only in first position;
+- higher-position diagrams do not fake a nut and expose the actual base fret as renderer metadata and accessible text;
+- finger, open/mute and barre marks retain the same musical semantics while receiving tighter phone-scale styling.
+
+Regression evidence:
+- unit tests pin weighted strings, nut/high-position separation, base-fret metadata and barre metadata;
+- iPhone browser validation pins A major position 2 to fret 5 and confirms the lowest string is visually heavier than the highest string;
+- release version `0.20.0` rotates the offline cache to `st-guitar-chord-board-v15`.
+
+No third-party chord-rendering runtime is added.
