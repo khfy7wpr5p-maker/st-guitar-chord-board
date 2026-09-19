@@ -45,6 +45,14 @@ export function buildChordDiagramModel(voicing, visibleFrets = 5) {
 }
 
 const X0=45, X1=315, TOP=60, BOTTOM=310;
+const STRING_STROKE_WIDTHS=Object.freeze({
+  6:4.8,
+  5:4.1,
+  4:3.4,
+  3:2.8,
+  2:2.2,
+  1:1.8
+});
 
 function xForString(stringNumber) {
   return X0 + ((6 - stringNumber) * (X1 - X0) / 5);
@@ -55,47 +63,56 @@ function yForRow(row, visibleFrets) {
   return TOP + (row - 0.5) * fretHeight;
 }
 
+function diagramAriaLabel(model) {
+  return model.baseFret===1
+    ? "Gitar akor diyagramı, açık pozisyon"
+    : `Gitar akor diyagramı, ${model.baseFret}. perdeden`;
+}
+
 export function renderChordDiagramSvg(voicing) {
   const model=buildChordDiagramModel(voicing);
   const fretHeight=(BOTTOM-TOP)/model.visibleFrets;
   const vertical=model.strings.map(s =>
-    `<line x1="${xForString(s.stringNumber)}" y1="${TOP}" x2="${xForString(s.stringNumber)}" y2="${BOTTOM}" />`
+    `<line class="string-line string-${s.stringNumber}" data-string="${s.stringNumber}" x1="${xForString(s.stringNumber)}" y1="${TOP}" x2="${xForString(s.stringNumber)}" y2="${BOTTOM}" stroke-width="${STRING_STROKE_WIDTHS[s.stringNumber]}" />`
   ).join("");
   const horizontal=Array.from({length:model.visibleFrets+1},(_,i)=>{
     const y=TOP+i*fretHeight;
-    const width=i===0&&model.baseFret===1?8:3;
-    return `<line x1="${X0}" y1="${y}" x2="${X1}" y2="${y}" stroke-width="${width}" />`;
+    const isNut=i===0&&model.baseFret===1;
+    const width=isNut?8:2.6;
+    const classes=isNut?"fret-line nut-line":"fret-line";
+    return `<line class="${classes}" data-fret-line="${i}" x1="${X0}" y1="${y}" x2="${X1}" y2="${y}" stroke-width="${width}" />`;
   }).join("");
 
   const status=model.strings.map(s=>{
     const x=xForString(s.stringNumber);
-    if(s.state==="open") return `<circle cx="${x}" cy="30" r="10" class="open-mark"/>`;
-    if(s.state==="muted") return `<text x="${x}" y="37" class="mute-mark">×</text>`;
+    if(s.state==="open") return `<circle cx="${x}" cy="30" r="9" class="open-mark" data-string="${s.stringNumber}"/>`;
+    if(s.state==="muted") return `<text x="${x}" y="37" class="mute-mark" data-string="${s.stringNumber}">×</text>`;
     return "";
   }).join("");
 
   const barres=model.barres.map(b=>{
     const xA=xForString(b.fromString);
     const xB=xForString(b.toString);
-    const left=Math.min(xA,xB)-18;
-    const width=Math.abs(xB-xA)+36;
-    const y=yForRow(b.row,model.visibleFrets)-18;
-    return `<rect x="${left}" y="${y}" width="${width}" height="36" rx="18" class="barre-mark"/>`;
+    const left=Math.min(xA,xB)-17;
+    const width=Math.abs(xB-xA)+34;
+    const y=yForRow(b.row,model.visibleFrets)-17;
+    return `<rect x="${left}" y="${y}" width="${width}" height="34" rx="17" class="barre-mark" data-finger="${b.finger ?? ""}" />`;
   }).join("");
 
   const notes=model.strings.filter(s=>s.state==="fretted").map(s=>{
     const x=xForString(s.stringNumber);
     const y=yForRow(s.row,model.visibleFrets);
     const label=s.finger ?? "";
-    return `<g><circle cx="${x}" cy="${y}" r="18" class="finger-mark"/><text x="${x}" y="${y+6}" class="finger-number">${label}</text></g>`;
+    return `<g class="finger-position" data-string="${s.stringNumber}" data-fret="${s.fret}"><circle cx="${x}" cy="${y}" r="17" class="finger-mark"/><text x="${x}" y="${y+6}" class="finger-number">${label}</text></g>`;
   }).join("");
 
   const base=model.baseFret>1
-    ? `<text x="18" y="${yForRow(1,model.visibleFrets)+6}" class="base-fret">${model.baseFret}</text>`
+    ? `<text x="19" y="${yForRow(1,model.visibleFrets)+6}" class="base-fret">${model.baseFret}</text>`
     : "";
 
-  return `<svg class="chord-diagram" viewBox="0 0 360 340" role="img" aria-label="Gitar akor diyagramı">
+  return `<svg class="chord-diagram" viewBox="0 0 360 340" role="img" focusable="false" preserveAspectRatio="xMidYMid meet" shape-rendering="geometricPrecision" data-base-fret="${model.baseFret}" aria-label="${diagramAriaLabel(model)}">
     <g class="fretboard-lines">${vertical}${horizontal}</g>
-    ${status}${base}${barres}${notes}
+    <g class="string-status">${status}</g>
+    ${base}${barres}${notes}
   </svg>`;
 }
