@@ -25,7 +25,7 @@ test("iPhone safe-area and standalone metadata are present", () => {
 test("service worker keeps offline app shell bounded to same-origin requests", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
   assert.match(sw,/APP_SHELL/);
-  assert.match(sw,/st-guitar-chord-board-v16/);
+  assert.match(sw,/st-guitar-chord-board-v18/);
   assert.match(sw,/url\.origin!==self\.location\.origin/);
   assert.match(sw,/event\.request\.mode==="navigate"/);
   assert.match(sw,/caches\.match\("\.\/index\.html"\)/);
