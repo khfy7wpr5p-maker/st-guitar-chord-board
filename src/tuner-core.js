@@ -191,6 +191,14 @@ export function detectPitchYinDetailed(samples, sampleRate, {
     }
     if (cmnd[bestLag] > 0.3) return null;
     lag=bestLag;
+  } else {
+    const localStart=Math.max(minLag,Math.floor(lag*0.85));
+    const localEnd=Math.min(maxLag,Math.ceil(lag*1.15));
+    let localBest=lag;
+    for (let candidate=localStart;candidate<=localEnd;candidate+=1) {
+      if (cmnd[candidate] < cmnd[localBest]) localBest=candidate;
+    }
+    lag=localBest;
   }
 
   const period=refinedPeriod(cmnd,lag,maxLag);

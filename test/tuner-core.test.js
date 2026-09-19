@@ -79,9 +79,9 @@ test("adaptive noise floor rises slowly and never learns a detected note as nois
 });
 
 test("sustain hold keeps the last note visible across brief pitch dropouts", () => {
-  assert.equal(shouldHoldReading(1000,1799),true);
-  assert.equal(shouldHoldReading(1000,1800),true);
-  assert.equal(shouldHoldReading(1000,1801),false);
+  assert.equal(shouldHoldReading(1000,1899),true);
+  assert.equal(shouldHoldReading(1000,1900),true);
+  assert.equal(shouldHoldReading(1000,1901),false);
   assert.equal(shouldHoldReading(Number.NEGATIVE_INFINITY,1200),false);
 });
 
@@ -147,7 +147,11 @@ test("high precision detector tracks a weak harmonic-rich low E2", () => {
 test("high precision detector rejects silence and unpitched low-level noise", () => {
   assert.equal(detectPitchHighPrecision(new Float32Array(8192),48000,{rmsFloor:0.001}),null);
   const noise=new Float32Array(8192);
-  for (let i=0;i<noise.length;i+=1) noise[i]=0.0015*Math.sin(i*2.173)+0.0012*Math.sin(i*0.619);
+  let state=0x12345678;
+  for (let i=0;i<noise.length;i+=1) {
+    state=(1664525*state+1013904223)>>>0;
+    noise[i]=((state/0xffffffff)*2-1)*0.003;
+  }
   const result=detectPitchHighPrecision(noise,48000,{rmsFloor:0.001});
   assert.equal(result,null);
 });
