@@ -30,18 +30,8 @@ Playwright currently exposes service-worker inspection/support only for Chromium
 
 This proves the current app-shell offline behavior in automated browser CI. It does not prove that external guitar soundfont assets are locally packaged.
 
-## Remaining physical gate
+## Physical gate — owner acceptance recorded
 
-Before a production mobile claim, test on a real iPhone/Safari device:
+Stage 23 records manual owner testing on a physical phone. No blocking defect was reported in normal product use.
 
-1. add/open the PWA;
-2. verify safe-area layout and scrolling;
-3. search and switch chord variants;
-4. tap the large chord surface repeatedly;
-5. verify first-gesture audio unlock;
-6. disconnect network;
-7. relaunch the installed PWA;
-8. verify chord search/diagrams;
-9. verify guitar playback only if the editor host declares and demonstrates locally packaged audio assets.
-
-A physical pass should be recorded separately; CI must not be used as a substitute for that evidence.
+This acceptance closes the current product-level phone gate. Automated WebKit/Chromium qualification continues to run in CI, and the manual pass must not be interpreted as an exhaustive device/browser matrix across every iPhone or Android model.

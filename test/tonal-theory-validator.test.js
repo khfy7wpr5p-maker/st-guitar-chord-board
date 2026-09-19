@@ -13,7 +13,7 @@ function voicingPitchClasses(voicing) {
   return [...new Set(voicingMidi(voicing).map(midi=>midi%12))].sort((a,b)=>a-b);
 }
 
-test("Tonal independently agrees with all 96 canonical chord pitch-class identities", () => {
+test("Tonal independently agrees with all 180 canonical chord pitch-class identities", () => {
   let checked=0;
   for (const root of CHORD_ROOTS) {
     for (const quality of CHORD_QUALITIES) {
@@ -23,7 +23,7 @@ test("Tonal independently agrees with all 96 canonical chord pitch-class identit
       checked+=1;
     }
   }
-  assert.equal(checked,96);
+  assert.equal(checked,180);
 });
 
 test("every displayed guitar voicing agrees with the Tonal chord identity", () => {
@@ -38,7 +38,7 @@ test("every displayed guitar voicing agrees with the Tonal chord identity", () =
       }
     }
   }
-  assert.equal(checked,276);
+  assert.equal(checked,528);
 });
 
 test("enharmonic display aliases validate through canonical identity", () => {

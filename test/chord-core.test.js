@@ -5,6 +5,7 @@ import { getVoicings, voicingMidi } from "../src/voicing-library.js";
 
 const ROOTS=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const STANDARD_QUALITIES=["major","m","7","maj7","m7","sus2","sus4"];
+const EXTENDED_QUALITIES=["6","m6","9","add9","dim","aug","m7b5"];
 
 function assertExactVoicing(symbol, voicing) {
   const chord=parseChordQuery(symbol);
@@ -27,6 +28,13 @@ test("parses symbolic and Turkish chord queries", () => {
   assert.deepEqual(parseChordQuery("Sibmaj7"), {root:"A#",quality:"maj7",symbol:"A#maj7"});
   assert.deepEqual(parseChordQuery("A5"), {root:"A",quality:"5",symbol:"A5"});
   assert.deepEqual(parseChordQuery("C#5"), {root:"C#",quality:"5",symbol:"C#5"});
+  assert.deepEqual(parseChordQuery("C6"), {root:"C",quality:"6",symbol:"C6"});
+  assert.deepEqual(parseChordQuery("Cm6"), {root:"C",quality:"m6",symbol:"Cm6"});
+  assert.deepEqual(parseChordQuery("C9"), {root:"C",quality:"9",symbol:"C9"});
+  assert.deepEqual(parseChordQuery("Cadd9"), {root:"C",quality:"add9",symbol:"Cadd9"});
+  assert.deepEqual(parseChordQuery("Cdim"), {root:"C",quality:"dim",symbol:"Cdim"});
+  assert.deepEqual(parseChordQuery("Caug"), {root:"C",quality:"aug",symbol:"Caug"});
+  assert.deepEqual(parseChordQuery("Cm7b5"), {root:"C",quality:"m7b5",symbol:"Cm7b5"});
 });
 
 test("flat presentation preserves spelling while canonical identity stays stable", () => {
@@ -51,6 +59,13 @@ test("chord interval semantics are exact", () => {
   assert.deepEqual(pitchClassesForChord(parseChordQuery("C7")), [0,4,7,10]);
   assert.deepEqual(pitchClassesForChord(parseChordQuery("Csus2")), [0,2,7]);
   assert.deepEqual(pitchClassesForChord(parseChordQuery("C5")), [0,7]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("C6")), [0,4,7,9]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("Cm6")), [0,3,7,9]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("C9")), [0,4,7,10,2]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("Cadd9")), [0,4,7,2]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("Cdim")), [0,3,6]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("Caug")), [0,4,8]);
+  assert.deepEqual(pitchClassesForChord(parseChordQuery("Cm7b5")), [0,3,6,10]);
 });
 
 test("the original 84 chords expose exactly three exact guitar voicings", () => {
@@ -58,6 +73,23 @@ test("the original 84 chords expose exactly three exact guitar voicings", () => 
   let voicingCount=0;
   for (const root of ROOTS) {
     for (const quality of STANDARD_QUALITIES) {
+      const symbol=formatChordSymbol(root,quality);
+      const voicings=getVoicings(symbol);
+      chordCount+=1;
+      voicingCount+=voicings.length;
+      assert.equal(voicings.length,3,symbol);
+      for (const voicing of voicings) assertExactVoicing(symbol,voicing);
+    }
+  }
+  assert.equal(chordCount,84);
+  assert.equal(voicingCount,252);
+});
+
+test("the seven extended families expose exactly three exact guitar voicings per root", () => {
+  let chordCount=0;
+  let voicingCount=0;
+  for (const root of ROOTS) {
+    for (const quality of EXTENDED_QUALITIES) {
       const symbol=formatChordSymbol(root,quality);
       const voicings=getVoicings(symbol);
       chordCount+=1;
@@ -80,14 +112,14 @@ test("all 12 power chords expose exactly two exact guitar positions", () => {
   }
 });
 
-test("all 96 chord identities expose exactly 276 displayed voicings", () => {
+test("all 180 chord identities expose exactly 528 displayed voicings", () => {
   let total=0;
   for (const root of ROOTS) {
-    for (const quality of [...STANDARD_QUALITIES,"5"]) {
+    for (const quality of [...STANDARD_QUALITIES,"5",...EXTENDED_QUALITIES]) {
       total+=getVoicings(formatChordSymbol(root,quality)).length;
     }
   }
-  assert.equal(total,276);
+  assert.equal(total,528);
 });
 
 test("requested power-chord examples use familiar two-position geometry", () => {

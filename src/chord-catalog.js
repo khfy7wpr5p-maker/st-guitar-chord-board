@@ -1,7 +1,10 @@
 import { formatChordSymbol, parseChordPresentation } from "./chord-core.js";
 
 export const CHORD_ROOTS = Object.freeze(["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]);
-export const CHORD_QUALITIES = Object.freeze(["major","m","7","maj7","m7","sus2","sus4","5"]);
+export const CHORD_QUALITIES = Object.freeze([
+  "major","m","7","maj7","m7","sus2","sus4","5",
+  "6","m6","9","add9","dim","aug","m7b5"
+]);
 export const DISPLAY_ALIAS_ROOTS = Object.freeze(["Db","Eb","Gb","Ab","Bb"]);
 
 export const CHORD_SYMBOLS = Object.freeze(

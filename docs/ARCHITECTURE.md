@@ -335,3 +335,37 @@ Regression evidence:
 - release version `0.20.0` rotates the offline cache to `st-guitar-chord-board-v15`.
 
 No third-party chord-rendering runtime is added.
+
+
+### Stage 23 — manual physical-phone acceptance ✅
+The product owner completed a manual phone-quality pass and reported no observable product defect in normal phone use. This closes the previously open physical-phone acceptance gate for the current product flow. Automated WebKit and Chromium suites remain mandatory regression gates; this does not claim exhaustive coverage across all iPhone/Android models.
+
+### Stage 24 — extended chord vocabulary ✅
+Product vocabulary expands from 8 to 15 chord families and from 96 to 180 canonical symbols.
+
+New product harmonic extensions:
+- `dim = [0,3,6]`
+- `aug = [0,4,8]`
+- `6 = [0,4,7,9]`
+- `m6 = [0,3,7,9]`
+- `9 = [0,4,7,10,2]`
+- `add9 = [0,4,7,2]`
+- `m7b5 = [0,3,6,10]`
+
+Runtime policy:
+- Tonal remains a development/CI oracle rather than a browser runtime dependency;
+- extended families use deterministic movable templates plus a small curated-open set;
+- full pitch-class identity is required; no incomplete/omitted-tone “easy” ninth voicings are accepted as canonical display positions;
+- every non-power chord is capped at three positions and power chords remain at two;
+- only index-finger barre metadata is permitted.
+
+Catalog invariant:
+`168 non-power × 3 + 12 power × 2 = 528` displayed voicings.
+
+Parser policy:
+symbolic roots and Turkish solfege aliases are resolved by a valid root+quality parse rather than longest root prefix alone. This prevents `Fadd9` and `Faug` from being misread as Turkish `Fa` plus an invalid suffix.
+
+Release:
+- version `0.21.0`;
+- Service Worker cache `st-guitar-chord-board-v19`;
+- existing offline guitar soundfont remains unchanged.

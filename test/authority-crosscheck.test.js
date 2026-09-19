@@ -25,10 +25,22 @@ test("local source-backed chord intervals match harmonic-engine authority", () =
   }
 });
 
-test("power chord interval is an explicit product extension, not attributed to harmonic engine", () => {
-  assert.deepEqual(PRODUCT_HARMONIC_EXTENSIONS["5"],[0,7]);
-  assert.deepEqual(QUALITY_INTERVALS["5"],PRODUCT_HARMONIC_EXTENSIONS["5"]);
-  assert.equal(Object.prototype.hasOwnProperty.call(HARMONIC_AUTHORITY,"5"),false);
+test("Chord Board harmonic extensions remain explicit product semantics", () => {
+  const expected={
+    "5":[0,7],
+    dim:[0,3,6],
+    aug:[0,4,8],
+    "6":[0,4,7,9],
+    m6:[0,3,7,9],
+    "9":[0,4,7,10,2],
+    add9:[0,4,7,2],
+    m7b5:[0,3,6,10]
+  };
+  for (const [quality,intervals] of Object.entries(expected)) {
+    assert.deepEqual(PRODUCT_HARMONIC_EXTENSIONS[quality],intervals,quality);
+    assert.deepEqual(QUALITY_INTERVALS[quality],intervals,quality);
+    assert.equal(Object.prototype.hasOwnProperty.call(HARMONIC_AUTHORITY,quality),false,quality);
+  }
 });
 
 test("every displayed voicing round-trips against authoritative standard tuning", () => {
@@ -59,7 +71,18 @@ test("every displayed voicing stays within deterministic fingering resource boun
       }
     }
   }
-  assert.equal(checked,276);
+  assert.equal(checked,528);
+});
+
+test("all declared barres use the first finger", () => {
+  for (const root of CHORD_ROOTS) {
+    for (const quality of CHORD_QUALITIES) {
+      const symbol=formatChordSymbol(root,quality);
+      for (const voicing of getVoicings(symbol)) {
+        for (const barre of voicing.barres || []) assert.equal(barre.finger,1,symbol);
+      }
+    }
+  }
 });
 
 test("learned fingering ranker remains outside runtime authority", () => {

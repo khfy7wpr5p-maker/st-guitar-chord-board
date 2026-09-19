@@ -14,10 +14,14 @@ const ROOT_SPECS = new Map([
 ]);
 
 const QUALITIES = [
+  ["M7B5","m7b5"],["MIN7B5","m7b5"],["MINOR7B5","m7b5"],
+  ["ADD9","add9"],
   ["MAJ7","maj7"],["MAJOR7","maj7"],["MAJÖR7","maj7"],
   ["MIN7","m7"],["MINOR7","m7"],["MINÖR7","m7"],["MİNÖR7","m7"],["M7","m7"],
+  ["MIN6","m6"],["MINOR6","m6"],["MINÖR6","m6"],["MİNÖR6","m6"],["M6","m6"],
   ["SUS2","sus2"],["SUS4","sus4"],
-  ["7","7"],["5","5"],
+  ["DIM","dim"],["°","dim"],["AUG","aug"],["+","aug"],
+  ["9","9"],["7","7"],["6","6"],["5","5"],
   ["MIN","m"],["MINOR","m"],["MINÖR","m"],["MİNÖR","m"],["M","m"],
   ["MAJ","major"],["MAJOR","major"],["MAJÖR","major"]
 ];
@@ -33,7 +37,14 @@ export const QUALITY_INTERVALS = Object.freeze({
   m7: [0,3,7,10],
   sus2: [0,2,7],
   sus4: [0,5,7],
-  "5": [0,7]
+  "5": [0,7],
+  dim: [0,3,6],
+  aug: [0,4,8],
+  "6": [0,4,7,9],
+  m6: [0,3,7,9],
+  "9": [0,4,7,10,2],
+  add9: [0,4,7,2],
+  m7b5: [0,3,6,10]
 });
 
 export const ROOT_PCS = Object.freeze({
@@ -54,24 +65,25 @@ export function parseChordPresentation(input) {
   const token = normalizeToken(input);
   if (!token) return null;
 
-  const rootKey = SORTED_ROOT_KEYS.find(key => token.startsWith(key));
-  if (!rootKey) return null;
+  for (const rootKey of SORTED_ROOT_KEYS) {
+    if (!token.startsWith(rootKey)) continue;
+    const suffix = token.slice(rootKey.length);
+    const quality = !suffix
+      ? "major"
+      : SORTED_QUALITIES.find(([alias]) => suffix === alias)?.[1];
+    if (!quality) continue;
 
-  const spec = ROOT_SPECS.get(rootKey);
-  const suffix = token.slice(rootKey.length);
-  const quality = !suffix
-    ? "major"
-    : SORTED_QUALITIES.find(([alias]) => suffix === alias)?.[1];
+    const spec = ROOT_SPECS.get(rootKey);
+    return Object.freeze({
+      root: spec.root,
+      quality,
+      symbol: formatChordSymbol(spec.root,quality),
+      displayRoot: spec.displayRoot,
+      displaySymbol: formatChordSymbol(spec.displayRoot,quality)
+    });
+  }
 
-  if (!quality) return null;
-
-  return Object.freeze({
-    root: spec.root,
-    quality,
-    symbol: formatChordSymbol(spec.root,quality),
-    displayRoot: spec.displayRoot,
-    displaySymbol: formatChordSymbol(spec.displayRoot,quality)
-  });
+  return null;
 }
 
 export function parseChordQuery(input) {
@@ -81,7 +93,10 @@ export function parseChordQuery(input) {
 }
 
 export function formatChordSymbol(root, quality) {
-  const suffix = {major:"",m:"m","7":"7",maj7:"maj7",m7:"m7",sus2:"sus2",sus4:"sus4","5":"5"}[quality];
+  const suffix = {
+    major:"",m:"m","7":"7",maj7:"maj7",m7:"m7",sus2:"sus2",sus4:"sus4","5":"5",
+    dim:"dim",aug:"aug","6":"6",m6:"m6","9":"9",add9:"add9",m7b5:"m7b5"
+  }[quality];
   if (suffix === undefined) throw new Error("Unsupported chord quality");
   return root + suffix;
 }

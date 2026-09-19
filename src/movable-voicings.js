@@ -38,6 +38,41 @@ const BASE = Object.freeze({
     T([-1,3,5,5,6,3],[-1,1,2,3,4,1],[{finger:1,fret:3,fromString:5,toString:1}],"Asus4"),
     T([8,10,10,10,8,8],[1,2,3,4,1,1],[{finger:1,fret:8,fromString:6,toString:1}],"Esus4"),
     T([-1,-1,10,12,13,13],[-1,-1,1,2,3,4],[],"Dsus4")
+  ],
+  dim: [
+    T([-1,3,1,-1,4,2],[-1,3,1,-1,4,2],[],"Adim"),
+    T([8,9,10,8,-1,-1],[1,2,3,1,-1,-1],[{finger:1,fret:8,fromString:6,toString:3}],"Edim"),
+    T([8,6,10,-1,7,-1],[3,1,4,-1,2,-1],[],"dim-compact")
+  ],
+  aug: [
+    T([-1,3,2,1,1,-1],[-1,3,2,1,1,-1],[{finger:1,fret:1,fromString:3,toString:2}],"Aaug"),
+    T([8,7,6,-1,-1,8],[3,2,1,-1,-1,4],[],"Eaug"),
+    T([-1,-1,10,9,9,12],[-1,-1,2,1,1,3],[{finger:1,fret:9,fromString:3,toString:2}],"Daug")
+  ],
+  "6": [
+    T([-1,3,2,2,-1,3],[-1,2,1,1,-1,3],[{finger:1,fret:2,fromString:4,toString:3}],"A6"),
+    T([8,7,7,-1,8,-1],[2,1,1,-1,3,-1],[{finger:1,fret:7,fromString:5,toString:4}],"E6"),
+    T([-1,-1,10,12,10,12],[-1,-1,1,2,1,3],[{finger:1,fret:10,fromString:4,toString:2}],"D6")
+  ],
+  m6: [
+    T([-1,3,1,2,-1,3],[-1,3,1,2,-1,4],[],"Am6"),
+    T([8,6,7,-1,8,-1],[3,1,2,-1,4,-1],[],"Em6"),
+    T([-1,-1,10,12,10,11],[-1,-1,1,3,1,2],[{finger:1,fret:10,fromString:4,toString:2}],"Dm6")
+  ],
+  "9": [
+    T([8,7,8,7,8,-1],[2,1,3,1,4,-1],[{finger:1,fret:7,fromString:5,toString:3}],"E9-a"),
+    T([8,10,8,9,-1,10],[1,3,1,2,-1,4],[{finger:1,fret:8,fromString:6,toString:4}],"E9-b"),
+    T([8,10,8,9,8,10],[1,3,1,2,1,4],[{finger:1,fret:8,fromString:6,toString:2}],"E9-c")
+  ],
+  add9: [
+    T([8,10,-1,9,-1,10],[1,3,-1,2,-1,4],[],"Eadd9-a"),
+    T([-1,-1,10,9,8,10],[-1,-1,3,2,1,4],[],"Dadd9"),
+    T([8,7,-1,-1,8,10],[2,1,-1,-1,3,4],[],"Eadd9-b")
+  ],
+  m7b5: [
+    T([-1,3,4,3,4,-1],[-1,1,2,1,3,-1],[{finger:1,fret:3,fromString:5,toString:3}],"Am7b5"),
+    T([8,9,8,8,-1,-1],[1,2,1,1,-1,-1],[{finger:1,fret:8,fromString:6,toString:3}],"Em7b5-a"),
+    T([8,9,8,-1,-1,11],[1,2,1,-1,-1,3],[{finger:1,fret:8,fromString:6,toString:4}],"Em7b5-b")
   ]
 });
 

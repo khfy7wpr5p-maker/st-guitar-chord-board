@@ -75,14 +75,14 @@ test("release manifest pins the verified soundfont provenance", async ({ request
   const response=await request.get("/release-manifest.json");
   expect(response.ok()).toBeTruthy();
   const manifest=await response.json();
-  expect(manifest.version).toBe("0.20.2");
+  expect(manifest.version).toBe("0.21.0");
   expect(manifest.builtFor).toBe("static-offline-pwa");
   expect(manifest.soundfont.instrument).toBe("electric_guitar_jazz");
   expect(manifest.soundfont.gitBlobSha1).toBe("2c0ef6f12d5a260982520130c97905e5931a60d4");
   expect(manifest.soundfont.bytes).toBe(2330622);
 });
 
-test("packaged soundfont covers every MIDI note used by all 96 chord voicings", async ({ page }) => {
+test("packaged soundfont covers every MIDI note used by all 180 chord voicings", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#app")).toHaveAttribute("data-ready","true");
 
@@ -116,7 +116,7 @@ test("packaged soundfont covers every MIDI note used by all 96 chord voicings", 
     };
   });
 
-  expect(coverage.chordCount).toBe(96);
-  expect(coverage.voicingCount).toBe(276);
+  expect(coverage.chordCount).toBe(180);
+  expect(coverage.voicingCount).toBe(528);
   expect(coverage.missing).toEqual([]);
 });
