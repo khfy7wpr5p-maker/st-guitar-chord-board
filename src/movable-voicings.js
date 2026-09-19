@@ -5,7 +5,7 @@ const MAX_FRET = 20;
 
 const BASE = Object.freeze({
   major: [
-    T([-1,3,5,5,5,3],[-1,1,3,3,3,1],[{finger:1,fret:3,fromString:5,toString:1},{finger:3,fret:5,fromString:4,toString:2}],"A"),
+    T([-1,3,5,5,5,3],[-1,1,2,3,4,1],[{finger:1,fret:3,fromString:5,toString:1}],"A"),
     T([8,10,10,9,8,8],[1,3,4,2,1,1],[{finger:1,fret:8,fromString:6,toString:1}],"E"),
     T([-1,-1,10,12,13,12],[-1,-1,1,2,4,3],[],"D")
   ],
@@ -22,21 +22,21 @@ const BASE = Object.freeze({
   maj7: [
     T([-1,3,5,4,5,3],[-1,1,3,2,4,1],[{finger:1,fret:3,fromString:5,toString:1}],"Amaj7"),
     T([8,10,9,9,8,8],[1,4,2,3,1,1],[{finger:1,fret:8,fromString:6,toString:1}],"Emaj7"),
-    T([-1,-1,10,12,12,12],[-1,-1,1,3,3,3],[{finger:3,fret:12,fromString:3,toString:1}],"Dmaj7")
+    T([-1,-1,10,12,12,12],[-1,-1,1,2,3,4],[],"Dmaj7")
   ],
   m7: [
     T([-1,3,5,3,4,3],[-1,1,3,1,2,1],[{finger:1,fret:3,fromString:5,toString:1}],"Am7"),
     T([8,10,8,8,8,8],[1,3,1,1,1,1],[{finger:1,fret:8,fromString:6,toString:1}],"Em7"),
-    T([-1,-1,10,12,11,11],[-1,-1,1,3,2,2],[{finger:2,fret:11,fromString:2,toString:1}],"Dm7")
+    T([-1,-1,10,12,11,11],[-1,-1,1,4,2,3],[],"Dm7")
   ],
   sus2: [
     T([-1,3,5,5,3,3],[-1,1,3,4,1,1],[{finger:1,fret:3,fromString:5,toString:1}],"Asus2"),
-    T([8,10,10,7,8,8],[2,4,4,1,3,3],[{finger:4,fret:10,fromString:5,toString:4},{finger:3,fret:8,fromString:2,toString:1}],"Esus2"),
+    T([8,10,10,7,-1,-1],[2,3,4,1,-1,-1],[],"Esus2"),
     T([-1,-1,10,12,13,10],[-1,-1,1,3,4,1],[{finger:1,fret:10,fromString:4,toString:1}],"Dsus2")
   ],
   sus4: [
-    T([-1,3,5,5,6,3],[-1,1,3,3,4,1],[{finger:1,fret:3,fromString:5,toString:1},{finger:3,fret:5,fromString:4,toString:3}],"Asus4"),
-    T([8,10,10,10,8,8],[1,3,4,4,1,1],[{finger:1,fret:8,fromString:6,toString:1},{finger:4,fret:10,fromString:4,toString:3}],"Esus4"),
+    T([-1,3,5,5,6,3],[-1,1,2,3,4,1],[{finger:1,fret:3,fromString:5,toString:1}],"Asus4"),
+    T([8,10,10,10,8,8],[1,2,3,4,1,1],[{finger:1,fret:8,fromString:6,toString:1}],"Esus4"),
     T([-1,-1,10,12,13,13],[-1,-1,1,2,3,4],[],"Dsus4")
   ]
 });
