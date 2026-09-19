@@ -27,15 +27,7 @@ test("release asset paths are project-subpath safe for GitHub Pages", async () =
     readFile("src/release-config.js","utf8")
   ]);
 
-  for (const value of [
-    "./manifest.webmanifest",
-    "./styles.css",
-    "./src/app.js",
-    "./service-worker.js",
-    "./assets/icon-512.svg",
-    "./assets/apple-touch-icon.png",
-    "./assets/favicon-32.png"
-  ]) {
+  for (const value of ["./manifest.webmanifest","./styles.css","./src/app.js","./service-worker.js"]) {
     assert.ok(index.includes(value), "missing relative asset path: " + value);
   }
 
@@ -43,9 +35,7 @@ test("release asset paths are project-subpath safe for GitHub Pages", async () =
   assert.equal(pwa.id,"./");
   assert.equal(pwa.start_url,"./");
   assert.equal(pwa.scope,"./");
-  assert.ok(pwa.icons.every(icon=>icon.src.startsWith("./assets/")));
   assert.ok(serviceWorker.includes('const APP_SHELL=["./"'));
-  assert.ok(serviceWorker.includes("./assets/icon-192.png"));
   assert.doesNotMatch(serviceWorker,/https?:\/\//);
   assert.ok(releaseConfig.includes('instrumentUrl: "./vendor/audio/electric_guitar_jazz-mp3.js"'));
 });

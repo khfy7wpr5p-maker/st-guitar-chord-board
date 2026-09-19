@@ -66,7 +66,6 @@ export async function buildRelease({
   for (const file of ROOT_FILES) {
     await cp(join(rootDir,file),join(distDir,file));
   }
-  await cp(join(rootDir,"assets"),join(distDir,"assets"),{recursive:true});
 
   await mkdir(join(distDir,"src"),{recursive:true});
   for (const file of runtimeSrcFiles) {

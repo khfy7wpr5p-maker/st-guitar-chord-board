@@ -12,23 +12,18 @@ async function loadBuildModule() {
   }
 }
 
-test("release build emits branded assets, enabled local-audio config and verified manifest", async () => {
+test("release build emits enabled local-audio config and verified manifest", async () => {
   const mod=await loadBuildModule();
   const root=await mkdtemp(join(tmpdir(),"chord-board-release-"));
   try {
     await mkdir(join(root,"src"),{recursive:true});
     await mkdir(join(root,"vendor/audio"),{recursive:true});
-    await mkdir(join(root,"assets"),{recursive:true});
     for (const [path,content] of [
       ["index.html","<html></html>"],
       ["styles.css","body{}"],
       ["manifest.webmanifest","{}"],
       ["service-worker.js","const RELEASE_REQUIRES_LOCAL_AUDIO=false;"],
       ["THIRD_PARTY_NOTICES.md","notice"],
-      ["assets/icon-192.png","icon192"],
-      ["assets/icon-512.svg","<svg></svg>"],
-      ["assets/apple-touch-icon.png","apple"],
-      ["assets/favicon-32.png","favicon"],
       ["src/app.js",""],
       ["src/release-config.js","export const RELEASE_AUDIO={enabled:false};"],
       ["vendor/audio/source.json","{}"]
@@ -51,10 +46,6 @@ test("release build emits branded assets, enabled local-audio config and verifie
     });
 
     await access(join(dist,"vendor/audio/electric_guitar_jazz-mp3.js"));
-    await access(join(dist,"assets/icon-192.png"));
-    await access(join(dist,"assets/icon-512.svg"));
-    await access(join(dist,"assets/apple-touch-icon.png"));
-    await access(join(dist,"assets/favicon-32.png"));
     const config=await readFile(join(dist,"src/release-config.js"),"utf8");
     assert.match(config,/enabled:\s*true/);
     const manifest=JSON.parse(await readFile(join(dist,"release-manifest.json"),"utf8"));

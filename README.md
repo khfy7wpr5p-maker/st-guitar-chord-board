@@ -4,7 +4,7 @@ Offline-first, phone-first interactive guitar chord surface.
 
 **GitHub Pages app:** https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/
 
-## Current status — Stage 23
+## Current status — Stage 22
 
 The app targets:
 
@@ -37,7 +37,7 @@ The app targets:
 - standalone Web Audio guitar bridge for published builds
 - CI-qualified online + offline packaged-sample playback path
 - live static deployment with automatic main-branch updates
-- refined in-house SVG chord renderer with guitar-like string gauges and explicit high-position semantics\n- production logo branding for app header, favicon, Apple touch icon and PWA install icons
+- refined in-house SVG chord renderer with guitar-like string gauges and explicit high-position semantics
 
 ### Search and naming rule
 
@@ -264,14 +264,3 @@ Implemented:
 Boundary:
 - chord identities, Stage 21 voicing order, fingering metadata, MIDI/audio and Tonal validation are unchanged;
 - the renderer remains dependency-free in the installed/offline runtime.
-
-
-### Stage 23 — production logo and install branding ✅
-Implemented:
-- the supplied black/white ST mark is the application brand symbol;
-- compact in-app brand header uses the scalable logo asset without changing chord-board interaction;
-- favicon and Apple touch icon are packaged with the release;
-- the PWA manifest registers 192px PNG and scalable maskable-capable icon assets;
-- branded assets are cached for offline use and shipped in GitHub Pages release artifacts;
-- release version is `0.21.0` and Service Worker cache rotates to `st-guitar-chord-board-v17`;
-- iPhone browser validation confirms the brand mark remains visible without breaking the phone layout.
