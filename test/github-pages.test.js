@@ -27,7 +27,7 @@ test("release asset paths are project-subpath safe for GitHub Pages", async () =
     readFile("src/release-config.js","utf8")
   ]);
 
-  for (const value of ["./manifest.webmanifest","./styles.css","./src/app.js","./service-worker.js","./apple-touch-icon.png","./favicon-32x32.png","./favicon-16x16.png","./favicon.ico"]) {
+  for (const value of ["./manifest.webmanifest","./styles.css?v=24-1","./src/app.js?v=24-1","./service-worker.js?v=24-1","./apple-touch-icon.png","./favicon-32x32.png","./favicon-16x16.png","./favicon.ico"]) {
     assert.ok(index.includes(value), "missing relative asset path: " + value);
   }
 
@@ -44,6 +44,9 @@ test("release asset paths are project-subpath safe for GitHub Pages", async () =
   assert.ok(serviceWorker.includes('./maskable-icon-512.png'));
   assert.ok(serviceWorker.includes('./src/tuner.js'));
   assert.ok(serviceWorker.includes('./src/tuner-core.js'));
+  assert.ok(serviceWorker.includes('./styles.css?v=24-1'));
+  assert.ok(serviceWorker.includes('./src/app.js?v=24-1'));
+  assert.ok(serviceWorker.includes('NETWORK_FIRST_DESTINATIONS'));
   assert.doesNotMatch(serviceWorker,/https?:\/\//);
   assert.ok(releaseConfig.includes('instrumentUrl: "./vendor/audio/electric_guitar_jazz-mp3.js"'));
 });
