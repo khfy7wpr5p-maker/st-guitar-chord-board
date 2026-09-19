@@ -1,7 +1,8 @@
-const CACHE="st-guitar-chord-board-v22";
-const APP_SHELL=["./","./index.html","./styles.css","./manifest.webmanifest","./apple-touch-icon.png","./favicon-16x16.png","./favicon-32x32.png","./favicon.ico","./icon-192.png","./icon-512.png","./maskable-icon-512.png","./src/app.js","./src/tuner.js","./src/tuner-core.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/selection-state.js","./src/release-config.js","./src/standalone-guitar-audio.js","./vendor/audio/source.json"];
+const CACHE="st-guitar-chord-board-v23";
+const APP_SHELL=["./","./index.html","./styles.css?v=24-1","./manifest.webmanifest","./apple-touch-icon.png","./favicon-16x16.png","./favicon-32x32.png","./favicon.ico","./icon-192.png","./icon-512.png","./maskable-icon-512.png","./src/app.js?v=24-1","./src/tuner.js","./src/tuner-core.js","./src/chord-core.js","./src/chord-labels-tr.js","./src/chord-catalog.js","./src/chord-relations.js","./src/curated-open-voicings.js","./src/voicing-library.js","./src/movable-voicings.js","./src/power-voicings.js","./src/audio-adapter.js","./src/diagram-model.js","./src/selection-state.js","./src/release-config.js","./src/standalone-guitar-audio.js","./vendor/audio/source.json"];
 const OPTIONAL_LOCAL_AUDIO=["./vendor/audio/electric_guitar_jazz-mp3.js"];
 const RELEASE_REQUIRES_LOCAL_AUDIO=false;
+const NETWORK_FIRST_DESTINATIONS=new Set(["script","style"]);
 
 self.addEventListener("install",event=>{
   event.waitUntil((async()=>{
@@ -33,6 +34,22 @@ self.addEventListener("fetch",event=>{
     event.respondWith(
       fetch(event.request).catch(()=>caches.match("./index.html"))
     );
+    return;
+  }
+
+  if(NETWORK_FIRST_DESTINATIONS.has(event.request.destination)){
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      try{
+        const response=await fetch(event.request);
+        if(response && response.status===200 && response.type==="basic"){
+          await cache.put(event.request,response.clone());
+        }
+        return response;
+      }catch{
+        return (await cache.match(event.request)) || Response.error();
+      }
+    })());
     return;
   }
 

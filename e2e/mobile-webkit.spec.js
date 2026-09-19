@@ -278,3 +278,27 @@ test("ST logo opens the same-page chromatic tuner and closes it cleanly", async 
   await expect(panel).toBeHidden();
   await expect(button).toHaveAttribute("aria-expanded","false");
 });
+
+
+test("search and tuner logo stay on the same top row on iPhone", async ({ page }) => {
+  await page.goto("/");
+  const layout=await page.evaluate(() => {
+    const search=document.querySelector("#chord-search").getBoundingClientRect();
+    const tuner=document.querySelector("#tuner-button").getBoundingClientRect();
+    return {
+      searchTop:search.top,
+      searchBottom:search.bottom,
+      searchRight:search.right,
+      tunerTop:tuner.top,
+      tunerBottom:tuner.bottom,
+      tunerLeft:tuner.left,
+      tunerWidth:tuner.width,
+      tunerHeight:tuner.height
+    };
+  });
+  expect(Math.abs(layout.searchTop-layout.tunerTop)).toBeLessThanOrEqual(1);
+  expect(Math.abs(layout.searchBottom-layout.tunerBottom)).toBeLessThanOrEqual(1);
+  expect(layout.searchRight).toBeLessThanOrEqual(layout.tunerLeft);
+  expect(layout.tunerWidth).toBe(48);
+  expect(layout.tunerHeight).toBe(48);
+});
