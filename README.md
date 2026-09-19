@@ -4,14 +4,14 @@ Offline-first, phone-first interactive guitar chord surface.
 
 **GitHub Pages app:** https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/
 
-## Current status — Stage 22
+## Current status — Stage 24
 
 The app targets:
 
 - **12 chromatic roots**
-- **8 chord families:** major, minor, 7, maj7, m7, sus2, sus4, power chord (5)
-- **96 searchable chord symbols**
-- original 84 chords keep **exactly 3 guitar voicings**
+- **15 chord families:** major, minor, 7, maj7, m7, sus2, sus4, power chord (5), 6, m6, 9, add9, dim, aug, m7b5
+- **180 searchable chord symbols**
+- 168 non-power chords expose **exactly 3 guitar voicings**
 - the 12 power chords use **exactly 2 guitar positions**
 - Turkish reading shown for every selected chord
 - compact same-root chord-family suggestions
@@ -30,7 +30,7 @@ The app targets:
 - pinned build-time local guitar soundfont vendoring path
 - same-origin local smplr bridge with explicit offlineReady capability
 - enharmonic display spelling preserved for flat chord input
-- Tonal.js development/CI theory cross-check across all 96 canonical chords and displayed voicings
+- Tonal.js development/CI theory cross-check across all 180 canonical chords and displayed voicings
 - horizontal swipe navigation between chord voicings on the large chord surface
 - last selected chord spelling and voicing restored locally across reloads/offline relaunches
 - verified static release build with packaged `electric_guitar_jazz` soundfont
@@ -51,6 +51,13 @@ Search is symbol-first:
 - `G7` → **Sol yedili**
 - `Bb5` → **Si bemol beş**
 - `Ebmaj7` → **Mi bemol majör yedili**
+- `C6` → **Do altılı**
+- `Cm6` → **Do minör altılı**
+- `C9` → **Do dokuzlu**
+- `Cadd9` → **Do add dokuz**
+- `Cdim` → **Do eksilmiş**
+- `Caug` → **Do artırılmış**
+- `Cm7b5` → **Do minör yedili bemol beş**
 
 When a valid chord is entered, the compact suggestion strip shows the selected chord first and then the other supported qualities on the same root.
 
@@ -88,15 +95,15 @@ This relation is shown only for basic major/minor chords.
 
 ### Guitar voicings
 
-The original 84 non-power chord identities expose exactly 3 ordered voicings. Power chords intentionally expose exactly 2 positions.
+All 168 non-power chord identities expose exactly 3 ordered voicings. Power chords intentionally expose exactly 2 positions.
 
 CI verifies:
 
-- all 96 canonical chords remain searchable;
+- all 180 canonical chords remain searchable;
 - every displayed voicing contains exactly the requested pitch classes;
-- all 84 non-power chords have exactly three unique positions;
+- all 168 non-power chords have exactly three unique positions;
 - all 12 power chords have exactly two positions;
-- the full catalog exposes exactly 276 displayed voicings;
+- the full catalog exposes exactly 528 displayed voicings;
 - generated frets stay within the bounded guitar range;
 - common open shapes remain prioritized.
 
@@ -264,3 +271,37 @@ Implemented:
 Boundary:
 - chord identities, Stage 21 voicing order, fingering metadata, MIDI/audio and Tonal validation are unchanged;
 - the renderer remains dependency-free in the installed/offline runtime.
+
+
+### Stage 23 — physical phone product acceptance ✅
+Recorded from manual owner testing on a physical phone:
+- no blocking layout, touch, swipe, search, chord-surface or general-use defect was found;
+- this manual acceptance complements, rather than replaces, the automated WebKit/Chromium gates;
+- broader multi-device lab coverage is not claimed.
+
+### Stage 24 — extended chord families ✅
+Added seven chord families across all 12 chromatic roots:
+- `6`
+- `m6`
+- `9`
+- `add9`
+- `dim`
+- `aug`
+- `m7b5`
+
+Catalog contract:
+- 15 chord families;
+- 180 canonical searchable chord symbols;
+- 168 non-power chords × 3 positions;
+- 12 power chords × 2 positions;
+- exactly 528 displayed voicings.
+
+Validation:
+- every chord identity is independently cross-checked with Tonal.js;
+- every displayed voicing must contain the complete requested pitch-class set;
+- every voicing remains inside standard tuning and fret 0..20;
+- every fingering remains within the deterministic four-finger resource boundary;
+- every declared barre uses finger 1 only;
+- common open `Cadd9`, `Aadd9`, `Eadd9`, `Gadd9` and `D6` shapes are curated first;
+- `Fadd9` / `Faug` parser ambiguity with Turkish `Fa` is explicitly regression-tested;
+- release version is `0.21.0`, offline cache `st-guitar-chord-board-v19`.
