@@ -17,6 +17,13 @@ function displayedVoicings() {
   );
 }
 
+test("open A major uses 2-3-4 fingering", () => {
+  const voicing=getVoicings("A")[0];
+  assert.deepEqual(voicing.frets,[-1,0,2,2,2,0]);
+  assert.deepEqual(voicing.fingers,[-1,0,2,3,4,0]);
+  assert.deepEqual(voicing.barres,[]);
+});
+
 test("open G uses 3-2-4 fingering", () => {
   const voicing=getVoicings("G")[0];
   assert.deepEqual(voicing.frets,[3,2,0,0,0,3]);
