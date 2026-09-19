@@ -1,0 +1,92 @@
+ST GUITAR CHORD BOARD PROPRIETARY LICENSE
+Version 1.0 — 2026
+
+Copyright (c) 2026 ST Guitar Chord Board.
+All rights reserved.
+
+1. Ownership
+
+The ST Guitar Chord Board application, including its original source code,
+application logic, chord and voicing rules, fingering logic, user interface,
+diagram rendering system, documentation, tests, and related original project
+materials ("Software"), is proprietary software.
+
+Except for third-party components identified separately in the repository,
+all rights in the Software are reserved by the copyright holder.
+
+2. Permitted Hosted Use
+
+Users may access and use an officially hosted version of the Software for
+personal, educational, instructional, classroom, and student practice
+purposes.
+
+This permission to use the hosted application does not grant ownership of the
+Software or any right to copy, redistribute, sublicense, sell, publish, or
+commercially exploit the source code.
+
+3. Restrictions
+
+Unless prior written permission is obtained from the copyright holder, you may
+not:
+
+a. copy or redistribute the proprietary source code or substantial portions of it;
+b. publish or distribute modified versions of the proprietary source code;
+c. sublicense, sell, rent, lease, or commercially distribute the Software;
+d. create and commercially distribute a competing or derivative product based
+   substantially on the proprietary source code;
+e. remove or alter copyright, attribution, license, or third-party notices;
+f. represent the Software or substantial portions of its proprietary code as
+   your own work.
+
+4. Educational Use
+
+Teachers, students, schools, music educators, and other users may use the
+officially hosted application in lessons, demonstrations, practice sessions,
+and other educational activities, subject to these terms.
+
+This educational-use permission does not include redistribution of the
+proprietary source code.
+
+5. Commercial Licensing
+
+Commercial distribution, white-label use, embedding in a commercial product,
+source-code licensing, sublicensing, resale, or other commercial exploitation
+requires a separate written agreement from the copyright holder.
+
+6. Third-Party Components
+
+This license applies only to the original proprietary portions of ST Guitar
+Chord Board.
+
+Third-party software, libraries, fonts, audio assets, samples, and other
+materials remain subject to their respective licenses and notices. Where
+applicable, those notices are documented in THIRD_PARTY_NOTICES.md or in the
+relevant third-party files.
+
+Nothing in this license limits rights granted by the licenses of those
+third-party components.
+
+7. No Transfer of Rights
+
+Access to the repository, access to the hosted application, or possession of a
+copy of the Software does not transfer copyright or other intellectual-property
+rights.
+
+8. Warranty Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+9. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER SHALL
+NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR IN
+CONNECTION WITH THE SOFTWARE OR ITS USE.
+
+10. Reservation of Rights
+
+Any rights not expressly granted in this license are reserved.
+
+For permissions or commercial licensing beyond the rights granted above,
+written authorization from the copyright holder is required.
