@@ -67,6 +67,8 @@ test("release build emits enabled local-audio config, brand icons and verified m
     const config=await readFile(join(dist,"src/release-config.js"),"utf8");
     assert.match(config,/enabled:\s*true/);
     const manifest=JSON.parse(await readFile(join(dist,"release-manifest.json"),"utf8"));
+    assert.ok(mod.RUNTIME_SRC_FILES.includes("tuner.js"));
+    assert.ok(mod.RUNTIME_SRC_FILES.includes("tuner-core.js"));
     assert.equal(manifest.version,"9.9.9");
     assert.equal(manifest.soundfont.gitBlobSha1,result.soundfontGitBlobSha1);
     assert.deepEqual(manifest.runtimeFiles,["app.js","release-config.js"]);

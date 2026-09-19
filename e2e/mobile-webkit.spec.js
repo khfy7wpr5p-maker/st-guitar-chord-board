@@ -248,3 +248,33 @@ test("root search exposes all 15 chord families in the horizontal suggestion str
     await expect(page.locator(`#suggestions .suggestion[data-symbol="${symbol}"]`)).toHaveCount(1);
   }
 });
+
+
+test("ST logo opens the same-page chromatic tuner and closes it cleanly", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator,"mediaDevices",{
+      configurable:true,
+      value:{
+        getUserMedia() {
+          return Promise.reject(new DOMException("denied","NotAllowedError"));
+        }
+      }
+    });
+  });
+
+  await page.goto("/");
+  const button=page.locator("#tuner-button");
+  await expect(button).toBeVisible();
+  await expect(button.locator("img")).toHaveAttribute("src","./icon-192.png");
+
+  await button.tap();
+  const panel=page.locator("#tuner-panel");
+  await expect(panel).toBeVisible();
+  await expect(button).toHaveAttribute("aria-expanded","true");
+  await expect(page.locator("#tuner-status")).toHaveText("Mikrofon izni verilmedi.");
+  await expect(page.locator("#tuner-note-ring .tuner-clock-note")).toHaveCount(12);
+
+  await page.locator("#tuner-close").tap();
+  await expect(panel).toBeHidden();
+  await expect(button).toHaveAttribute("aria-expanded","false");
+});

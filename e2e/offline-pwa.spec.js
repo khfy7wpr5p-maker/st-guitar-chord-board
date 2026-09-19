@@ -36,6 +36,11 @@ test("cached app shell reloads while browser context is offline", async ({ page,
   await expect(page.locator("#chord-symbol")).toHaveText("A5");
   await expect(page.locator("#chord-reading")).toHaveText("La beş");
   await expect(page.locator("#variant-count")).toHaveText("2 / 2");
+  await expect(page.locator("#tuner-button")).toBeVisible();
+  expect(await page.evaluate(async () => {
+    const [ui,core]=await Promise.all([fetch("./src/tuner.js"),fetch("./src/tuner-core.js")]);
+    return ui.ok && core.ok;
+  })).toBeTruthy();
 
   await context.setOffline(false);
 });

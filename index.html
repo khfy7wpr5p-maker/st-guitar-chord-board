@@ -18,10 +18,15 @@
 </head>
 <body>
   <main id="app">
-    <label class="search-wrap">
-      <span class="sr-only">Akor ara</span>
-      <input id="chord-search" type="search" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Am, E, A5, G7, F#maj7">
-    </label>
+    <div class="top-row">
+      <label class="search-wrap">
+        <span class="sr-only">Akor ara</span>
+        <input id="chord-search" type="search" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Am, E, A5, G7, F#maj7">
+      </label>
+      <button id="tuner-button" class="tuner-button" type="button" aria-label="Kromatik tuneri aç" aria-haspopup="dialog" aria-controls="tuner-panel" aria-expanded="false">
+        <img src="./icon-192.png" width="36" height="36" alt="">
+      </button>
+    </div>
 
     <div id="suggestions" class="suggestions" aria-label="Aynı kökten akor ailesi"></div>
 
@@ -42,6 +47,28 @@
     <div id="relation" class="relation" aria-label="Akor ilişkisi" hidden></div>
     <p id="status" class="status" aria-live="polite"></p>
   </main>
+
+  <section id="tuner-panel" class="tuner-panel" role="dialog" aria-modal="true" aria-label="Kromatik tuner" aria-hidden="true" hidden>
+    <div class="tuner-card">
+      <button id="tuner-close" class="tuner-close" type="button" aria-label="Tuneri kapat">×</button>
+      <p class="tuner-kicker">Kromatik Tuner</p>
+      <div id="tuner-dial" class="tuner-dial" data-in-tune="false">
+        <div id="tuner-note-ring" class="tuner-note-ring" aria-hidden="true"></div>
+        <div class="tuner-needle-layer" aria-hidden="true">
+          <span id="tuner-needle" class="tuner-needle"></span>
+          <span class="tuner-hub"></span>
+        </div>
+        <div class="tuner-readout">
+          <div class="tuner-note-line"><strong id="tuner-note">—</strong><span id="tuner-octave"></span></div>
+          <span id="tuner-frequency">— Hz</span>
+          <span id="tuner-cents">— cent</span>
+        </div>
+      </div>
+      <p id="tuner-status" class="tuner-status" aria-live="polite"></p>
+      <p class="tuner-reference">A4 = 440 Hz</p>
+    </div>
+  </section>
+
   <script type="module" src="./src/app.js"></script>
   <script>
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
