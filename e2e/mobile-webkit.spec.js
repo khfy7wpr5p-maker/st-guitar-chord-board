@@ -236,3 +236,15 @@ test("extended chord family search, Turkish label and playback work on iPhone We
   expect(call.symbol).toBe("Cm7b5");
   expect([...new Set(call.midis.map(midi => midi % 12))].sort((x,y)=>x-y)).toEqual([0,3,6,10]);
 });
+
+
+test("root search exposes all 15 chord families in the horizontal suggestion strip", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("C");
+
+  const suggestions=page.locator("#suggestions .suggestion");
+  await expect(suggestions).toHaveCount(15);
+  for (const symbol of ["C6","Cm6","C9","Cadd9","Cdim","Caug","Cm7b5"]) {
+    await expect(page.locator(`#suggestions .suggestion[data-symbol="${symbol}"]`)).toHaveCount(1);
+  }
+});
