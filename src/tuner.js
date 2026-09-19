@@ -1,7 +1,17 @@
-import { CHROMATIC_NOTES, detectPitchYin, frequencyToTuning } from "./tuner-core.js";
+import {
+  CHROMATIC_NOTES,
+  TUNER_SIGNAL_DEFAULTS,
+  adaptiveRmsFloor,
+  detectPitchYin,
+  frequencyToTuning,
+  shouldHoldReading,
+  signalRms,
+  updateNoiseFloor
+} from "./tuner-core.js";
 
-const UPDATE_INTERVAL_MS = 90;
+const UPDATE_INTERVAL_MS = 80;
 const IN_TUNE_CENTS = 5;
+const YIN_THRESHOLD = 0.2;
 
 function stopTracks(stream) {
   for (const track of stream?.getTracks?.() || []) track.stop();
@@ -56,6 +66,9 @@ export function createChromaticTuner(doc = document, win = window) {
   let lastUpdate=0;
   let active=false;
   let history=[];
+  let lastReading=null;
+  let lastDetectedAt=Number.NEGATIVE_INFINITY;
+  let noiseFloor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
   const buffer=new Float32Array(2048);
 
   function setReading(reading) {
@@ -93,6 +106,9 @@ export function createChromaticTuner(doc = document, win = window) {
     source=null;
     analyser=null;
     history=[];
+    lastReading=null;
+    lastDetectedAt=Number.NEGATIVE_INFINITY;
+    noiseFloor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
     if (context) {
       const closing=context;
       context=null;
@@ -143,17 +159,37 @@ export function createChromaticTuner(doc = document, win = window) {
         if (now-lastUpdate >= UPDATE_INTERVAL_MS) {
           lastUpdate=now;
           analyser.getFloatTimeDomainData(buffer);
-          const detected=detectPitchYin(buffer,context.sampleRate);
+          const rms=signalRms(buffer);
+          const rmsFloor=adaptiveRmsFloor(noiseFloor);
+          const detected=detectPitchYin(buffer,context.sampleRate,{
+            rmsFloor,
+            threshold:YIN_THRESHOLD
+          });
           if (detected) {
+            if (history.length) {
+              const anchor=history[history.length-1];
+              const distance=Math.abs(1200*Math.log2(detected/anchor));
+              if (distance > 80) history=[];
+            }
             history.push(detected);
             if (history.length > 3) history.shift();
             const frequency=median(history);
-            setReading(frequencyToTuning(frequency));
+            lastReading=frequencyToTuning(frequency);
+            lastDetectedAt=now;
+            noiseFloor=updateNoiseFloor(noiseFloor,rms,{signalDetected:true});
+            setReading(lastReading);
             statusEl.textContent="Dinleniyor";
           } else {
-            history=[];
-            setReading(null);
-            statusEl.textContent="Bir nota çalın";
+            noiseFloor=updateNoiseFloor(noiseFloor,rms);
+            if (lastReading && shouldHoldReading(lastDetectedAt,now)) {
+              setReading(lastReading);
+              statusEl.textContent="Zayıf sinyal · nota korunuyor";
+            } else {
+              history=[];
+              lastReading=null;
+              setReading(null);
+              statusEl.textContent="Bir nota çalın";
+            }
           }
         }
         frame=win.requestAnimationFrame(tick);

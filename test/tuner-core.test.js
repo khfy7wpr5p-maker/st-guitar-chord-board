@@ -1,6 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHROMATIC_NOTES, detectPitchYin, frequencyToTuning } from "../src/tuner-core.js";
+import {
+  CHROMATIC_NOTES,
+  TUNER_SIGNAL_DEFAULTS,
+  adaptiveRmsFloor,
+  detectPitchYin,
+  frequencyToTuning,
+  shouldHoldReading,
+  signalRms,
+  updateNoiseFloor
+} from "../src/tuner-core.js";
 
 test("chromatic note ring exposes twelve notes", () => {
   assert.deepEqual(CHROMATIC_NOTES,["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"]);
@@ -38,4 +47,35 @@ test("YIN detector recovers guitar and reference tones from synthetic input", ()
 
 test("YIN detector ignores silence", () => {
   assert.equal(detectPitchYin(new Float32Array(2048),48000),null);
+});
+
+
+test("sensitive tuner floor detects a weak sustained guitar-like tone", () => {
+  const sampleRate=48000;
+  const expected=329.6276;
+  const samples=new Float32Array(2048);
+  for (let i=0;i<samples.length;i+=1) samples[i]=0.004*Math.sin(2*Math.PI*expected*i/sampleRate);
+  const rms=signalRms(samples);
+  assert.ok(rms > 0.002 && rms < 0.004);
+  const floor=adaptiveRmsFloor(TUNER_SIGNAL_DEFAULTS.initialNoiseFloor);
+  assert.ok(floor < 0.002);
+  const detected=detectPitchYin(samples,sampleRate,{rmsFloor:floor,threshold:0.2});
+  assert.ok(detected);
+  assert.ok(Math.abs(detected-expected) < 0.3);
+});
+
+test("adaptive noise floor rises slowly and never learns a detected note as noise", () => {
+  let floor=TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
+  for (let i=0;i<40;i+=1) floor=updateNoiseFloor(floor,0.004);
+  assert.ok(floor > TUNER_SIGNAL_DEFAULTS.initialNoiseFloor);
+  assert.ok(floor < 0.004);
+  const duringNote=updateNoiseFloor(floor,0.02,{signalDetected:true});
+  assert.equal(duringNote,floor);
+});
+
+test("sustain hold keeps the last note visible across brief pitch dropouts", () => {
+  assert.equal(shouldHoldReading(1000,1799),true);
+  assert.equal(shouldHoldReading(1000,1800),true);
+  assert.equal(shouldHoldReading(1000,1801),false);
+  assert.equal(shouldHoldReading(Number.NEGATIVE_INFINITY,1200),false);
 });

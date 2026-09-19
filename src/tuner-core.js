@@ -1,5 +1,61 @@
 export const CHROMATIC_NOTES = Object.freeze(["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"]);
 
+export const TUNER_SIGNAL_DEFAULTS = Object.freeze({
+  absoluteRmsFloor: 0.0015,
+  initialNoiseFloor: 0.0008,
+  noiseMultiplier: 2,
+  maxRmsFloor: 0.012,
+  holdMs: 800
+});
+
+export function signalRms(samples) {
+  if (!(samples instanceof Float32Array) && !Array.isArray(samples)) return 0;
+  if (!samples.length) return 0;
+  let mean=0;
+  for (let i=0;i<samples.length;i+=1) mean+=samples[i];
+  mean/=samples.length;
+  let energy=0;
+  for (let i=0;i<samples.length;i+=1) {
+    const centered=samples[i]-mean;
+    energy+=centered*centered;
+  }
+  return Math.sqrt(energy/samples.length);
+}
+
+export function adaptiveRmsFloor(noiseFloor, {
+  absoluteRmsFloor=TUNER_SIGNAL_DEFAULTS.absoluteRmsFloor,
+  noiseMultiplier=TUNER_SIGNAL_DEFAULTS.noiseMultiplier,
+  maxRmsFloor=TUNER_SIGNAL_DEFAULTS.maxRmsFloor
+} = {}) {
+  const boundedNoise=Number.isFinite(noiseFloor) && noiseFloor > 0 ? noiseFloor : TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
+  return Math.min(maxRmsFloor,Math.max(absoluteRmsFloor,boundedNoise*noiseMultiplier));
+}
+
+export function updateNoiseFloor(currentFloor, observedRms, {
+  signalDetected=false,
+  minFloor=0.0005,
+  maxFloor=0.008,
+  riseRate=0.025,
+  fallRate=0.12
+} = {}) {
+  const current=Number.isFinite(currentFloor) && currentFloor > 0 ? currentFloor : TUNER_SIGNAL_DEFAULTS.initialNoiseFloor;
+  if (signalDetected || !Number.isFinite(observedRms) || observedRms < 0) {
+    return Math.min(maxFloor,Math.max(minFloor,current));
+  }
+  const target=Math.min(maxFloor,Math.max(minFloor,observedRms));
+  const rate=target > current ? riseRate : fallRate;
+  return Math.min(maxFloor,Math.max(minFloor,current+(target-current)*rate));
+}
+
+export function shouldHoldReading(lastDetectedAt, now, holdMs=TUNER_SIGNAL_DEFAULTS.holdMs) {
+  return Number.isFinite(lastDetectedAt)
+    && Number.isFinite(now)
+    && Number.isFinite(holdMs)
+    && holdMs >= 0
+    && now >= lastDetectedAt
+    && now-lastDetectedAt <= holdMs;
+}
+
 export function frequencyToTuning(frequency, referenceHz = 440) {
   if (!Number.isFinite(frequency) || frequency <= 0) return null;
   if (!Number.isFinite(referenceHz) || referenceHz <= 0) throw new TypeError("referenceHz must be a positive finite number");
