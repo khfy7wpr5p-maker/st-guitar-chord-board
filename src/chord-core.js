@@ -65,24 +65,25 @@ export function parseChordPresentation(input) {
   const token = normalizeToken(input);
   if (!token) return null;
 
-  const rootKey = SORTED_ROOT_KEYS.find(key => token.startsWith(key));
-  if (!rootKey) return null;
+  for (const rootKey of SORTED_ROOT_KEYS) {
+    if (!token.startsWith(rootKey)) continue;
+    const suffix = token.slice(rootKey.length);
+    const quality = !suffix
+      ? "major"
+      : SORTED_QUALITIES.find(([alias]) => suffix === alias)?.[1];
+    if (!quality) continue;
 
-  const spec = ROOT_SPECS.get(rootKey);
-  const suffix = token.slice(rootKey.length);
-  const quality = !suffix
-    ? "major"
-    : SORTED_QUALITIES.find(([alias]) => suffix === alias)?.[1];
+    const spec = ROOT_SPECS.get(rootKey);
+    return Object.freeze({
+      root: spec.root,
+      quality,
+      symbol: formatChordSymbol(spec.root,quality),
+      displayRoot: spec.displayRoot,
+      displaySymbol: formatChordSymbol(spec.displayRoot,quality)
+    });
+  }
 
-  if (!quality) return null;
-
-  return Object.freeze({
-    root: spec.root,
-    quality,
-    symbol: formatChordSymbol(spec.root,quality),
-    displayRoot: spec.displayRoot,
-    displaySymbol: formatChordSymbol(spec.displayRoot,quality)
-  });
+  return null;
 }
 
 export function parseChordQuery(input) {
