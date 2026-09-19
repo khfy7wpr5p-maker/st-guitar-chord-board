@@ -49,6 +49,10 @@ test("iPhone WebKit chord search, relation, variation and audio payload", async 
   expect(Array.isArray(calls[0].midis)).toBeTruthy();
   expect(calls[0].midis.length).toBeGreaterThanOrEqual(3);
   expect(calls[0].positions.length).toBe(calls[0].midis.length);
+  expect(calls[0].playbackMode).toBe("bass-to-treble-then-chord");
+  expect(calls[0].stepMs).toBe(500);
+  expect(calls[0].noteDurationMs).toBe(500);
+  expect(calls[0].finalChordDurationMs).toBe(1000);
 });
 
 test("power chord flow exposes exactly two positions", async ({ page }) => {

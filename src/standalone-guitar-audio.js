@@ -15,6 +15,12 @@ function assertMidiList(midis) {
   midis.forEach(assertMidi);
 }
 
+function boundedDurationMs(value, fallback) {
+  const numeric=Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return fallback;
+  return Math.max(50,Math.min(5000,numeric));
+}
+
 export function midiToNoteName(midi) {
   assertMidi(midi);
   const pitchClass = NOTE_NAMES[midi % 12];
@@ -132,14 +138,39 @@ export function createStandaloneGuitarBridge({
       const velocity = Math.max(0, Math.min(1, Number(payload.velocity ?? 0.82)));
       const startTime = Number(ctx.currentTime || 0) + 0.01;
 
-      buffers.forEach((buffer, index) => {
+      const startVoice=(buffer,when,durationMs) => {
         const source = ctx.createBufferSource();
         const gain = ctx.createGain();
         source.buffer = buffer;
         gain.gain.value = velocity;
         source.connect(gain);
         gain.connect(ctx.destination);
-        source.start(startTime + index * 0.004);
+        if (Number.isFinite(durationMs)) {
+          source.start(when,0,durationMs/1000);
+        } else {
+          source.start(when);
+        }
+      };
+
+      if (payload.playbackMode === "bass-to-treble-then-chord") {
+        const stepMs=boundedDurationMs(payload.stepMs,500);
+        const noteDurationMs=boundedDurationMs(payload.noteDurationMs,500);
+        const finalChordDurationMs=boundedDurationMs(payload.finalChordDurationMs,1000);
+        buffers.forEach((buffer,index) => {
+          startVoice(buffer,startTime+(index*stepMs)/1000,noteDurationMs);
+        });
+        const chordStart=startTime+(buffers.length*stepMs)/1000;
+        buffers.forEach(buffer => startVoice(buffer,chordStart,finalChordDurationMs));
+        return Object.freeze({
+          ok:true,
+          voices:midis.length,
+          pattern:"bass-to-treble-then-chord",
+          totalDurationMs:buffers.length*stepMs+finalChordDurationMs
+        });
+      }
+
+      buffers.forEach((buffer, index) => {
+        startVoice(buffer,startTime + index * 0.004);
       });
 
       return Object.freeze({ ok:true, voices:midis.length });

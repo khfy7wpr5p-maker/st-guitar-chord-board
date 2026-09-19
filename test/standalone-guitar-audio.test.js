@@ -72,3 +72,46 @@ test("standalone bridge is local/offline-capable and lazy-loads the instrument o
   assert.equal(loads,1);
   assert.equal(starts.length,6);
 });
+
+
+test("standalone bridge plays bass-to-treble every 500ms then the full chord for 1s", async () => {
+  const mod=await loadModule();
+  const starts=[];
+  const context={
+    state:"running",
+    currentTime:10,
+    destination:{},
+    async decodeAudioData(bytes){ return {bytes}; },
+    createBufferSource(){
+      return {
+        buffer:null,
+        connect(){},
+        start(...args){ starts.push(args); }
+      };
+    },
+    createGain(){ return { gain:{value:0}, connect(){} }; }
+  };
+  const dataUri="data:audio/mp3;base64,AQID";
+  const bridge=mod.createStandaloneGuitarBridge({
+    soundfontUrl:"./vendor/audio/electric_guitar_jazz-mp3.js",
+    createAudioContext:()=>context,
+    loadInstrumentData:async ()=>({E2:dataUri,A2:dataUri,E3:dataUri}),
+    decodeDataUri:async ()=>new Uint8Array([1,2,3]).buffer
+  });
+
+  const result=await bridge.playChord({
+    midis:[40,45,52],
+    playbackMode:"bass-to-treble-then-chord",
+    stepMs:500,
+    noteDurationMs:500,
+    finalChordDurationMs:1000
+  });
+
+  assert.equal(result.pattern,"bass-to-treble-then-chord");
+  assert.equal(result.totalDurationMs,2500);
+  assert.equal(starts.length,6);
+  assert.deepEqual(starts.slice(0,3).map(args=>Number(args[0].toFixed(2))),[10.01,10.51,11.01]);
+  assert.deepEqual(starts.slice(3).map(args=>Number(args[0].toFixed(2))),[11.51,11.51,11.51]);
+  assert.deepEqual(starts.slice(0,3).map(args=>args[2]),[0.5,0.5,0.5]);
+  assert.deepEqual(starts.slice(3).map(args=>args[2]),[1,1,1]);
+});
