@@ -21,6 +21,13 @@ test("selection state round-trips display symbol and voicing index", () => {
   assert.deepEqual(loadSelectionState(storage),{symbol:"Bb5",voicingIndex:1});
 });
 
+test("legacy fourth non-power position normalizes to the new third position", () => {
+  const storage=memoryStorage({
+    [SELECTION_STORAGE_KEY]:JSON.stringify({symbol:"A",voicingIndex:3})
+  });
+  assert.deepEqual(loadSelectionState(storage),{symbol:"A",voicingIndex:2});
+});
+
 test("invalid or stale persisted state falls back safely", () => {
   for (const raw of [
     "{bad json",

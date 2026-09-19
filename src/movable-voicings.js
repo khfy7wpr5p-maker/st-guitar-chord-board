@@ -1,6 +1,7 @@
 import { ROOT_PCS } from "./chord-core.js";
 
 const T = (frets, fingers, barres = [], shape = "movable") => ({ frets, fingers, barres, shape });
+const MAX_FRET = 20;
 
 const BASE = Object.freeze({
   major: [
@@ -40,21 +41,56 @@ const BASE = Object.freeze({
   ]
 });
 
+function mod12(value) {
+  return ((value % 12) + 12) % 12;
+}
+
+function placementDeltas(template, targetRootPc) {
+  const played=template.frets.filter(fret=>fret>=0);
+  if (!played.length) return [];
+  const minDelta=-Math.min(...played);
+  const maxDelta=MAX_FRET-Math.max(...played);
+  const deltas=[];
+  for (let delta=minDelta; delta<=maxDelta; delta+=1) {
+    if (mod12(delta)===targetRootPc) deltas.push(delta);
+  }
+  return deltas;
+}
+
 function shiftedTemplate(template, semitones) {
-  const shifted = template.frets.map(f => f < 0 ? -1 : f + semitones);
-  const positive = shifted.filter(f => f >= 0);
-  let octaveShift = 0;
-  if (Math.max(...positive) > 20 && Math.min(...positive) >= 12) octaveShift = -12;
-  const frets = shifted.map(f => f < 0 ? -1 : f + octaveShift);
-  const barres = template.barres.map(b => ({...b, fret:b.fret + semitones + octaveShift}));
-  if (frets.some(f => f > 20)) throw new Error("Generated voicing exceeds fret 20");
-  if (frets.some(f => f < -1)) throw new Error("Generated voicing has invalid fret");
-  return {...template, frets, barres, generated:true};
+  const frets=template.frets.map(fret=>{
+    if (fret<0) return -1;
+    const shifted=fret+semitones;
+    if (shifted<0 || shifted>MAX_FRET) {
+      throw new Error("Generated voicing exceeds bounded fret range");
+    }
+    return shifted;
+  });
+
+  const fingers=template.fingers.map((finger,index)=>{
+    if (frets[index]<0) return -1;
+    if (frets[index]===0) return 0;
+    return finger;
+  });
+
+  const barres=template.barres.flatMap(barre=>{
+    const fret=barre.fret+semitones;
+    if (fret<0 || fret>MAX_FRET) {
+      throw new Error("Generated barre exceeds bounded fret range");
+    }
+    if (fret===0) return [];
+    return [{...barre,fret}];
+  });
+
+  return {...template,frets,fingers,barres,generated:true};
 }
 
 export function generateMovableVoicings(chord) {
   if (!chord || !(chord.root in ROOT_PCS)) return [];
-  const templates = BASE[chord.quality];
+  const templates=BASE[chord.quality];
   if (!templates) return [];
-  return templates.map(t => shiftedTemplate(t, ROOT_PCS[chord.root]));
+  const rootPc=ROOT_PCS[chord.root];
+  return templates.flatMap(template=>
+    placementDeltas(template,rootPc).map(delta=>shiftedTemplate(template,delta))
+  );
 }

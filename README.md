@@ -2,16 +2,16 @@
 
 Offline-first, phone-first interactive guitar chord surface.
 
-**Live app:** https://st-guitar-chord-board.onrender.com
+**GitHub Pages app:** https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/
 
-## Current status — Stage 20
+## Current status — Stage 21
 
 The app targets:
 
 - **12 chromatic roots**
 - **8 chord families:** major, minor, 7, maj7, m7, sus2, sus4, power chord (5)
 - **96 searchable chord symbols**
-- original 84 chords keep **3+ exact guitar voicings**
+- original 84 chords keep **exactly 3 guitar voicings**
 - the 12 power chords use **exactly 2 guitar positions**
 - Turkish reading shown for every selected chord
 - compact same-root chord-family suggestions
@@ -87,13 +87,15 @@ This relation is shown only for basic major/minor chords.
 
 ### Guitar voicings
 
-The original 84 chord identities retain the existing 3+ voicing rule. Power chords are the only current exception and intentionally expose exactly two positions.
+The original 84 non-power chord identities expose exactly 3 ordered voicings. Power chords intentionally expose exactly 2 positions.
 
 CI verifies:
 
 - all 96 canonical chords remain searchable;
 - every displayed voicing contains exactly the requested pitch classes;
+- all 84 non-power chords have exactly three unique positions;
 - all 12 power chords have exactly two positions;
+- the full catalog exposes exactly 276 displayed voicings;
 - generated frets stay within the bounded guitar range;
 - common open shapes remain prioritized.
 
@@ -229,3 +231,18 @@ Offline sharing flow:
 3. user adds it to the Home Screen / installs the PWA;
 4. the Service Worker caches the release shell and guitar soundfont;
 5. later launches can work without an internet connection.
+
+
+### Stage 21 — curated voicing selection and ordering ✅
+Implemented:
+- movable A/E/D-family templates now generate every bounded octave-equivalent placement whose played frets remain in 0..20;
+- muted strings remain muted and a negative played fret rejects that candidate instead of silently becoming a mute;
+- common curated open/open-region shapes remain first when available;
+- remaining candidates are deduplicated and ranked deterministically by practical base fret, maximum fret, fret span and stable shape order;
+- every non-power chord is capped at exactly 3 unique displayed positions; power chords remain exactly 2;
+- reviewed regressions pin A, A7, Am, B and G#m to practical low/mid-neck ordering;
+- legacy saved fourth-position state migrates to the new third position for valid non-power chords;
+- exact catalog cardinality is 84×3 + 12×2 = 276;
+- Tonal theory, standard-tuning MIDI and deterministic fingering authority checks cover all 276 displayed voicings;
+- release version is `0.19.0` and Service Worker cache is `st-guitar-chord-board-v14`;
+- the pinned `electric_guitar_jazz` soundfont remains unchanged at 2,330,622 bytes.

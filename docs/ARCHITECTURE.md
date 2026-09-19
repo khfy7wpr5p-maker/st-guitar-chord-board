@@ -298,3 +298,24 @@ Fix:
 - no duplicate audio assets are introduced;
 - exhaustive release coverage verifies all MIDI notes used by all voicings across all 96 canonical chords;
 - offline cache version is rotated so installed PWAs update the bridge.
+
+
+### Stage 21 — curated voicing selection and ordering ✅
+Runtime selection policy:
+- curated open/open-region voicing remains first when one exists;
+- C-family reviewed definitions remain explicit three-position authorities;
+- each movable A/E/D-family template produces all octave-equivalent transpositions congruent to the requested root while keeping every originally played fret inside 0..20;
+- negative played frets invalidate a placement; `-1` is preserved only for strings that were already muted;
+- exact fret-vector duplicates are removed;
+- remaining candidates are ranked deterministically by lower practical base fret, lower maximum fret, lower fret span and stable source order;
+- the selected list is capped at exactly three positions for every non-power chord;
+- power chords keep their independent exactly-two-position contract.
+
+Catalog invariant:
+`84 non-power × 3 + 12 power × 2 = 276` displayed voicings.
+
+Persistence/release compatibility:
+- a previously stored fourth non-power position migrates to the new third position without weakening malformed-state rejection;
+- Service Worker cache rotates to `st-guitar-chord-board-v14`;
+- release `0.19.0` keeps the existing pinned 2,330,622-byte `electric_guitar_jazz` soundfont;
+- GitHub Pages remains the static/offline distribution target; no Render dependency is introduced.

@@ -59,17 +59,46 @@ function combineUnique(primary, generated) {
   return result;
 }
 
+function metrics(voicing) {
+  const played=voicing.frets.filter(fret=>fret>=0);
+  const positive=played.filter(fret=>fret>0);
+  const base=played.includes(0) || !positive.length || Math.min(...positive)<=1
+    ? 1
+    : Math.min(...positive);
+  const max=played.length ? Math.max(...played) : 0;
+  const min=played.length ? Math.min(...played) : 0;
+  return {base,max,span:max-min};
+}
+
+function rankVoicings(voicings) {
+  return voicings
+    .map((voicing,index)=>({voicing,index,metrics:metrics(voicing)}))
+    .sort((a,b)=>
+      a.metrics.base-b.metrics.base ||
+      a.metrics.max-b.metrics.max ||
+      a.metrics.span-b.metrics.span ||
+      a.index-b.index
+    )
+    .map(item=>item.voicing);
+}
+
 export function getVoicings(symbol) {
   if (C_FAMILY_VOICINGS[symbol]) return C_FAMILY_VOICINGS[symbol];
-  const chord = parseChordQuery(symbol);
+  const chord=parseChordQuery(symbol);
   if (!chord) return [];
-  if (chord.quality === "5") return generatePowerVoicings(chord);
-  const generated = generateMovableVoicings(chord);
-  const open = getCommonOpenVoicing(symbol);
-  return combineUnique(open ? [open] : [], generated);
+  if (chord.quality==="5") return generatePowerVoicings(chord);
+
+  const open=getCommonOpenVoicing(symbol);
+  const generated=generateMovableVoicings(chord);
+  const unique=combineUnique(open?[open]:[],generated);
+  const ordered=open
+    ? [unique[0],...rankVoicings(unique.slice(1))]
+    : rankVoicings(unique);
+
+  return ordered.slice(0,3);
 }
 
 const OPEN_MIDI = [40,45,50,55,59,64];
 export function voicingMidi(voicing) {
-  return voicing.frets.flatMap((fret,index) => fret < 0 ? [] : [OPEN_MIDI[index] + fret]);
+  return voicing.frets.flatMap((fret,index)=>fret<0?[]:[OPEN_MIDI[index]+fret]);
 }

@@ -38,7 +38,7 @@ test("every displayed guitar voicing agrees with the Tonal chord identity", () =
       }
     }
   }
-  assert.ok(checked>=276);
+  assert.equal(checked,276);
 });
 
 test("enharmonic display aliases validate through canonical identity", () => {
