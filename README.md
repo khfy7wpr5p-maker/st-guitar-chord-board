@@ -4,7 +4,7 @@ Offline-first, phone-first interactive guitar chord surface.
 
 **GitHub Pages app:** https://khfy7wpr5p-maker.github.io/st-guitar-chord-board/
 
-## Current status — Stage 21
+## Current status — Stage 22
 
 The app targets:
 
@@ -37,6 +37,7 @@ The app targets:
 - standalone Web Audio guitar bridge for published builds
 - CI-qualified online + offline packaged-sample playback path
 - live static deployment with automatic main-branch updates
+- refined in-house SVG chord renderer with guitar-like string gauges and explicit high-position semantics
 
 ### Search and naming rule
 
@@ -246,3 +247,20 @@ Implemented:
 - Tonal theory, standard-tuning MIDI and deterministic fingering authority checks cover all 276 displayed voicings;
 - release version is `0.19.0` and Service Worker cache is `st-guitar-chord-board-v14`;
 - the pinned `electric_guitar_jazz` soundfont remains unchanged at 2,330,622 bytes.
+
+
+### Stage 22 — refined in-house chord diagram renderer ✅
+Implemented:
+- keeps the existing ST-owned SVG renderer; no SVGuitar runtime dependency is introduced;
+- bass-to-treble strings now use progressively lighter stroke weights to read more like a real guitar;
+- fret lines and the nut are distinct semantic SVG elements;
+- only first-position diagrams draw the heavy nut line;
+- high-position diagrams expose their real starting fret through `data-base-fret` and an accessible Turkish label;
+- finger dots, open-string marks and barre geometry are visually tightened for small phone screens;
+- A major second position is pinned in browser validation to `5-7-7-6-5-5`, displayed as position `2 / 3`, starting at fret 5;
+- visual CI captures a dedicated iPhone screenshot for the A fifth-fret position;
+- release version is `0.20.0` and Service Worker cache rotates to `st-guitar-chord-board-v15`.
+
+Boundary:
+- chord identities, Stage 21 voicing order, fingering metadata, MIDI/audio and Tonal validation are unchanged;
+- the renderer remains dependency-free in the installed/offline runtime.
