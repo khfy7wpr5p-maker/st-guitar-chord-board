@@ -59,7 +59,7 @@ test("every displayed voicing stays within deterministic fingering resource boun
       }
     }
   }
-  assert.ok(checked>=276);
+  assert.equal(checked,276);
 });
 
 test("learned fingering ranker remains outside runtime authority", () => {
