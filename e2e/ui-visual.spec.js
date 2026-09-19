@@ -79,6 +79,16 @@ test("visual validation: Bb5 second position and restored state", async ({ page 
   await page.screenshot({ path:`${OUTPUT}/iphone-bb5-position-2-restored.png`, fullPage:true });
 });
 
+test("runtime fingering: open A major uses bass-to-treble 2-3-4", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A");
+
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+  await expect(page.locator('.finger-position[data-string="4"] .finger-number')).toHaveText("2");
+  await expect(page.locator('.finger-position[data-string="3"] .finger-number')).toHaveText("3");
+  await expect(page.locator('.finger-position[data-string="2"] .finger-number')).toHaveText("4");
+});
+
 test("visual validation: A second position starts at fret five with weighted strings", async ({ page }) => {
   await page.goto("/");
   await page.locator("#chord-search").fill("A");
