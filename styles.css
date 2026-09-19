@@ -19,14 +19,16 @@ button{min-height:44px}
 #chord-symbol{font-size:clamp(42px,14vw,72px);line-height:1}
 #chord-reading{font-size:clamp(18px,5vw,26px);font-weight:650;line-height:1.15}
 #strings{width:100%;display:grid;place-items:center;min-height:310px}
-.chord-diagram{width:min(100%,390px);height:auto;display:block;overflow:visible}
-.fretboard-lines{stroke:#252525;stroke-linecap:round}
-.open-mark{fill:none;stroke:#111;stroke-width:4}
-.mute-mark{fill:#111;font-size:30px;font-weight:650;text-anchor:middle}
-.finger-mark{fill:#111}
-.finger-number{fill:white;font-size:18px;font-weight:750;text-anchor:middle}
+.chord-diagram{width:min(100%,400px);height:auto;display:block;overflow:visible}
+.string-line{stroke:#1b1b1b;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.fret-line{stroke:#6a6a6a;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.nut-line{stroke:#111}
+.open-mark{fill:#fff;stroke:#111;stroke-width:3;vector-effect:non-scaling-stroke}
+.mute-mark{fill:#111;font-size:28px;font-weight:700;text-anchor:middle}
+.finger-mark{fill:#111;stroke:#fff;stroke-width:1.25;vector-effect:non-scaling-stroke}
+.finger-number{fill:white;font-size:18px;font-weight:800;text-anchor:middle}
 .barre-mark{fill:#111}
-.base-fret{fill:#111;font-size:18px;font-weight:750;text-anchor:middle}
+.base-fret{fill:#111;font-size:17px;font-weight:800;text-anchor:middle}
 .variants{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px}
 .variants button{height:52px;border:0;border-radius:16px;background:#e6e6e6;font-size:32px;touch-action:manipulation}
 .variants span{text-align:center;font-weight:700}
