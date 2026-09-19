@@ -42,6 +42,8 @@ test("release asset paths are project-subpath safe for GitHub Pages", async () =
   assert.ok(serviceWorker.includes('./icon-192.png'));
   assert.ok(serviceWorker.includes('./icon-512.png'));
   assert.ok(serviceWorker.includes('./maskable-icon-512.png'));
+  assert.ok(serviceWorker.includes('./src/tuner.js'));
+  assert.ok(serviceWorker.includes('./src/tuner-core.js'));
   assert.doesNotMatch(serviceWorker,/https?:\/\//);
   assert.ok(releaseConfig.includes('instrumentUrl: "./vendor/audio/electric_guitar_jazz-mp3.js"'));
 });

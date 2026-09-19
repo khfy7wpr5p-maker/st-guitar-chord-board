@@ -21,6 +21,7 @@ const countEl = document.querySelector("#variant-count");
 const prev = document.querySelector("#prev");
 const next = document.querySelector("#next");
 const status = document.querySelector("#status");
+const tunerButton = document.querySelector("#tuner-button");
 
 if (RELEASE_AUDIO.enabled) {
   installStandaloneGuitarBridge(window, { soundfontUrl:RELEASE_AUDIO.instrumentUrl });
@@ -134,6 +135,18 @@ function changeVoicing(delta) {
   persistSelection();
   return true;
 }
+
+let tunerControllerPromise=null;
+tunerButton?.addEventListener("click",async () => {
+  try {
+    tunerControllerPromise ||= import("./tuner.js")
+      .then(({ createChromaticTuner }) => createChromaticTuner(document,window));
+    const tuner=await tunerControllerPromise;
+    await tuner.open();
+  } catch {
+    status.textContent="Tuner yüklenemedi";
+  }
+});
 
 input.addEventListener("input", e => {
   const value = e.target.value;
