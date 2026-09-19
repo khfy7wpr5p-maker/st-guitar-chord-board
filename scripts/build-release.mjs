@@ -13,6 +13,13 @@ const ROOT_FILES = Object.freeze([
   "styles.css",
   "manifest.webmanifest",
   "service-worker.js",
+  "apple-touch-icon.png",
+  "favicon-16x16.png",
+  "favicon-32x32.png",
+  "favicon.ico",
+  "icon-192.png",
+  "icon-512.png",
+  "maskable-icon-512.png",
   "THIRD_PARTY_NOTICES.md"
 ]);
 
