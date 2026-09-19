@@ -30,7 +30,14 @@ const QUALITY_NAMES_TR = Object.freeze({
   m7:"minör yedili",
   sus2:"sus iki",
   sus4:"sus dört",
-  "5":"beş"
+  "5":"beş",
+  dim:"eksilmiş",
+  aug:"artırılmış",
+  "6":"altılı",
+  m6:"minör altılı",
+  "9":"dokuzlu",
+  add9:"add dokuz",
+  m7b5:"minör yedili bemol beş"
 });
 
 export function chordNameTr(chord) {
