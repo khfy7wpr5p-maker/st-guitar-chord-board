@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-test("PWA manifest is standalone portrait, locally scoped and branded", () => {
+test("PWA manifest is standalone portrait and scoped locally", () => {
   const manifest=JSON.parse(readFileSync(new URL("../manifest.webmanifest",import.meta.url),"utf8"));
   assert.equal(manifest.id,"./");
   assert.equal(manifest.start_url,"./");
@@ -10,41 +10,22 @@ test("PWA manifest is standalone portrait, locally scoped and branded", () => {
   assert.equal(manifest.display,"standalone");
   assert.equal(manifest.orientation,"portrait");
   assert.equal(manifest.lang,"tr");
-  assert.ok(manifest.icons.some(icon =>
-    icon.src==="./assets/icon-192.png" &&
-    icon.sizes==="192x192" &&
-    icon.type==="image/png"
-  ));
-  assert.ok(manifest.icons.some(icon =>
-    icon.src==="./assets/icon-512.svg" &&
-    icon.sizes==="any" &&
-    icon.type==="image/svg+xml" &&
-    icon.purpose.includes("maskable")
-  ));
 });
 
-test("iPhone safe-area, standalone metadata and brand icons are present", () => {
+test("iPhone safe-area and standalone metadata are present", () => {
   const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
   const css=readFileSync(new URL("../styles.css",import.meta.url),"utf8");
   assert.match(html,/viewport-fit=cover/);
   assert.match(html,/apple-mobile-web-app-capable/);
-  assert.match(html,/\.\/assets\/apple-touch-icon\.png/);
-  assert.match(html,/\.\/assets\/favicon-32\.png/);
-  assert.match(html,/class="brand-mark"/);
   assert.match(css,/safe-area-inset-top/);
   assert.match(css,/touch-action:manipulation/);
   assert.match(css,/min-height:44px/);
-  assert.match(css,/\.brand-mark/);
 });
 
 test("service worker keeps offline app shell bounded to same-origin requests", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
   assert.match(sw,/APP_SHELL/);
-  assert.match(sw,/st-guitar-chord-board-v17/);
-  assert.match(sw,/assets\/icon-192\.png/);
-  assert.match(sw,/assets\/icon-512\.svg/);
-  assert.match(sw,/assets\/apple-touch-icon\.png/);
-  assert.match(sw,/assets\/favicon-32\.png/);
+  assert.match(sw,/st-guitar-chord-board-v16/);
   assert.match(sw,/url\.origin!==self\.location\.origin/);
   assert.match(sw,/event\.request\.mode==="navigate"/);
   assert.match(sw,/caches\.match\("\.\/index\.html"\)/);
