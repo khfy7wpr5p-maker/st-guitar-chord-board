@@ -25,7 +25,7 @@ export function sameRootFamily(chordOrSymbol) {
   return [selected, ...family.filter(symbol => symbol !== selected)];
 }
 
-export function suggestChordSymbols(input, limit = 8) {
+export function suggestChordSymbols(input, limit = 15) {
   if (!Number.isInteger(limit) || limit < 1 || limit > 20) {
     throw new RangeError("limit must be an integer in 1..20");
   }
