@@ -79,7 +79,7 @@ test("release manifest pins the verified soundfont provenance", async ({ request
   expect(manifest.builtFor).toBe("static-offline-pwa");
   expect(manifest.soundfont.instrument).toBe("electric_guitar_jazz");
   expect(manifest.soundfont.gitBlobSha1).toBe("2c0ef6f12d5a260982520130c97905e5931a60d4");
-  expect(manifest.soundfont.bytes).toBeGreaterThan(100_000);
+  expect(manifest.soundfont.bytes).toBe(2330622);
 });
 
 
