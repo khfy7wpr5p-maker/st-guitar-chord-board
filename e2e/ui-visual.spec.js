@@ -78,3 +78,26 @@ test("visual validation: Bb5 second position and restored state", async ({ page 
 
   await page.screenshot({ path:`${OUTPUT}/iphone-bb5-position-2-restored.png`, fullPage:true });
 });
+
+
+test("visual validation: A second position starts at fret five with weighted strings", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A");
+  await page.locator("#next").tap();
+
+  await expect(page.locator("#chord-symbol")).toHaveText("A");
+  await expect(page.locator("#variant-count")).toHaveText("2 / 3");
+  const diagram=page.locator(".chord-diagram");
+  await expect(diagram).toHaveAttribute("data-base-fret","5");
+  await expect(diagram).toHaveAttribute("aria-label","Gitar akor diyagramı, 5. perdeden");
+  await expect(page.locator(".nut-line")).toHaveCount(0);
+
+  const widths=await page.locator(".string-line").evaluateAll(lines =>
+    lines.map(line=>Number(line.getAttribute("stroke-width")))
+  );
+  expect(widths).toHaveLength(6);
+  expect(widths[0]).toBeGreaterThan(widths.at(-1));
+
+  await assertPhoneLayout(page);
+  await page.screenshot({ path:`${OUTPUT}/iphone-a-position-2-fret-5.png`, fullPage:true });
+});
