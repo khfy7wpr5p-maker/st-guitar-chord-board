@@ -36,9 +36,9 @@ test("iPhone WebKit chord search, relation, variation and audio payload", async 
   await expect(relation).toContainText("C");
   await expect(relation).toContainText("Do majör");
 
-  await expect(page.locator("#variant-count")).toContainText("1 /");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
   await page.locator("#next").tap();
-  await expect(page.locator("#variant-count")).toContainText("2 /");
+  await expect(page.locator("#variant-count")).toHaveText("2 / 3");
 
   await page.locator("#chord-button").tap();
   const calls = await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__);
@@ -206,4 +206,17 @@ test("invalid persisted selection falls back safely to C first voicing", async (
   await expect(page.locator("#chord-symbol")).toHaveText("C");
   await expect(page.locator("#chord-reading")).toHaveText("Do majör");
   await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+});
+
+test("normal chords stop at exactly three positions and never expose a fourth", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("A");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+
+  await page.locator("#next").tap();
+  await expect(page.locator("#variant-count")).toHaveText("2 / 3");
+  await page.locator("#next").tap();
+  await expect(page.locator("#variant-count")).toHaveText("3 / 3");
+  await page.locator("#next").tap();
+  await expect(page.locator("#variant-count")).toHaveText("3 / 3");
 });
