@@ -8,5 +8,19 @@
   "orientation":"portrait",
   "background_color":"#f5f5f5",
   "theme_color":"#111111",
-  "lang":"tr"
+  "lang":"tr",
+  "icons":[
+    {
+      "src":"./assets/icon-192.png",
+      "sizes":"192x192",
+      "type":"image/png",
+      "purpose":"any"
+    },
+    {
+      "src":"./assets/icon-512.svg",
+      "sizes":"any",
+      "type":"image/svg+xml",
+      "purpose":"any maskable"
+    }
+  ]
 }

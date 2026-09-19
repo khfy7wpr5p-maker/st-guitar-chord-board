@@ -52,6 +52,8 @@ async function assertPhoneLayout(page) {
 test("visual validation: default chord board on iPhone", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#app")).toHaveAttribute("data-ready","true");
+  await expect(page.locator(".brand-mark")).toBeVisible();
+  await expect(page.locator(".brand-name")).toHaveText("ST Guitar Chord Board");
   await expect(page.locator("#chord-symbol")).toHaveText("C");
   await expect(page.locator("#chord-reading")).toHaveText("Do majör");
   await expect(page.locator(".chord-diagram")).toBeVisible();
