@@ -83,24 +83,38 @@ function developmentAdapter(host) {
   return {
     kind: "development-web-audio",
     offlineReady: true,
-    async playChord(midis) {
+    async playChord(midis, meta = {}) {
       assertMidiList(midis);
       const AudioContextCtor = host.AudioContext || host.webkitAudioContext;
       if (!AudioContextCtor) return { ok:false, reason:"audio-context-unavailable" };
       const ctx = new AudioContextCtor();
       if (ctx.state === "suspended") await ctx.resume();
       const now = ctx.currentTime;
-      midis.forEach((midi,i)=>{
+      const scheduleTone=(midi,start,durationMs,velocity=0.12) => {
+        const duration=Math.max(0.08,Math.min(5,Number(durationMs || 900)/1000));
         const osc=ctx.createOscillator();
         const gain=ctx.createGain();
         osc.type="triangle";
         osc.frequency.value=440*Math.pow(2,(midi-69)/12);
-        gain.gain.setValueAtTime(0.0001,now);
-        gain.gain.exponentialRampToValueAtTime(0.12,now+0.008+i*0.002);
-        gain.gain.exponentialRampToValueAtTime(0.0001,now+0.85);
-        osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now+0.9);
-      });
-      setTimeout(()=>ctx.close().catch(()=>{}),1100);
+        gain.gain.setValueAtTime(0.0001,start);
+        gain.gain.exponentialRampToValueAtTime(velocity,start+0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
+        osc.connect(gain); gain.connect(ctx.destination); osc.start(start); osc.stop(start+duration+0.05);
+      };
+
+      let totalMs=Number(meta.durationMs ?? 900);
+      if (meta.playbackMode === "bass-to-treble-then-chord") {
+        const stepMs=Math.max(50,Math.min(5000,Number(meta.stepMs ?? 500)));
+        const noteDurationMs=Math.max(50,Math.min(5000,Number(meta.noteDurationMs ?? 500)));
+        const finalChordDurationMs=Math.max(50,Math.min(5000,Number(meta.finalChordDurationMs ?? 1000)));
+        midis.forEach((midi,index)=>scheduleTone(midi,now+(index*stepMs)/1000,noteDurationMs));
+        const chordStart=now+(midis.length*stepMs)/1000;
+        midis.forEach(midi=>scheduleTone(midi,chordStart,finalChordDurationMs));
+        totalMs=midis.length*stepMs+finalChordDurationMs;
+      } else {
+        midis.forEach((midi,i)=>scheduleTone(midi,now+i*0.002,totalMs));
+      }
+      setTimeout(()=>ctx.close().catch(()=>{}),Math.ceil(totalMs+200));
       return { ok:true, voices:midis.length };
     }
   };

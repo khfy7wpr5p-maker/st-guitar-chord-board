@@ -43,6 +43,10 @@ const restoredSelection = loadSelectionState(storage);
 const SWIPE_MIN_DISTANCE = 48;
 const SWIPE_AXIS_RATIO = 1.25;
 const SWIPE_CLICK_SUPPRESSION_MS = 450;
+const CHORD_AUDITION_MODE = "bass-to-treble-then-chord";
+const CHORD_NOTE_STEP_MS = 500;
+const CHORD_NOTE_DURATION_MS = 500;
+const CHORD_FINAL_DURATION_MS = 1000;
 
 let symbol = restoredSelection.symbol;
 let index = restoredSelection.voicingIndex;
@@ -215,7 +219,11 @@ board.addEventListener("click", async event => {
       symbol: chord.symbol,
       displaySymbol: chord.displaySymbol,
       voicingIndex:index,
-      positions
+      positions,
+      playbackMode:CHORD_AUDITION_MODE,
+      stepMs:CHORD_NOTE_STEP_MS,
+      noteDurationMs:CHORD_NOTE_DURATION_MS,
+      finalChordDurationMs:CHORD_FINAL_DURATION_MS
     });
     board.classList.remove("pressed");
     void board.offsetWidth;
