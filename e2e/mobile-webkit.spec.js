@@ -220,3 +220,19 @@ test("normal chords stop at exactly three positions and never expose a fourth", 
   await page.locator("#next").tap();
   await expect(page.locator("#variant-count")).toHaveText("3 / 3");
 });
+
+
+test("extended chord family search, Turkish label and playback work on iPhone WebKit", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#chord-search").fill("Cm7b5");
+
+  await expect(page.locator("#chord-symbol")).toHaveText("Cm7b5");
+  await expect(page.locator("#chord-reading")).toHaveText("Do minör yedili bemol beş");
+  await expect(page.locator("#variant-count")).toHaveText("1 / 3");
+  await expect(page.locator("#relation")).toBeHidden();
+
+  await page.locator("#chord-button").tap();
+  const call=await page.evaluate(() => window.__CHORD_BOARD_AUDIO_CALLS__.at(-1));
+  expect(call.symbol).toBe("Cm7b5");
+  expect([...new Set(call.midis.map(midi => midi % 12))].sort((x,y)=>x-y)).toEqual([0,3,6,10]);
+});
