@@ -12,7 +12,7 @@ async function loadBuildModule() {
   }
 }
 
-test("release build emits enabled local-audio config and verified manifest", async () => {
+test("release build emits enabled local-audio config, brand icons and verified manifest", async () => {
   const mod=await loadBuildModule();
   const root=await mkdtemp(join(tmpdir(),"chord-board-release-"));
   try {
@@ -23,6 +23,13 @@ test("release build emits enabled local-audio config and verified manifest", asy
       ["styles.css","body{}"],
       ["manifest.webmanifest","{}"],
       ["service-worker.js","const RELEASE_REQUIRES_LOCAL_AUDIO=false;"],
+      ["apple-touch-icon.png","apple-icon"],
+      ["favicon-16x16.png","favicon-16"],
+      ["favicon-32x32.png","favicon-32"],
+      ["favicon.ico","favicon-ico"],
+      ["icon-192.png","icon-192"],
+      ["icon-512.png","icon-512"],
+      ["maskable-icon-512.png","maskable-icon-512"],
       ["THIRD_PARTY_NOTICES.md","notice"],
       ["src/app.js",""],
       ["src/release-config.js","export const RELEASE_AUDIO={enabled:false};"],
@@ -45,6 +52,17 @@ test("release build emits enabled local-audio config and verified manifest", asy
       runtimeSrcFiles:["app.js","release-config.js"]
     });
 
+    for (const file of [
+      "apple-touch-icon.png",
+      "favicon-16x16.png",
+      "favicon-32x32.png",
+      "favicon.ico",
+      "icon-192.png",
+      "icon-512.png",
+      "maskable-icon-512.png"
+    ]) {
+      await access(join(dist,file));
+    }
     await access(join(dist,"vendor/audio/electric_guitar_jazz-mp3.js"));
     const config=await readFile(join(dist,"src/release-config.js"),"utf8");
     assert.match(config,/enabled:\s*true/);
