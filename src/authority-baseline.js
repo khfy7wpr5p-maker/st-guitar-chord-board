@@ -45,7 +45,14 @@ export const HARMONIC_AUTHORITY = Object.freeze({
 });
 
 export const PRODUCT_HARMONIC_EXTENSIONS = Object.freeze({
-  "5": Object.freeze([0,7])
+  "5": Object.freeze([0,7]),
+  dim: Object.freeze([0,3,6]),
+  aug: Object.freeze([0,4,8]),
+  "6": Object.freeze([0,4,7,9]),
+  m6: Object.freeze([0,3,7,9]),
+  "9": Object.freeze([0,4,7,10,2]),
+  add9: Object.freeze([0,4,7,2]),
+  m7b5: Object.freeze([0,3,6,10])
 });
 
 export const FINGERING_AUTHORITY = Object.freeze({
