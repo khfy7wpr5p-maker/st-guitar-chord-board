@@ -75,7 +75,7 @@ test("release manifest pins the verified soundfont provenance", async ({ request
   const response=await request.get("/release-manifest.json");
   expect(response.ok()).toBeTruthy();
   const manifest=await response.json();
-  expect(manifest.version).toBe("0.20.1");
+  expect(manifest.version).toBe("0.20.2");
   expect(manifest.builtFor).toBe("static-offline-pwa");
   expect(manifest.soundfont.instrument).toBe("electric_guitar_jazz");
   expect(manifest.soundfont.gitBlobSha1).toBe("2c0ef6f12d5a260982520130c97905e5931a60d4");
