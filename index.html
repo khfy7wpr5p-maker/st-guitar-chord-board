@@ -30,12 +30,12 @@
 
     <div id="suggestions" class="suggestions" aria-label="Aynı kökten akor ailesi"></div>
 
-    <button id="chord-button" class="chord-button" type="button" aria-label="Seçili akoru çal">
+    <button id="chord-button" class="chord-button" type="button" aria-label="Seçili akoru çal" aria-describedby="chord-accessibility-description">
       <div class="chord-heading">
         <strong id="chord-symbol">C</strong>
         <span id="chord-reading">Do majör</span>
       </div>
-      <div id="strings" class="strings" aria-hidden="true"></div>
+      <span id="chord-accessibility-description" class="sr-only"></span>\n      <div id="strings" class="strings" aria-hidden="true"></div>
     </button>
 
     <nav class="variants" aria-label="Akor varyasyonları">
@@ -45,7 +45,7 @@
     </nav>
 
     <div id="relation" class="relation" aria-label="Akor ilişkisi" hidden></div>
-    <p id="status" class="status" aria-live="polite"></p>
+    <p id="status" class="status" aria-live="polite"></p>\n    <p id="chord-accessibility-status" class="sr-only" aria-live="polite"></p>
   </main>
 
   <section id="tuner-panel" class="tuner-panel" role="dialog" aria-modal="true" aria-label="Kromatik tuner" aria-hidden="true" hidden>
