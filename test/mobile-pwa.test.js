@@ -41,13 +41,14 @@ test("iPhone safe-area, standalone metadata and brand icons are present", () => 
 test("service worker keeps offline app shell bounded to same-origin requests", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
   assert.match(sw,/APP_SHELL/);
-  assert.match(sw,/st-guitar-chord-board-v27/);
+  assert.match(sw,/st-guitar-chord-board-v28/);
   assert.match(sw,/apple-touch-icon\.png/);
   assert.match(sw,/icon-192\.png/);
   assert.match(sw,/icon-512\.png/);
   assert.match(sw,/maskable-icon-512\.png/);
   assert.match(sw,/src\/tuner\.js/);
   assert.match(sw,/src\/tuner-core\.js/);
+  assert.match(sw,/src\/accessibility-model\.js/);
   assert.match(sw,/styles\.css\?v=24-1/);
   assert.match(sw,/src\/app\.js\?v=24-1/);
   assert.match(sw,/NETWORK_FIRST_DESTINATIONS/);

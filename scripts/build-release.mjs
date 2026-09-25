@@ -25,6 +25,7 @@ const ROOT_FILES = Object.freeze([
 
 export const RUNTIME_SRC_FILES = Object.freeze([
   "app.js",
+  "accessibility-model.js",
   "audio-adapter.js",
   "tuner.js",
   "tuner-core.js",
