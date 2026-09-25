@@ -47,7 +47,8 @@ test("service worker keeps offline app shell bounded to same-origin requests", (
   assert.match(sw,/icon-512\.png/);
   assert.match(sw,/maskable-icon-512\.png/);
   assert.match(sw,/src\/tuner\.js/);
-  assert.match(sw,/src\/tuner-core\.js/);\n  assert.match(sw,/src\/accessibility-model\.js/);
+  assert.match(sw,/src\/tuner-core\.js/);
+  assert.match(sw,/src\/accessibility-model\.js/);
   assert.match(sw,/styles\.css\?v=24-1/);
   assert.match(sw,/src\/app\.js\?v=24-1/);
   assert.match(sw,/NETWORK_FIRST_DESTINATIONS/);
