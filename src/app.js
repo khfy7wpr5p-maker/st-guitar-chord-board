@@ -5,6 +5,7 @@ import { getRelativeRelation } from "./chord-relations.js";
 import { getVoicings, voicingMidi } from "./voicing-library.js";
 import { createAudioAdapter } from "./audio-adapter.js";
 import { renderChordDiagramSvg } from "./diagram-model.js";
+import { buildChordAccessibilityModel } from "./accessibility-model.js";
 import { loadSelectionState, saveSelectionState } from "./selection-state.js";
 import { RELEASE_AUDIO } from "./release-config.js";
 import { installStandaloneGuitarBridge } from "./standalone-guitar-audio.js";
@@ -21,6 +22,8 @@ const countEl = document.querySelector("#variant-count");
 const prev = document.querySelector("#prev");
 const next = document.querySelector("#next");
 const status = document.querySelector("#status");
+const accessibilityDescription = document.querySelector("#chord-accessibility-description");
+const accessibilityStatus = document.querySelector("#chord-accessibility-status");
 const tunerButton = document.querySelector("#tuner-button");
 
 if (RELEASE_AUDIO.enabled) {
@@ -84,7 +87,22 @@ function renderRelation(chord) {
   </button>`;
 }
 
-function render() {
+function renderAccessibility(chord, voicing, totalPositions, announce = false) {
+  const model=buildChordAccessibilityModel({
+    symbol:chord.displaySymbol,
+    chordName:chordNameTr(chord),
+    voicing,
+    position:index+1,
+    totalPositions
+  });
+  board.setAttribute("aria-label",model.label);
+  accessibilityDescription.textContent=model.description;
+  if (announce && accessibilityStatus.textContent !== model.label) {
+    accessibilityStatus.textContent=model.label;
+  }
+}
+
+function render({ announceAccessibility = false } = {}) {
   const chord = parseChordPresentation(symbol);
   const voicings = getVoicings(symbol);
   if (!voicings.length || !chord) {
@@ -105,7 +123,7 @@ function render() {
   stringsEl.innerHTML = renderChordDiagramSvg(v);
   countEl.textContent = `${index+1} / ${voicings.length}`;
   board.disabled = false;
-  board.setAttribute("aria-label", `${chord.displaySymbol}, ${chordNameTr(chord)} akorunu çal`);
+  renderAccessibility(chord,v,voicings.length,announceAccessibility);
   status.textContent = audio.kind === "development-web-audio"
     ? "Geliştirme sesi"
     : audio.offlineReady === true
@@ -124,7 +142,7 @@ function selectSymbol(nextSymbol) {
   if (!parsed) return false;
   symbol = parsed.displaySymbol;
   index = 0;
-  render();
+  render({announceAccessibility:true});
   persistSelection();
   return true;
 }
@@ -135,7 +153,7 @@ function changeVoicing(delta) {
   const nextIndex = Math.max(0, Math.min(voicings.length - 1, index + delta));
   if (nextIndex === index) return false;
   index = nextIndex;
-  render();
+  render({announceAccessibility:true});
   persistSelection();
   return true;
 }
