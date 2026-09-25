@@ -20,6 +20,11 @@ test("VoiceOver description stays screen-reader-only and owns the chord button s
   assert.match(html,/id="strings"[^>]*aria-hidden="true"/);
 });
 
+test("accessibility-only markup introduces no literal visible escape text", () => {
+  const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
+  assert.equal(html.includes("\\n"),false);
+});
+
 test("accessibility runtime model is packaged for release and offline app-shell use", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
   assert.match(sw,/st-guitar-chord-board-v28/);
