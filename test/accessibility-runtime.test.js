@@ -18,6 +18,8 @@ test("VoiceOver description stays screen-reader-only and owns the chord button s
     /id="chord-accessibility-status"[^>]*class="sr-only"[^>]*aria-live="polite"/
   );
   assert.match(html,/id="strings"[^>]*aria-hidden="true"/);
+  assert.doesNotMatch(html,/<\/span>\\n\s*<div id="strings"/);
+  assert.doesNotMatch(html,/<\/p>\\n\s*<p id="chord-accessibility-status"/);
 });
 
 test("accessibility-only markup introduces no literal visible escape text", () => {
