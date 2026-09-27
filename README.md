@@ -313,3 +313,12 @@ Validation:
 - Stage 24 chord data was already present in 0.21.0; this hotfix makes the new families visibly discoverable without typing the full symbol;
 - iPhone WebKit regression verifies `C6`, `Cm6`, `C9`, `Cadd9`, `Cdim`, `Caug` and `Cm7b5` are all present after entering `C`;
 - release version is `0.21.1`; Service Worker cache rotates to `st-guitar-chord-board-v20`.
+
+
+## License
+
+ST Guitar Chord Board is proprietary software. The officially hosted application may be used for personal, educational, instructional, classroom, and student-practice purposes under the terms in [LICENSE](LICENSE).
+
+Source-code redistribution, modified-source distribution, resale, white-label use, embedding in a commercial product, sublicensing, or other commercial exploitation requires prior written permission from the copyright holder.
+
+Third-party software and audio assets remain subject to their own licenses and notices; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
