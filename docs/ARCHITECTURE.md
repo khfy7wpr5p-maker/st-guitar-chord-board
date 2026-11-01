@@ -4,6 +4,24 @@
 
 The chord board is an offline-first, phone-first instrument surface. The selected chord is the primary large tactile control. There is no required backend.
 
+## Realistic fretboard presentation — 0.22.0
+
+The owner-approved MagicPath image (`467390975682158592` /
+`467391591330484224`) is implemented by `renderChordDiagramSvg` and board CSS.
+The same diagram model drives the six strings, open/mute marks, rebased fret
+window, barres and finger labels. The SVG adds wood edging/grain, a dark neck,
+metallic frets/strings and ivory markers. Strings stay above frets and markers
+stay above strings. Visible string numbers are 6–1; fret labels use the model's
+actual base fret. Only first-position diagrams have an ivory nut.
+
+Materials are inline SVG definitions, not raster assets or external dependencies.
+`app.js`, chord/fingering authorities, accessibility text, audio timing and
+pointer handlers are unchanged. The SVG remains hidden from assistive technology
+inside the existing single accessible chord control. Package `0.22.0`, cache
+`st-guitar-chord-board-v29` and entry asset revision `32-1` carry the update to
+offline installs. Phone/iPad layout and packaged offline playback are release
+verification boundaries.
+
 ## Runtime flow
 
 ```text

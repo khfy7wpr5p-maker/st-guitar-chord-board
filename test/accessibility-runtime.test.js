@@ -29,7 +29,7 @@ test("accessibility-only markup introduces no literal visible escape text", () =
 
 test("accessibility runtime model is packaged for release and offline app-shell use", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
-  assert.match(sw,/st-guitar-chord-board-v28/);
+  assert.match(sw,/st-guitar-chord-board-v29/);
   assert.match(sw,/src\/accessibility-model\.js/);
   assert.ok(RUNTIME_SRC_FILES.includes("accessibility-model.js"));
 });

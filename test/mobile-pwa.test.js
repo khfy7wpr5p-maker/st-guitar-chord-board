@@ -29,9 +29,9 @@ test("iPhone safe-area, standalone metadata and brand icons are present", () => 
   assert.match(html,/\.\/favicon\.ico/);
   assert.match(html,/id="tuner-button"/);
   assert.match(html,/id="tuner-panel"/);
-  assert.match(html,/styles\.css\?v=24-1/);
-  assert.match(html,/src\/app\.js\?v=24-1/);
-  assert.match(html,/service-worker\.js\?v=24-1/);
+  assert.match(html,/styles\.css\?v=32-1/);
+  assert.match(html,/src\/app\.js\?v=32-1/);
+  assert.match(html,/service-worker\.js\?v=32-1/);
   assert.match(css,/safe-area-inset-top/);
   assert.match(css,/\.tuner-dial/);
   assert.match(css,/touch-action:manipulation/);
@@ -41,7 +41,7 @@ test("iPhone safe-area, standalone metadata and brand icons are present", () => 
 test("service worker keeps offline app shell bounded to same-origin requests", () => {
   const sw=readFileSync(new URL("../service-worker.js",import.meta.url),"utf8");
   assert.match(sw,/APP_SHELL/);
-  assert.match(sw,/st-guitar-chord-board-v28/);
+  assert.match(sw,/st-guitar-chord-board-v29/);
   assert.match(sw,/apple-touch-icon\.png/);
   assert.match(sw,/icon-192\.png/);
   assert.match(sw,/icon-512\.png/);
@@ -49,8 +49,8 @@ test("service worker keeps offline app shell bounded to same-origin requests", (
   assert.match(sw,/src\/tuner\.js/);
   assert.match(sw,/src\/tuner-core\.js/);
   assert.match(sw,/src\/accessibility-model\.js/);
-  assert.match(sw,/styles\.css\?v=24-1/);
-  assert.match(sw,/src\/app\.js\?v=24-1/);
+  assert.match(sw,/styles\.css\?v=32-1/);
+  assert.match(sw,/src\/app\.js\?v=32-1/);
   assert.match(sw,/NETWORK_FIRST_DESTINATIONS/);
   assert.match(sw,/request\.destination/);
   assert.match(sw,/url\.origin!==self\.location\.origin/);
