@@ -38,7 +38,7 @@ test("high-position barre diagram rebases to the first visible fret", () => {
     barres:[{finger:1,fret:8,fromString:6,toString:1}]
   });
   assert.match(svg,/class="barre-mark"/);
-  assert.match(svg,/class="base-fret">8</);
+  assert.match(svg,/class="base-fret(?: fret-number)?">8</);
 });
 
 
@@ -66,4 +66,24 @@ test("high-position renderer exposes the real starting fret without drawing a nu
   assert.match(svg,/aria-label="Gitar akor diyagramı, 5\. perdeden"/);
   assert.doesNotMatch(svg,/class="fret-line nut-line"/);
   assert.match(svg,/class="barre-mark"[^>]*data-finger="1"/);
+});
+
+test("the visible diagram identifies all six strings and five first-position frets", () => {
+  const svg=renderChordDiagramSvg({
+    frets:[-1,3,2,0,1,0], fingers:[-1,3,2,0,1,0], barres:[]
+  });
+  const strings=[...svg.matchAll(/<text\b[^>]*class="string-number"[^>]*>(\d+)<\/text>/g)].map(m=>Number(m[1]));
+  const frets=[...svg.matchAll(/<text\b[^>]*class="(?:base-fret )?fret-number"[^>]*>(\d+)<\/text>/g)].map(m=>Number(m[1]));
+  assert.deepEqual(strings,[6,5,4,3,2,1]);
+  assert.deepEqual(frets,[1,2,3,4,5]);
+});
+
+test("visible fret numbers follow a fifth-position voicing instead of restarting at one", () => {
+  const svg=renderChordDiagramSvg({
+    frets:[5,7,7,6,5,5], fingers:[1,3,4,2,1,1],
+    barres:[{finger:1,fret:5,fromString:6,toString:1}]
+  });
+  const frets=[...svg.matchAll(/<text\b[^>]*class="(?:base-fret )?fret-number"[^>]*>(\d+)<\/text>/g)].map(m=>Number(m[1]));
+  assert.deepEqual(frets,[5,6,7,8,9]);
+  assert.doesNotMatch(svg,/class="fret-line nut-line"/);
 });

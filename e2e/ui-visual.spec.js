@@ -59,6 +59,44 @@ test("visual validation: default chord board on iPhone", async ({ page }) => {
   await page.screenshot({ path:`${OUTPUT}/iphone-default-c.png`, fullPage:true });
 });
 
+test("realistic fretboard keeps numeric labels and finger geometry aligned at open and high positions", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".string-number")).toHaveText(["6","5","4","3","2","1"]);
+  await expect(page.locator(".fret-number")).toHaveText(["1","2","3","4","5"]);
+  await expect(page.locator(".nut-line")).toHaveCount(1);
+
+  await page.locator("#chord-search").fill("A");
+  await page.locator("#next").tap();
+  await expect(page.locator(".fret-number")).toHaveText(["5","6","7","8","9"]);
+  await expect(page.locator(".nut-line")).toHaveCount(0);
+
+  const geometry=await page.locator(".chord-diagram").evaluate(svg => {
+    const view=svg.viewBox.baseVal;
+    return {
+      labelsInside:[...svg.querySelectorAll(".string-number,.fret-number")].every(label=>{
+        const b=label.getBBox();
+        return b.x>=0&&b.y>=0&&b.x+b.width<=view.width&&b.y+b.height<=view.height;
+      }),
+      fingersAligned:[...svg.querySelectorAll(".finger-position")].every(note=>{
+        const circle=note.querySelector("circle");
+        const string=svg.querySelector(`.string-line[data-string="${note.dataset.string}"]`);
+        return circle.cx.baseVal.value===string.x1.baseVal.value;
+      })
+    };
+  });
+  expect(geometry).toEqual({labelsInside:true,fingersAligned:true});
+  await assertPhoneLayout(page);
+});
+
+test("realistic fretboard fits an iPad viewport", async ({ page }) => {
+  await page.setViewportSize({width:768,height:1024});
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready","true");
+  await expect(page.locator(".string-number")).toHaveText(["6","5","4","3","2","1"]);
+  await assertPhoneLayout(page);
+  await page.screenshot({path:`${OUTPUT}/ipad-realistic-fretboard.png`,fullPage:true});
+});
+
 test("visual validation: Bb5 second position and restored state", async ({ page }) => {
   await page.goto("/");
   await page.locator("#chord-search").fill("Bb5");

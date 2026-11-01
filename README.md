@@ -315,6 +315,20 @@ Validation:
 - release version is `0.21.1`; Service Worker cache rotates to `st-guitar-chord-board-v20`.
 
 
+### 0.22.0 — approved MagicPath realistic fretboard
+
+- Applies the approved dark wooden neck, wood edging, ivory nut, metallic frets,
+  wound bass strings and ivory numbered finger markers through the existing SVG.
+- Visible string numbers run from 6 to 1; each row shows its actual fret number,
+  including higher positions. A high-position diagram never draws a nut.
+- All materials are inline SVG/CSS: no image download, runtime library or network
+  request is added, and the renderer follows every existing voicing.
+- Search, tuner, chord data, fingering, barres, tap/swipe, saved selection,
+  VoiceOver semantics and 500 ms bass-to-treble audition keep their existing paths.
+- Release version is `0.22.0`, offline cache `st-guitar-chord-board-v29` and entry
+  asset revision `32-1`. Existing installs pick up the new cached visual assets.
+- The MagicPath source is a visual reference, not an embedded application image.
+
 ## License
 
 ST Guitar Chord Board is proprietary software. The officially hosted application may be used for personal, educational, instructional, classroom, and student-practice purposes under the terms in [LICENSE](LICENSE).
